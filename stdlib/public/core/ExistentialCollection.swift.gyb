@@ -170,15 +170,17 @@ internal final class _IteratorBox<
   internal var _base: Base
 }
 
-//===--- Sequence ---------------------------------------------------------===//
+//===--- Iterable ---------------------------------------------------------===//
 //===----------------------------------------------------------------------===//
 
-% for Kind in ['Sequence', 'Collection', 'BidirectionalCollection', 'RandomAccessCollection']:
+% for Kind in ['Iterable', 'Sequence', 'Collection', 'BidirectionalCollection', 'RandomAccessCollection']:
 
 @_fixed_layout
 @_versioned
-%   if Kind == 'Sequence':
-internal class _AnySequenceBox<Element>
+%   if Kind == 'Iterable':
+internal class _AnyIterableBox<Element>
+%   elif Kind == 'Sequence':
+internal class _AnySequenceBox<Element> : _AnyIterableBox<Element>
 %   elif Kind == 'Collection':
 internal class _AnyCollectionBox<Element> : _AnySequenceBox<Element>
 %   elif Kind == 'BidirectionalCollection':
@@ -192,7 +194,7 @@ internal class _AnyRandomAccessCollectionBox<Element>
 %   end
 {
 
-%   if Kind == 'Sequence':
+%   if Kind == 'Iterable':
   @_inlineable // FIXME(sil-serialize-all)
   @_versioned // FIXME(sil-serialize-all)
   internal init() { }
@@ -264,8 +266,9 @@ internal class _AnyRandomAccessCollectionBox<Element>
   @_inlineable // FIXME(sil-serialize-all)
   @_versioned // FIXME(sil-serialize-all)
   deinit {}
-
-%   override = 'override' if Kind != 'Sequence' else ''
+  
+%   if Kind != 'Iterable:
+%     override = 'override' if Kind != 'Sequence' else ''
   @_versioned
   @_inlineable
   internal ${override} func _drop(
@@ -314,7 +317,8 @@ internal class _AnyRandomAccessCollectionBox<Element>
   ) rethrows -> [Any${Kind}<Element>] {
     _abstract()
   }
-
+  
+%   end
 %   if Kind == 'Collection':
   @_versioned
   @_inlineable
@@ -434,15 +438,17 @@ internal class _AnyRandomAccessCollectionBox<Element>
 
 % end
 
-% for Kind in ['Sequence', 'Collection', 'BidirectionalCollection', 'RandomAccessCollection']:
+% for Kind in ['Iterable', 'Sequence', 'Collection', 'BidirectionalCollection', 'RandomAccessCollection']:
+%   if Kind == 'Iterable':
+%     EqualAndWeakerOrderedKinds = []
 %   if Kind == 'Sequence':
-%     EqualAndWeakerKinds = ['Sequence']
+%     EqualAndWeakerOrderedKinds = ['Sequence']
 %   elif Kind == 'Collection':
-%     EqualAndWeakerKinds = ['Sequence', 'Collection']
+%     EqualAndWeakerOrderedKinds = ['Sequence', 'Collection']
 %   elif Kind == 'BidirectionalCollection':
-%     EqualAndWeakerKinds = ['Sequence', 'Collection', 'BidirectionalCollection']
+%     EqualAndWeakerOrderedKinds = ['Sequence', 'Collection', 'BidirectionalCollection']
 %   elif Kind == 'RandomAccessCollection':
-%     EqualAndWeakerKinds = ['Sequence', 'Collection', 'BidirectionalCollection', 'RandomAccessCollection']
+%     EqualAndWeakerOrderedKinds = ['Sequence', 'Collection', 'BidirectionalCollection', 'RandomAccessCollection']
 %   else:
 %     assert False, 'Unknown kind'
 %   end
@@ -512,6 +518,7 @@ internal final class _${Kind}Box<S : ${Kind}> : _Any${Kind}Box<S.Iterator.Elemen
     let (it,idx) = _base._copyContents(initializing: buf)
     return (AnyIterator(it),idx)
   }
+%   if Kind != 'Iterable':
   @_versioned
   @_inlineable
   internal override func _drop(
@@ -546,7 +553,8 @@ internal final class _${Kind}Box<S : ${Kind}> : _Any${Kind}Box<S.Iterator.Elemen
   internal override func _suffix(_ maxLength: Int) -> _Any${Kind}Box<Element> {
     return _${Kind}Box<S.SubSequence>(_base: _base.suffix(maxLength))
   }
-%   for ResultKind in EqualAndWeakerKinds:
+%   end
+%   for ResultKind in EqualAndWeakerOrderedKinds:
   @_versioned
   @_inlineable
   internal override func _split(
@@ -567,7 +575,7 @@ internal final class _${Kind}Box<S : ${Kind}> : _Any${Kind}Box<S.Iterator.Elemen
   @_versioned // FIXME(sil-serialize-all)
   deinit {}
 
-%   if Kind == 'Sequence':
+%   if Kind in ['Iterable', 'Sequence']:
   @_versioned
   @_inlineable
   internal init(_base: S) {
@@ -784,6 +792,8 @@ extension  AnySequence: Sequence {
 
 % for Kind in ['Sequence', 'Collection', 'BidirectionalCollection', 'RandomAccessCollection']:
 extension Any${Kind} {
+%   if Kind == 'Iterable':
+  /// Returns an iterator over the iterable elements.
 %   if Kind == 'Sequence':
   /// Returns an iterator over the elements of this sequence.
 %   else:
