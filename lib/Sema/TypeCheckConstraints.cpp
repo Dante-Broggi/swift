@@ -2312,8 +2312,8 @@ bool TypeChecker::typeCheckForEachBinding(DeclContext *dc, ForEachStmt *stmt) {
     /// The type of the initializer.
     Type InitType;
 
-    /// The type of the sequence.
-    Type SequenceType;
+    /// The type of the iterable.
+    Type IterableType;
 
   public:
     explicit BindingListener(ForEachStmt *stmt) : Stmt(stmt) { }
@@ -2322,19 +2322,19 @@ bool TypeChecker::typeCheckForEachBinding(DeclContext *dc, ForEachStmt *stmt) {
       // Save the locator we're using for the expression.
       Locator = cs.getConstraintLocator(expr);
 
-      // The expression type must conform to the Sequence.
+      // The expression type must conform to the Iterable protocol.
       auto &tc = cs.getTypeChecker();
       ProtocolDecl *sequenceProto
-        = tc.getProtocol(Stmt->getForLoc(), KnownProtocolKind::Sequence);
+        = tc.getProtocol(Stmt->getForLoc(), KnownProtocolKind::Iterable);
       if (!sequenceProto) {
         return true;
       }
 
-      SequenceType =
+      IterableType =
         cs.createTypeVariable(Locator, /*options=*/0);
       cs.addConstraint(ConstraintKind::Conversion, cs.getType(expr),
-                       SequenceType, Locator);
-      cs.addConstraint(ConstraintKind::ConformsTo, SequenceType,
+                       IterableType, Locator);
+      cs.addConstraint(ConstraintKind::ConformsTo, IterableType,
                        sequenceProto->getDeclaredType(), Locator);
 
       auto iteratorLocator =
@@ -2421,10 +2421,10 @@ bool TypeChecker::typeCheckForEachBinding(DeclContext *dc, ForEachStmt *stmt) {
       auto &cs = solution.getConstraintSystem();
       auto &tc = cs.getTypeChecker();
       InitType = solution.simplifyType(InitType);
-      SequenceType = solution.simplifyType(SequenceType);
+      IterableType = solution.simplifyType(IterableType);
 
       // Perform any necessary conversions of the sequence (e.g. [T]! -> [T]).
-      if (tc.convertToType(expr, SequenceType, cs.DC)) {
+      if (tc.convertToType(expr, IterableType, cs.DC)) {
         return nullptr;
       }
 

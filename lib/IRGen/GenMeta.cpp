@@ -5034,7 +5034,7 @@ SpecialProtocol irgen::getSpecialProtocolID(ProtocolDecl *P) {
     return SpecialProtocol::Error;
     
   // The other known protocols aren't special at runtime.
-  case KnownProtocolKind::Sequence:
+  case KnownProtocolKind::Iterable:
   case KnownProtocolKind::IteratorProtocol:
   case KnownProtocolKind::RawRepresentable:
   case KnownProtocolKind::Equatable:
