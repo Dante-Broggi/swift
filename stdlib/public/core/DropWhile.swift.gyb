@@ -12,7 +12,7 @@
 
 %{
 from gyb_stdlib_support import (
-    TRAVERSALS,
+    TRAVERSALS, 
     collectionForTraversal
 )
 }%
