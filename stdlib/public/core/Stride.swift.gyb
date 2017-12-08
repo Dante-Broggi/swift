@@ -69,7 +69,7 @@ extension Strideable {
 % for Base, VersionInfo in [
 %   ('Strideable where Self : _Pointer', None),
 %   ('Strideable', 'deprecated: 3, obsoleted: 4'),
-%   ]:
+%   ]: 
 %   Availability = '@available(swift, %s, message: "Please use explicit type conversions or Strideable methods for mixed-type arithmetics.")' % (VersionInfo) if VersionInfo else ''
 
 extension ${Base} {
