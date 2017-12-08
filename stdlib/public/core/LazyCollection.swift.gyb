@@ -10,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-% from gyb_stdlib_support import TRAVERSALS, collectionForTraversal
+% from gyb_stdlib_support import TRAVERSALS, collectionForTraversal 
 
 /// A collection on which normally-eager operations such as `map` and
 /// `filter` are implemented lazily.
