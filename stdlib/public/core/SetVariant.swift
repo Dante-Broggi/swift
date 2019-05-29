@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -45,14 +45,14 @@ extension Set {
 
     @inlinable
     @inline(__always)
-    init(native: __owned _NativeSet<Element>) {
+    init(native: _NativeSet<Element>) {
       self.object = _BridgeStorage(native: native._storage)
     }
 
 #if _runtime(_ObjC)
     @inlinable
     @inline(__always)
-    init(cocoa: __owned __CocoaSet) {
+    init(cocoa: __CocoaSet) {
       self.object = _BridgeStorage(objC: cocoa.object)
     }
 #endif
@@ -89,6 +89,7 @@ extension Set._Variant {
     set {
       self = .init(native: newValue)
     }
+    /*
     _modify {
       var native = _NativeSet<Element>(object.unflaggedNativeInstance)
       self = .init(dummy: ())
@@ -99,6 +100,7 @@ extension Set._Variant {
       }
       yield &native
     }
+    */
   }
 
 #if _runtime(_ObjC)
@@ -202,7 +204,7 @@ extension Set._Variant: _SetBuffer {
 
   @inlinable
   internal var count: Int {
-    @inline(__always)
+    // @inline(__always)
     get {
 #if _runtime(_ObjC)
       guard isNative else {
@@ -239,7 +241,7 @@ extension Set._Variant: _SetBuffer {
 
 extension Set._Variant {
   @inlinable
-  internal mutating func update(with value: __owned Element) -> Element? {
+  internal mutating func update(with value: Element) -> Element? {
 #if _runtime(_ObjC)
     guard isNative else {
       // Make sure we have space for an extra element.
@@ -255,7 +257,7 @@ extension Set._Variant {
 
   @inlinable
   internal mutating func insert(
-    _ element: __owned Element
+    _ element: Element
   ) -> (inserted: Bool, memberAfterInsert: Element) {
 #if _runtime(_ObjC)
     guard isNative else {
@@ -358,7 +360,7 @@ extension Set._Variant {
   /// - Complexity: O(1).
   @inlinable
   @inline(__always)
-  internal __consuming func makeIterator() -> Set<Element>.Iterator {
+  internal func makeIterator() -> Set<Element>.Iterator {
 #if _runtime(_ObjC)
     guard isNative else {
       return Set.Iterator(_cocoa: asCocoa.makeIterator())
@@ -367,4 +369,3 @@ extension Set._Variant {
     return Set.Iterator(_native: asNative.makeIterator())
   }
 }
-

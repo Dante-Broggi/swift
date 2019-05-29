@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -37,14 +37,18 @@ internal struct _SmallString {
 
   @inlinable
   internal var leadingRawBits: UInt64 {
-    @inline(__always) get { return _storage.0 }
-    @inline(__always) set { _storage.0 = newValue }
+    // @inline(__always)
+    get { return _storage.0 }
+    // @inline(__always)
+    set { _storage.0 = newValue }
   }
 
   @inlinable
   internal var trailingRawBits: UInt64 {
-    @inline(__always) get { return _storage.1 }
-    @inline(__always) set { _storage.1 = newValue }
+    // @inline(__always)
+    get { return _storage.1 }
+    // @inline(__always)
+    set { _storage.1 = newValue }
   }
 
   @inlinable @inline(__always)
@@ -164,7 +168,8 @@ extension _SmallString: RandomAccessCollection, MutableCollection {
 
   @inlinable
   internal subscript(_ idx: Int) -> UInt8 {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       _internalInvariant(idx >= 0 && idx <= 15)
       if idx < 8 {
         return leadingRawBits._uncheckedGetByte(at: idx)
@@ -172,7 +177,8 @@ extension _SmallString: RandomAccessCollection, MutableCollection {
         return trailingRawBits._uncheckedGetByte(at: idx &- 8)
       }
     }
-    @inline(__always) set {
+    // @inline(__always)
+    set {
       _internalInvariant(idx >= 0 && idx <= 15)
       if idx < 8 {
         leadingRawBits._uncheckedSetByte(at: idx, to: newValue)

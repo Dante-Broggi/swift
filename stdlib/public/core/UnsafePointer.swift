@@ -1,4 +1,4 @@
-//===--- UnsafePointer.swift ----------------------------------*- swift -*-===//
+﻿//===--- UnsafePointer.swift ----------------------------------*- swift -*-===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -216,20 +216,20 @@ public struct UnsafePointer<Pointee>: _Pointer {
   /// Creates an `UnsafePointer` from a builtin raw pointer.
   @_transparent
   public init(_ _rawValue : Builtin.RawPointer) {
-    self._rawValue = _rawValue
+	self._rawValue = _rawValue
   }
 
   /// Deallocates the memory block previously allocated at this pointer.
   ///
-  /// This pointer must be a pointer to the start of a previously allocated memory 
+  /// This pointer must be a pointer to the start of a previously allocated memory
   /// block. The memory must not be initialized or `Pointee` must be a trivial type.
   @inlinable
   public func deallocate() {
-    // Passing zero alignment to the runtime forces "aligned
-    // deallocation". Since allocation via `UnsafeMutable[Raw][Buffer]Pointer`
-    // always uses the "aligned allocation" path, this ensures that the
-    // runtime's allocation and deallocation paths are compatible.
-    Builtin.deallocRaw(_rawValue, (-1)._builtinWordValue, (0)._builtinWordValue)
+	// Passing zero alignment to the runtime forces "aligned
+	// deallocation". Since allocation via `UnsafeMutable[Raw][Buffer]Pointer`
+	// always uses the "aligned allocation" path, this ensures that the
+	// runtime's allocation and deallocation paths are compatible.
+	Builtin.deallocRaw(_rawValue, (-1)._builtinWordValue, (0)._builtinWordValue)
   }
 
   /// Accesses the instance referenced by this pointer.
@@ -238,9 +238,10 @@ public struct UnsafePointer<Pointee>: _Pointer {
   /// this pointer must already be initialized.
   @inlinable // unsafe-performance
   public var pointee: Pointee {
-    @_transparent unsafeAddress {
-      return self
-    }
+	// @_transparent
+	unsafeAddress {
+	  return self
+	}
   }
 
   /// Executes the given closure while temporarily binding the specified number
@@ -292,13 +293,13 @@ public struct UnsafePointer<Pointee>: _Pointer {
   /// - Returns: The return value, if any, of the `body` closure parameter.
   @inlinable
   public func withMemoryRebound<T, Result>(to type: T.Type, capacity count: Int,
-    _ body: (UnsafePointer<T>) throws -> Result
+	_ body: (UnsafePointer<T>) throws -> Result
   ) rethrows -> Result {
-    Builtin.bindMemory(_rawValue, count._builtinWordValue, T.self)
-    defer {
-      Builtin.bindMemory(_rawValue, count._builtinWordValue, Pointee.self)
-    }
-    return try body(UnsafePointer<T>(_rawValue))
+	Builtin.bindMemory(_rawValue, count._builtinWordValue, T.self)
+	defer {
+	  Builtin.bindMemory(_rawValue, count._builtinWordValue, Pointee.self)
+	}
+	return try body(UnsafePointer<T>(_rawValue))
   }
 
   /// Accesses the pointee at the specified offset from this pointer.
@@ -310,17 +311,17 @@ public struct UnsafePointer<Pointee>: _Pointer {
   ///   instance, measured in strides of the pointer's `Pointee` type.
   @inlinable
   public subscript(i: Int) -> Pointee {
-    @_transparent
-    unsafeAddress {
-      return self + i
-    }
+	// @_transparent
+	unsafeAddress {
+	  return self + i
+	}
   }
 
   @inlinable // unsafe-performance
-  internal static var _max : UnsafePointer {
-    return UnsafePointer(
-      bitPattern: 0 as Int &- MemoryLayout<Pointee>.stride
-    )._unsafelyUnwrappedUnchecked
+  internal static var _max : UnsafePointer<Pointee> {
+	return UnsafePointer<Pointee>(
+	  bitPattern: 0 as Int &- MemoryLayout<Pointee>.stride
+	)._unsafelyUnwrappedUnchecked
   }
 }
 
@@ -522,7 +523,7 @@ public struct UnsafeMutablePointer<Pointee>: _Pointer {
   /// Creates an `UnsafeMutablePointer` from a builtin raw pointer.
   @_transparent
   public init(_ _rawValue : Builtin.RawPointer) {
-    self._rawValue = _rawValue
+	self._rawValue = _rawValue
   }
 
   /// Creates a mutable typed pointer referencing the same memory as the given
@@ -531,7 +532,7 @@ public struct UnsafeMutablePointer<Pointee>: _Pointer {
   /// - Parameter other: The immutable pointer to convert.
   @_transparent
   public init(mutating other: UnsafePointer<Pointee>) {
-    self._rawValue = other._rawValue
+	self._rawValue = other._rawValue
   }
 
   /// Creates a mutable typed pointer referencing the same memory as the given
@@ -541,30 +542,30 @@ public struct UnsafeMutablePointer<Pointee>: _Pointer {
   ///   the result is `nil`.
   @_transparent
   public init?(mutating other: UnsafePointer<Pointee>?) {
-    guard let unwrapped = other else { return nil }
-    self.init(mutating: unwrapped)
+	guard let unwrapped = other else { return nil }
+	self.init(mutating: unwrapped)
   }
-  
-  /// Creates an immutable typed pointer referencing the same memory as the		
-  /// given mutable pointer.		
-  ///		
-  /// - Parameter other: The pointer to convert.		
-  @_transparent		
-  public init(_ other: UnsafeMutablePointer<Pointee>) {		
-   self._rawValue = other._rawValue		
-  }		
 
-  /// Creates an immutable typed pointer referencing the same memory as the		
-  /// given mutable pointer.		
-  ///		
-  /// - Parameter other: The pointer to convert. If `other` is `nil`, the		
-  ///   result is `nil`.		
-  @_transparent		
-  public init?(_ other: UnsafeMutablePointer<Pointee>?) {		
-   guard let unwrapped = other else { return nil }		
-   self.init(unwrapped)		
-  }		
-  
+  /// Creates an immutable typed pointer referencing the same memory as the
+  /// given mutable pointer.
+  ///
+  /// - Parameter other: The pointer to convert.
+  @_transparent
+  public init(_ other: UnsafeMutablePointer<Pointee>) {
+   self._rawValue = other._rawValue
+  }
+
+  /// Creates an immutable typed pointer referencing the same memory as the
+  /// given mutable pointer.
+  ///
+  /// - Parameter other: The pointer to convert. If `other` is `nil`, the
+  ///   result is `nil`.
+  @_transparent
+  public init?(_ other: UnsafeMutablePointer<Pointee>?) {
+   guard let unwrapped = other else { return nil }
+   self.init(unwrapped)
+  }
+
 
   /// Allocates uninitialized memory for the specified number of instances of
   /// type `Pointee`.
@@ -591,39 +592,39 @@ public struct UnsafeMutablePointer<Pointee>: _Pointer {
   ///   of `Pointee`.
   @inlinable
   public static func allocate(capacity count: Int)
-    -> UnsafeMutablePointer<Pointee> {
-    let size = MemoryLayout<Pointee>.stride * count
-    // For any alignment <= _minAllocationAlignment, force alignment = 0.
-    // This forces the runtime's "aligned" allocation path so that
-    // deallocation does not require the original alignment.
-    //
-    // The runtime guarantees:
-    //
-    // align == 0 || align > _minAllocationAlignment:
-    //   Runtime uses "aligned allocation".
-    //
-    // 0 < align <= _minAllocationAlignment:
-    //   Runtime may use either malloc or "aligned allocation".
-    var align = Builtin.alignof(Pointee.self)
-    if Int(align) <= _minAllocationAlignment() {
-      align = (0)._builtinWordValue
-    }
-    let rawPtr = Builtin.allocRaw(size._builtinWordValue, align)
-    Builtin.bindMemory(rawPtr, count._builtinWordValue, Pointee.self)
-    return UnsafeMutablePointer(rawPtr)
+	-> UnsafeMutablePointer<Pointee> {
+	let size = MemoryLayout<Pointee>.stride * count
+	// For any alignment <= _minAllocationAlignment, force alignment = 0.
+	// This forces the runtime's "aligned" allocation path so that
+	// deallocation does not require the original alignment.
+	//
+	// The runtime guarantees:
+	//
+	// align == 0 || align > _minAllocationAlignment:
+	//   Runtime uses "aligned allocation".
+	//
+	// 0 < align <= _minAllocationAlignment:
+	//   Runtime may use either malloc or "aligned allocation".
+	var align = Builtin.alignof(Pointee.self)
+	if Int(align) <= _minAllocationAlignment() {
+	  align = (0)._builtinWordValue
+	}
+	let rawPtr = Builtin.allocRaw(size._builtinWordValue, align)
+	Builtin.bindMemory(rawPtr, count._builtinWordValue, Pointee.self)
+	return UnsafeMutablePointer<Pointee>(rawPtr)
   }
 
   /// Deallocates the memory block previously allocated at this pointer.
   ///
-  /// This pointer must be a pointer to the start of a previously allocated memory 
+  /// This pointer must be a pointer to the start of a previously allocated memory
   /// block. The memory must not be initialized or `Pointee` must be a trivial type.
   @inlinable
   public func deallocate() {
-    // Passing zero alignment to the runtime forces "aligned
-    // deallocation". Since allocation via `UnsafeMutable[Raw][Buffer]Pointer`
-    // always uses the "aligned allocation" path, this ensures that the
-    // runtime's allocation and deallocation paths are compatible.
-    Builtin.deallocRaw(_rawValue, (-1)._builtinWordValue, (0)._builtinWordValue)
+	// Passing zero alignment to the runtime forces "aligned
+	// deallocation". Since allocation via `UnsafeMutable[Raw][Buffer]Pointer`
+	// always uses the "aligned allocation" path, this ensures that the
+	// runtime's allocation and deallocation paths are compatible.
+	Builtin.deallocRaw(_rawValue, (-1)._builtinWordValue, (0)._builtinWordValue)
   }
 
   /// Accesses the instance referenced by this pointer.
@@ -638,12 +639,21 @@ public struct UnsafeMutablePointer<Pointee>: _Pointer {
   /// `initialize(to:count:)`.
   @inlinable // unsafe-performance
   public var pointee: Pointee {
-    @_transparent unsafeAddress {
-      return UnsafePointer(self)
-    }
-    @_transparent nonmutating unsafeMutableAddress {
-      return self
-    }
+	get {
+		fatalError()
+	}
+	set {}
+
+	/*
+	// @_transparent
+	unsafeAddress {
+	  return UnsafePointer<Pointee>(self)
+	}
+	// @_transparent
+	nonmutating unsafeMutableAddress {
+	  return self
+	}
+	*/
   }
 
   /// Initializes this pointer's memory with the specified number of
@@ -656,32 +666,32 @@ public struct UnsafeMutablePointer<Pointee>: _Pointer {
   /// - Parameters:
   ///   - repeatedValue: The instance to initialize this pointer's memory with.
   ///   - count: The number of consecutive copies of `newValue` to initialize.
-  ///     `count` must not be negative. 
+  ///     `count` must not be negative.
   @inlinable
   public func initialize(repeating repeatedValue: Pointee, count: Int) {
-    // FIXME: add tests (since the `count` has been added)
-    _debugPrecondition(count >= 0,
-      "UnsafeMutablePointer.initialize(repeating:count:): negative count")
-    // Must not use `initializeFrom` with a `Collection` as that will introduce
-    // a cycle.
-    for offset in 0..<count {
-      Builtin.initialize(repeatedValue, (self + offset)._rawValue)
-    }
+	// FIXME: add tests (since the `count` has been added)
+	_debugPrecondition(count >= 0,
+	  "UnsafeMutablePointer.initialize(repeating:count:): negative count")
+	// Must not use `initializeFrom` with a `Collection` as that will introduce
+	// a cycle.
+	for offset in 0..<count {
+	  Builtin.initialize(repeatedValue, (self + offset)._rawValue)
+	}
   }
-  
+
   /// Initializes this pointer's memory with a single instance of the given value.
   ///
   /// The destination memory must be uninitialized or the pointer's `Pointee`
   /// must be a trivial type. After a call to `initialize(to:)`, the
-  /// memory referenced by this pointer is initialized. Calling this method is 
-  /// roughly equivalent to calling `initialize(repeating:count:)` with a 
+  /// memory referenced by this pointer is initialized. Calling this method is
+  /// roughly equivalent to calling `initialize(repeating:count:)` with a
   /// `count` of 1.
   ///
   /// - Parameters:
   ///   - value: The instance to initialize this pointer's pointee to.
   @inlinable
   public func initialize(to value: Pointee) {
-    Builtin.initialize(value, self._rawValue)
+	Builtin.initialize(value, self._rawValue)
   }
 
   /// Retrieves and returns the referenced instance, returning the pointer's
@@ -702,7 +712,7 @@ public struct UnsafeMutablePointer<Pointee>: _Pointer {
   /// - Returns: The instance referenced by this pointer.
   @inlinable
   public func move() -> Pointee {
-    return Builtin.take(_rawValue)
+	return Builtin.take(_rawValue)
   }
 
   /// Replaces this pointer's memory with the specified number of
@@ -716,15 +726,15 @@ public struct UnsafeMutablePointer<Pointee>: _Pointer {
   /// - Parameters:
   ///   - repeatedValue: The instance to assign this pointer's memory to.
   ///   - count: The number of consecutive copies of `newValue` to assign.
-  ///     `count` must not be negative. 
+  ///     `count` must not be negative.
   @inlinable
   public func assign(repeating repeatedValue: Pointee, count: Int) {
-    _debugPrecondition(count >= 0, "UnsafeMutablePointer.assign(repeating:count:) with negative count")
-    for i in 0..<count {
-      self[i] = repeatedValue
-    }
+	_debugPrecondition(count >= 0, "UnsafeMutablePointer.assign(repeating:count:) with negative count")
+	for i in 0..<count {
+	  self[i] = repeatedValue
+	}
   }
-  
+
   /// Replaces this pointer's initialized memory with the specified number of
   /// instances from the given pointer's memory.
   ///
@@ -743,28 +753,28 @@ public struct UnsafeMutablePointer<Pointee>: _Pointer {
   ///     `source` to this pointer's memory. `count` must not be negative.
   @inlinable
   public func assign(from source: UnsafePointer<Pointee>, count: Int) {
-    _debugPrecondition(
-      count >= 0, "UnsafeMutablePointer.assign with negative count")
-    if UnsafePointer(self) < source || UnsafePointer(self) >= source + count {
-      // assign forward from a disjoint or following overlapping range.
-      Builtin.assignCopyArrayFrontToBack(
-        Pointee.self, self._rawValue, source._rawValue, count._builtinWordValue)
-      // This builtin is equivalent to:
-      // for i in 0..<count {
-      //   self[i] = source[i]
-      // }
-    }
-    else if UnsafePointer(self) != source {
-      // assign backward from a non-following overlapping range.
-      Builtin.assignCopyArrayBackToFront(
-        Pointee.self, self._rawValue, source._rawValue, count._builtinWordValue)
-      // This builtin is equivalent to:
-      // var i = count-1
-      // while i >= 0 {
-      //   self[i] = source[i]
-      //   i -= 1
-      // }
-    }
+	_debugPrecondition(
+	  count >= 0, "UnsafeMutablePointer.assign with negative count")
+	if UnsafePointer<Pointee>(self) < source || UnsafePointer<Pointee>(self) >= source + count {
+	  // assign forward from a disjoint or following overlapping range.
+	  Builtin.assignCopyArrayFrontToBack(
+		Pointee.self, self._rawValue, source._rawValue, count._builtinWordValue)
+	  // This builtin is equivalent to:
+	  // for i in 0..<count {
+	  //   self[i] = source[i]
+	  // }
+	}
+	else if UnsafePointer<Pointee>(self) != source {
+	  // assign backward from a non-following overlapping range.
+	  Builtin.assignCopyArrayBackToFront(
+		Pointee.self, self._rawValue, source._rawValue, count._builtinWordValue)
+	  // This builtin is equivalent to:
+	  // var i = count-1
+	  // while i >= 0 {
+	  //   self[i] = source[i]
+	  //   i -= 1
+	  // }
+	}
   }
 
   /// Moves instances from initialized source memory into the uninitialized
@@ -784,29 +794,29 @@ public struct UnsafeMutablePointer<Pointee>: _Pointer {
   ///   - count: The number of instances to move from `source` to this
   ///     pointer's memory. `count` must not be negative.
   @inlinable
-  public func moveInitialize(from source: UnsafeMutablePointer, count: Int) {
-    _debugPrecondition(
-      count >= 0, "UnsafeMutablePointer.moveInitialize with negative count")
-    if self < source || self >= source + count {
-      // initialize forward from a disjoint or following overlapping range.
-      Builtin.takeArrayFrontToBack(
-        Pointee.self, self._rawValue, source._rawValue, count._builtinWordValue)
-      // This builtin is equivalent to:
-      // for i in 0..<count {
-      //   (self + i).initialize(to: (source + i).move())
-      // }
-    }
-    else {
-      // initialize backward from a non-following overlapping range.
-      Builtin.takeArrayBackToFront(
-        Pointee.self, self._rawValue, source._rawValue, count._builtinWordValue)
-      // This builtin is equivalent to:
-      // var src = source + count
-      // var dst = self + count
-      // while dst != self {
-      //   (--dst).initialize(to: (--src).move())
-      // }
-    }
+  public func moveInitialize(from source: UnsafeMutablePointer<Pointee>, count: Int) {
+	_debugPrecondition(
+	  count >= 0, "UnsafeMutablePointer.moveInitialize with negative count")
+	if self < source || self >= source + count {
+	  // initialize forward from a disjoint or following overlapping range.
+	  Builtin.takeArrayFrontToBack(
+		Pointee.self, self._rawValue, source._rawValue, count._builtinWordValue)
+	  // This builtin is equivalent to:
+	  // for i in 0..<count {
+	  //   (self + i).initialize(to: (source + i).move())
+	  // }
+	}
+	else {
+	  // initialize backward from a non-following overlapping range.
+	  Builtin.takeArrayBackToFront(
+		Pointee.self, self._rawValue, source._rawValue, count._builtinWordValue)
+	  // This builtin is equivalent to:
+	  // var src = source + count
+	  // var dst = self + count
+	  // while dst != self {
+	  //   (--dst).initialize(to: (--src).move())
+	  // }
+	}
   }
 
   /// Initializes the memory referenced by this pointer with the values
@@ -825,18 +835,18 @@ public struct UnsafeMutablePointer<Pointee>: _Pointer {
   ///     pointer's memory. `count` must not be negative.
   @inlinable
   public func initialize(from source: UnsafePointer<Pointee>, count: Int) {
-    _debugPrecondition(
-      count >= 0, "UnsafeMutablePointer.initialize with negative count")
-    _debugPrecondition(
-      UnsafePointer(self) + count <= source ||
-      source + count <= UnsafePointer(self),
-      "UnsafeMutablePointer.initialize overlapping range")
-    Builtin.copyArray(
-      Pointee.self, self._rawValue, source._rawValue, count._builtinWordValue)
-    // This builtin is equivalent to:
-    // for i in 0..<count {
-    //   (self + i).initialize(to: source[i])
-    // }
+	_debugPrecondition(
+	  count >= 0, "UnsafeMutablePointer.initialize with negative count")
+	_debugPrecondition(
+	  UnsafePointer<Pointee>(self) + count <= source ||
+	  source + count <= UnsafePointer<Pointee>(self),
+	  "UnsafeMutablePointer.initialize overlapping range")
+	Builtin.copyArray(
+	  Pointee.self, self._rawValue, source._rawValue, count._builtinWordValue)
+	// This builtin is equivalent to:
+	// for i in 0..<count {
+	//   (self + i).initialize(to: source[i])
+	// }
   }
 
   /// Replaces the memory referenced by this pointer with the values
@@ -855,20 +865,20 @@ public struct UnsafeMutablePointer<Pointee>: _Pointer {
   ///   - count: The number of instances to move from `source` to this
   ///     pointer's memory. `count` must not be negative.
   @inlinable
-  public func moveAssign(from source: UnsafeMutablePointer, count: Int) {
-    _debugPrecondition(
-      count >= 0, "UnsafeMutablePointer.moveAssign(from:) with negative count")
-    _debugPrecondition(
-      self + count <= source || source + count <= self,
-      "moveAssign overlapping range")
-    Builtin.assignTakeArray(
-      Pointee.self, self._rawValue, source._rawValue, count._builtinWordValue)
-    // These builtins are equivalent to:
-    // for i in 0..<count {
-    //   self[i] = (source + i).move()
-    // }
+  public func moveAssign(from source: UnsafeMutablePointer<Pointee>, count: Int) {
+	_debugPrecondition(
+	  count >= 0, "UnsafeMutablePointer.moveAssign(from:) with negative count")
+	_debugPrecondition(
+	  self + count <= source || source + count <= self,
+	  "moveAssign overlapping range")
+	Builtin.assignTakeArray(
+	  Pointee.self, self._rawValue, source._rawValue, count._builtinWordValue)
+	// These builtins are equivalent to:
+	// for i in 0..<count {
+	//   self[i] = (source + i).move()
+	// }
   }
-  
+
   /// Deinitializes the specified number of values starting at this pointer.
   ///
   /// The region of memory starting at this pointer and covering `count`
@@ -877,17 +887,17 @@ public struct UnsafeMutablePointer<Pointee>: _Pointer {
   /// bound to the `Pointee` type.
   ///
   /// - Parameter count: The number of instances to deinitialize. `count` must
-  ///   not be negative. 
+  ///   not be negative.
   /// - Returns: A raw pointer to the same address as this pointer. The memory
   ///   referenced by the returned raw pointer is still bound to `Pointee`.
   @inlinable
   @discardableResult
   public func deinitialize(count: Int) -> UnsafeMutableRawPointer {
-    _debugPrecondition(count >= 0, "UnsafeMutablePointer.deinitialize with negative count")
-    // FIXME: optimization should be implemented, where if the `count` value
-    // is 1, the `Builtin.destroy(Pointee.self, _rawValue)` gets called.
-    Builtin.destroyArray(Pointee.self, _rawValue, count._builtinWordValue)
-    return UnsafeMutableRawPointer(self)
+	_debugPrecondition(count >= 0, "UnsafeMutablePointer.deinitialize with negative count")
+	// FIXME: optimization should be implemented, where if the `count` value
+	// is 1, the `Builtin.destroy(Pointee.self, _rawValue)` gets called.
+	Builtin.destroyArray(Pointee.self, _rawValue, count._builtinWordValue)
+	return UnsafeMutableRawPointer(self)
   }
 
   /// Executes the given closure while temporarily binding the specified number
@@ -939,13 +949,13 @@ public struct UnsafeMutablePointer<Pointee>: _Pointer {
   /// - Returns: The return value, if any, of the `body` closure parameter.
   @inlinable
   public func withMemoryRebound<T, Result>(to type: T.Type, capacity count: Int,
-    _ body: (UnsafeMutablePointer<T>) throws -> Result
+	_ body: (UnsafeMutablePointer<T>) throws -> Result
   ) rethrows -> Result {
-    Builtin.bindMemory(_rawValue, count._builtinWordValue, T.self)
-    defer {
-      Builtin.bindMemory(_rawValue, count._builtinWordValue, Pointee.self)
-    }
-    return try body(UnsafeMutablePointer<T>(_rawValue))
+	Builtin.bindMemory(_rawValue, count._builtinWordValue, T.self)
+	defer {
+	  Builtin.bindMemory(_rawValue, count._builtinWordValue, Pointee.self)
+	}
+	return try body(UnsafeMutablePointer<T>(_rawValue))
   }
 
   /// Accesses the pointee at the specified offset from this pointer.
@@ -963,20 +973,26 @@ public struct UnsafeMutablePointer<Pointee>: _Pointer {
   ///   instance, measured in strides of the pointer's `Pointee` type.
   @inlinable
   public subscript(i: Int) -> Pointee {
-    @_transparent
-    unsafeAddress {
-      return UnsafePointer(self + i)
-    }
-    @_transparent
-    nonmutating unsafeMutableAddress {
-      return self + i
-    }
+	get {
+		fatalError()
+	}
+	set {}
+	/*
+	// @_transparent
+	unsafeAddress {
+	  return UnsafePointer<Pointee>(self + i)
+	}
+	// @_transparent
+	nonmutating unsafeMutableAddress {
+	  return self + i
+	}
+	*/
   }
 
   @inlinable // unsafe-performance
-  internal static var _max : UnsafeMutablePointer {
-    return UnsafeMutablePointer(
-      bitPattern: 0 as Int &- MemoryLayout<Pointee>.stride
-    )._unsafelyUnwrappedUnchecked
+  internal static var _max : UnsafeMutablePointer<Pointee> {
+	return UnsafeMutablePointer<Pointee>(
+	  bitPattern: 0 as Int &- MemoryLayout<Pointee>.stride
+	)._unsafelyUnwrappedUnchecked
   }
 }

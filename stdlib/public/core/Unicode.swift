@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -24,10 +24,10 @@ import SwiftShims
 public enum UnicodeDecodingResult : Equatable {
   /// A decoded Unicode scalar value.
   case scalarValue(Unicode.Scalar)
-  
+
   /// An indication that no more Unicode scalars are available in the input.
   case emptyInput
-  
+
   /// An indication of a decoding error.
   case error
 
@@ -37,7 +37,8 @@ public enum UnicodeDecodingResult : Equatable {
     rhs: UnicodeDecodingResult
   ) -> Bool {
     switch (lhs, rhs) {
-    case (.scalarValue(let lhsScalar), .scalarValue(let rhsScalar)):
+    // case (.scalarValue(let lhsScalar), .scalarValue(let rhsScalar)):
+    case let (.scalarValue(lhsScalar), .scalarValue(rhsScalar)):
       return lhsScalar == rhsScalar
     case (.emptyInput, .emptyInput):
       return true
@@ -479,7 +480,7 @@ extension Unicode.UTF32 : UnicodeCodec {
     _ input: inout I
   ) -> UnicodeDecodingResult where I.Element == CodeUnit {
     var parser = ForwardParser()
-    
+
     switch parser.parseScalar(from: &input) {
     case .valid(let s): return .scalarValue(UTF32.decode(s))
     case .error:      return .error
@@ -656,7 +657,7 @@ extension UnicodeCodec {
   }
 }
 
-@available(*, unavailable, message: "use 'transcode(_:from:to:stoppingOnError:into:)'")
+// @available(*, unavailable, message: "use 'transcode(_:from:to:stoppingOnError:into:)'")
 public func transcode<Input, InputEncoding, OutputEncoding>(
   _ inputEncoding: InputEncoding.Type, _ outputEncoding: OutputEncoding.Type,
   _ input: Input, _ output: (OutputEncoding.CodeUnit) -> Void,
@@ -673,4 +674,3 @@ public func transcode<Input, InputEncoding, OutputEncoding>(
 /// A namespace for Unicode utilities.
 @_frozen
 public enum Unicode {}
-

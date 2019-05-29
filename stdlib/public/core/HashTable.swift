@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -10,14 +10,14 @@
 //
 //===----------------------------------------------------------------------===//
 
-@usableFromInline
+// @usableFromInline
 internal protocol _HashTableDelegate {
   func hashValue(at bucket: _HashTable.Bucket) -> Int
   func moveEntry(from source: _HashTable.Bucket, to target: _HashTable.Bucket)
 }
 
-@usableFromInline
-@_fixed_layout
+// @usableFromInline
+// @_fixed_layout
 internal struct _HashTable {
   @usableFromInline
   internal typealias Word = _UnsafeBitset.Word
@@ -41,14 +41,16 @@ internal struct _HashTable {
 
   @inlinable
   internal var bucketCount: Int {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return bucketMask &+ 1
     }
   }
 
   @inlinable
   internal var wordCount: Int {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return _UnsafeBitset.wordCount(forCapacity: bucketCount)
     }
   }
@@ -57,7 +59,8 @@ internal struct _HashTable {
 extension _HashTable {
   /// The inverse of the maximum hash table load factor.
   private static var maxLoadFactor: Double {
-    @inline(__always) get { return 3 / 4 }
+    // @inline(__always)
+    get { return 3 / 4 }
   }
 
   internal static func capacity(forScale scale: Int8) -> Int {
@@ -138,14 +141,16 @@ extension _HashTable {
 
     @inlinable
     internal var word: Int {
-      @inline(__always) get {
+      // @inline(__always)
+      get {
         return _UnsafeBitset.word(for: offset)
       }
     }
 
     @inlinable
     internal var bit: Int {
-      @inline(__always) get {
+      // @inline(__always)
+      get {
         return _UnsafeBitset.bit(for: offset)
       }
     }
@@ -319,7 +324,7 @@ extension _HashTable {
 
   @inlinable
   internal var endBucket: Bucket {
-    @inline(__always)
+    // @inline(__always)
     get {
       return Bucket(offset: bucketCount)
     }

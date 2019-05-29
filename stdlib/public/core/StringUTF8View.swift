@@ -1,4 +1,4 @@
-//===--- StringUTF8.swift - A UTF8 view of String -------------------------===//
+﻿//===--- StringUTF8.swift - A UTF8 view of String -------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -232,7 +232,8 @@ extension String {
   /// A UTF-8 encoding of `self`.
   @inlinable
   public var utf8: UTF8View {
-    @inline(__always) get { return UTF8View(self._guts) }
+    // @inline(__always)
+    get { return UTF8View(self._guts) }
     set { self = String(newValue._guts) }
   }
 
@@ -272,8 +273,8 @@ extension String {
   }
 
   /// Creates a string corresponding to the given sequence of UTF-8 code units.
-  @available(swift, introduced: 4.0, message:
-  "Please use failable String.init?(_:UTF8View) when in Swift 3.2 mode")
+  // @available(swift, introduced: 4.0, message:
+  // "Please use failable String.init?(_:UTF8View) when in Swift 3.2 mode")
   @inlinable @inline(__always)
   public init(_ utf8: UTF8View) {
     self = String(utf8._guts)
@@ -363,7 +364,7 @@ extension String.UTF8View {
   public typealias SubSequence = Substring.UTF8View
 
   @inlinable
-  @available(swift, introduced: 4)
+  // @available(swift, introduced: 4)
   public subscript(r: Range<Index>) -> String.UTF8View.SubSequence {
     return Substring.UTF8View(self, _bounds: r)
   }

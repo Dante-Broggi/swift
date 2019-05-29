@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -61,6 +61,7 @@ internal func _withUninitializedString<R>(
   return (bodyResult, stringResult)
 }
 
+/*
 // FIXME(ABI)#51 : this API should allow controlling different kinds of
 // qualification separately: qualification with module names and qualification
 // with type names that we are nested in.
@@ -69,6 +70,7 @@ internal func _withUninitializedString<R>(
 @_silgen_name("swift_getTypeName")
 public func _getTypeName(_ type: Any.Type, qualified: Bool)
   -> (UnsafePointer<UInt8>, Int)
+*/
 
 /// Returns the demangled qualified name of a metatype.
 public // @testable
@@ -89,6 +91,7 @@ func _typeByName(_ name: String) -> Any.Type? {
   }
 }
 
+/*
 @_silgen_name("swift_stdlib_getTypeByMangledNameUntrusted")
 internal func _getTypeByMangledNameUntrusted(
   _ name: UnsafePointer<UInt8>,
@@ -110,3 +113,4 @@ public func _getTypeByMangledNameInContext(
   genericContext: UnsafeRawPointer?,
   genericArguments: UnsafeRawPointer?)
   -> Any.Type?
+*/

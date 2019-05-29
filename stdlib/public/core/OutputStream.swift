@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -10,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-import SwiftShims
+// import SwiftShims
 
 //===----------------------------------------------------------------------===//
 // Input/Output interfaces
@@ -273,11 +273,13 @@ public protocol CustomDebugStringConvertible {
 // Default (ad-hoc) printing
 //===----------------------------------------------------------------------===//
 
+/*
 @_silgen_name("swift_EnumCaseName")
 internal func _getEnumCaseName<T>(_ value: T) -> UnsafePointer<CChar>?
 
 @_silgen_name("swift_OpaqueSummary")
 internal func _opaqueSummary(_ metadata: Any.Type) -> UnsafePointer<CChar>?
+*/
 
 /// Do our best to print a value that cannot be printed directly.
 @_semantics("optimize.sil.specialize.generic.never")
@@ -389,17 +391,19 @@ internal func _print_unlocked<T, TargetStream : TextOutputStream>(
     debugPrintable.debugDescription.write(to: &target)
     return
   }
-  if case let streamableObject as TextOutputStreamable = value {
+  //if case let streamableObject as TextOutputStreamable = value {
+  if case let streamableObject = value as TextOutputStreamable {
     streamableObject.write(to: &target)
     return
   }
 
-  if case let printableObject as CustomStringConvertible = value {
+  //if case let printableObject as CustomStringConvertible = value {
+  if case let printableObject = value as CustomStringConvertible {
     printableObject.description.write(to: &target)
     return
   }
 
-  if case let debugPrintableObject as CustomDebugStringConvertible = value {
+  if case let debugPrintableObject = value as CustomDebugStringConvertible {
     debugPrintableObject.debugDescription.write(to: &target)
     return
   }
@@ -588,7 +592,7 @@ internal struct _TeeStream<
 
   internal var left: L
   internal var right: R
-  
+
   /// Append the given `string` to this stream.
   internal mutating func write(_ string: String) {
     left.write(string); right.write(string)

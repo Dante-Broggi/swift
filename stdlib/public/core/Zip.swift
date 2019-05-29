@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -96,7 +96,7 @@ extension Zip2Sequence {
     /// Creates an instance around a pair of underlying iterators.
     @inlinable // generic-performance
     internal init(
-    _ iterator1: Sequence1.Iterator, 
+    _ iterator1: Sequence1.Iterator,
     _ iterator2: Sequence2.Iterator
     ) {
       (_baseStream1, _baseStream2) = (iterator1, iterator2)
@@ -139,7 +139,7 @@ extension Zip2Sequence: Sequence {
 
   /// Returns an iterator over the elements of this sequence.
   @inlinable // generic-performance
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     return Iterator(
       _sequence1.makeIterator(),
       _sequence2.makeIterator())

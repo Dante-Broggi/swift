@@ -1,4 +1,4 @@
-//===--- ManagedBuffer.swift - variable-sized buffer of aligned memory ----===//
+﻿//===--- ManagedBuffer.swift - variable-sized buffer of aligned memory ----===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -10,11 +10,12 @@
 //
 //===----------------------------------------------------------------------===//
 
-import SwiftShims
+// import SwiftShims
 
 @usableFromInline
 internal typealias _HeapObject = SwiftShims.HeapObject
 
+/*
 @usableFromInline
 @_silgen_name("swift_bufferAllocate")
 internal func _swift_bufferAllocate(
@@ -22,6 +23,7 @@ internal func _swift_bufferAllocate(
   size: Int,
   alignmentMask: Int
 ) -> AnyObject
+*/
 
 /// A class whose instances contain a property of type `Header` and raw
 /// storage for an array of `Element`, whose size is determined at
@@ -34,7 +36,7 @@ internal func _swift_bufferAllocate(
 /// any live elements in the `deinit` of a subclass.
 /// - Note: Subclasses must not have any stored properties; any storage
 ///   needed should be included in `Header`.
-@_fixed_layout
+// @_fixed_layout
 open class ManagedBuffer<Header, Element> {
   /// The stored `Header` instance.
   ///
@@ -89,7 +91,7 @@ extension ManagedBuffer {
 
   @inlinable
   internal final var firstElementAddress: UnsafeMutablePointer<Element> {
-    return UnsafeMutablePointer(
+    return UnsafeMutablePointer<Element>(
       Builtin.projectTailElems(self, Element.self))
   }
 
@@ -171,7 +173,7 @@ extension ManagedBuffer {
 ///        }
 ///      }
 ///
-@_fixed_layout
+// @_fixed_layout
 public struct ManagedBufferPointer<Header, Element> {
 
   @usableFromInline
@@ -204,7 +206,7 @@ public struct ManagedBufferPointer<Header, Element> {
 
     // initialize the header field
     try withUnsafeMutablePointerToHeader {
-      $0.initialize(to: 
+      $0.initialize(to:
         try factory(
           self.buffer,
           {
@@ -487,7 +489,7 @@ extension ManagedBufferPointer: Equatable {
 
 // FIXME: when our calling convention changes to pass self at +0,
 // inout should be dropped from the arguments to these functions.
-// FIXME(docs): isKnownUniquelyReferenced should check weak/unowned counts too, 
+// FIXME(docs): isKnownUniquelyReferenced should check weak/unowned counts too,
 // but currently does not. rdar://problem/29341361
 
 /// Returns a Boolean value indicating whether the given object is known to

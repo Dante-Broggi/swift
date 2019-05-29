@@ -1,4 +1,4 @@
-//===--- Map.swift - Lazily map over a Sequence ---------------*- swift -*-===//
+﻿//===--- Map.swift - Lazily map over a Sequence ---------------*- swift -*-===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -14,10 +14,10 @@
 /// `Sequence` passed through a transform function returning `Element`.
 /// These elements are computed lazily, each time they're read, by
 /// calling the transform function on a base element.
-@_fixed_layout
+// @_fixed_layout
 public struct LazyMapSequence<Base : Sequence, Element> {
 
-  public typealias Elements = LazyMapSequence
+  public typealias Elements = LazyMapSequence<Base, Element>
 
   @usableFromInline
   internal var _base: Base
@@ -34,7 +34,7 @@ public struct LazyMapSequence<Base : Sequence, Element> {
 }
 
 extension LazyMapSequence {
-  @_fixed_layout
+  // @_fixed_layout
   public struct Iterator {
     @usableFromInline
     internal var _base: Base.Iterator
@@ -46,7 +46,7 @@ extension LazyMapSequence {
 
     @inlinable
     internal init(
-      _base: Base.Iterator, 
+      _base: Base.Iterator,
       _transform: @escaping (Base.Element) -> Element
     ) {
       self._base = _base
@@ -74,7 +74,7 @@ extension LazyMapSequence: LazySequenceProtocol {
   ///
   /// - Complexity: O(1).
   @inlinable
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     return Iterator(_base: _base.makeIterator(), _transform: _transform)
   }
 
@@ -206,7 +206,7 @@ extension LazySequenceProtocol {
 
 extension LazyMapSequence {
   @inlinable
-  @available(swift, introduced: 5)
+  // @available(swift, introduced: 5)
   public func map<ElementOfResult>(
     _ transform: @escaping (Element) -> ElementOfResult
   ) -> LazyMapSequence<Base, ElementOfResult> {
@@ -218,7 +218,7 @@ extension LazyMapSequence {
 
 extension LazyMapCollection {
   @inlinable
-  @available(swift, introduced: 5)
+  // @available(swift, introduced: 5)
   public func map<ElementOfResult>(
     _ transform: @escaping (Element) -> ElementOfResult
   ) -> LazyMapCollection<Base, ElementOfResult> {

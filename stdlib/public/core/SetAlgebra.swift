@@ -1,4 +1,4 @@
-//===--- SetAlgebra.swift - Protocols for set operations ------------------===//
+﻿//===--- SetAlgebra.swift - Protocols for set operations ------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -10,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-//  
+//
 //
 //===----------------------------------------------------------------------===//
 
@@ -52,10 +52,10 @@
 /// - `x.isStrictSuperset(of: y)` if and only if
 ///   `x.isSuperset(of: y) && x != y`
 /// - `x.isStrictSubset(of: y)` if and only if `x.isSubset(of: y) && x != y`
-public protocol SetAlgebra : Equatable, ExpressibleByArrayLiteral {  
+public protocol SetAlgebra : Equatable, ExpressibleByArrayLiteral {
   /// A type for which the conforming type provides a containment test.
   associatedtype Element
-  
+
   /// Creates an empty set.
   ///
   /// This initializer is equivalent to initializing with an empty array
@@ -70,7 +70,7 @@ public protocol SetAlgebra : Equatable, ExpressibleByArrayLiteral {
   ///     print(emptySet.isEmpty)
   ///     // Prints "true"
   init()
-  
+
   /// Returns a Boolean value that indicates whether the given element exists
   /// in the set.
   ///
@@ -115,8 +115,8 @@ public protocol SetAlgebra : Equatable, ExpressibleByArrayLiteral {
   /// - Note: if this set and `other` contain elements that are equal but
   ///   distinguishable (e.g. via `===`), which of these elements is present
   ///   in the result is unspecified.
-  __consuming func union(_ other: __owned Self) -> Self
-  
+  func union(_ other: Self) -> Self
+
   /// Returns a new set with the elements that are common to both this set and
   /// the given set.
   ///
@@ -137,7 +137,7 @@ public protocol SetAlgebra : Equatable, ExpressibleByArrayLiteral {
   /// - Note: if this set and `other` contain elements that are equal but
   ///   distinguishable (e.g. via `===`), which of these elements is present
   ///   in the result is unspecified.
-  __consuming func intersection(_ other: Self) -> Self
+  func intersection(_ other: Self) -> Self
 
   /// Returns a new set with the elements that are either in this set or in the
   /// given set, but not in both.
@@ -155,7 +155,7 @@ public protocol SetAlgebra : Equatable, ExpressibleByArrayLiteral {
   ///
   /// - Parameter other: A set of the same type as the current set.
   /// - Returns: A new set.
-  __consuming func symmetricDifference(_ other: __owned Self) -> Self
+  func symmetricDifference(_ other: Self) -> Self
 
   // FIXME(move-only types): SetAlgebra.insert is not implementable by a
   // set with move-only Element type, since it would be necessary to copy
@@ -194,9 +194,9 @@ public protocol SetAlgebra : Equatable, ExpressibleByArrayLiteral {
   ///   other means.
   @discardableResult
   mutating func insert(
-    _ newMember: __owned Element
+    _ newMember: Element
   ) -> (inserted: Bool, memberAfterInsert: Element)
-  
+
   /// Removes the given element and any elements subsumed by the given element.
   ///
   /// - Parameter member: The element of the set to remove.
@@ -233,11 +233,11 @@ public protocol SetAlgebra : Equatable, ExpressibleByArrayLiteral {
   ///   comparison or some other means.
   ///
   ///   For sets where the set type and element type are the same, like
-  ///   `OptionSet` types, this method returns any intersection between the 
+  ///   `OptionSet` types, this method returns any intersection between the
   ///   set and `[newMember]`, or `nil` if the intersection is empty.
   @discardableResult
-  mutating func update(with newMember: __owned Element) -> Element?
-  
+  mutating func update(with newMember: Element) -> Element?
+
   /// Adds the elements of the given set to the set.
   ///
   /// In the following example, the elements of the `visitors` set are added to
@@ -258,7 +258,7 @@ public protocol SetAlgebra : Equatable, ExpressibleByArrayLiteral {
   ///     // Prints "[2, 4, 6, 7, 0, 1, 3]"
   ///
   /// - Parameter other: A set of the same type as the current set.
-  mutating func formUnion(_ other: __owned Self)
+  mutating func formUnion(_ other: Self)
 
   /// Removes the elements of this set that aren't also in the given set.
   ///
@@ -291,7 +291,7 @@ public protocol SetAlgebra : Equatable, ExpressibleByArrayLiteral {
   ///     // Prints "["Diana", "Forlani", "Alicia"]"
   ///
   /// - Parameter other: A set of the same type.
-  mutating func formSymmetricDifference(_ other: __owned Self)
+  mutating func formSymmetricDifference(_ other: Self)
 
   //===--- Requirements with default implementations ----------------------===//
   /// Returns a new set containing the elements of this set that do not occur
@@ -308,7 +308,7 @@ public protocol SetAlgebra : Equatable, ExpressibleByArrayLiteral {
   ///
   /// - Parameter other: A set of the same type as the current set.
   /// - Returns: A new set.
-  __consuming func subtracting(_ other: Self) -> Self
+  func subtracting(_ other: Self) -> Self
 
   /// Returns a Boolean value that indicates whether the set is a subset of
   /// another set.
@@ -359,7 +359,7 @@ public protocol SetAlgebra : Equatable, ExpressibleByArrayLiteral {
 
   /// A Boolean value that indicates whether the set has no elements.
   var isEmpty: Bool { get }
-  
+
   /// Creates a new set from a finite sequence of items.
   ///
   /// Use this initializer to create a new set from an existing sequence, like
@@ -370,7 +370,7 @@ public protocol SetAlgebra : Equatable, ExpressibleByArrayLiteral {
   ///     // Prints "[6, 0, 1, 3]"
   ///
   /// - Parameter sequence: The elements to use as members of the new set.
-  init<S : Sequence>(_ sequence: __owned S) where S.Element == Element
+  init<S : Sequence>(_ sequence: S) where S.Element == Element
 
   /// Removes the elements of the given set from this set.
   ///
@@ -406,7 +406,7 @@ extension SetAlgebra {
   ///
   /// - Parameter sequence: The elements to use as members of the new set.
   @inlinable // protocol-only
-  public init<S : Sequence>(_ sequence: __owned S)
+  public init<S : Sequence>(_ sequence: S)
     where S.Element == Element {
     self.init()
     for e in sequence { insert(e) }
@@ -582,5 +582,5 @@ extension SetAlgebra where Element == ArrayLiteralElement {
   @inlinable // protocol-only
   public init(arrayLiteral: Element...) {
     self.init(arrayLiteral)
-  }  
+  }
 }

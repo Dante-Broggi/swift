@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -12,7 +12,7 @@
 
 /// A collection that supports efficient random-access index traversal.
 ///
-/// Random-access collections can move indices any distance and 
+/// Random-access collections can move indices any distance and
 /// measure the distance between indices in O(1) time. Therefore, the
 /// fundamental difference between random-access and bidirectional collections
 /// is that operations that depend on index movement or distance measurement
@@ -33,11 +33,13 @@
 public protocol RandomAccessCollection: BidirectionalCollection
 where SubSequence: RandomAccessCollection, Indices: RandomAccessCollection
 {
+#if !ELEMENTS
   // FIXME: Associated type inference requires these.
-  override associatedtype Element
-  override associatedtype Index
-  override associatedtype SubSequence
-  override associatedtype Indices
+  //override associatedtype Element
+  //override associatedtype Index
+  //override associatedtype SubSequence
+  //override associatedtype Indices
+#endif
 
   /// The indices that are valid for subscripting the collection, in ascending
   /// order.
@@ -56,7 +58,11 @@ where SubSequence: RandomAccessCollection, Indices: RandomAccessCollection
   ///         i = c.index(after: i)
   ///     }
   ///     // c == MyFancyCollection([2, 4, 6, 8, 10])
-  override var indices: Indices { get }
+#if ELEMENTS
+  var indices: Indices { get }
+#else
+  //override var indices: Indices { get }
+#endif
 
   /// Accesses a contiguous subrange of the collection's elements.
   ///
@@ -81,26 +87,45 @@ where SubSequence: RandomAccessCollection, Indices: RandomAccessCollection
   ///   the range must be valid indices of the collection.
   ///
   /// - Complexity: O(1)
-  override subscript(bounds: Range<Index>) -> SubSequence { get }
+#if ELEMENTS
+  subscript(bounds: Range<Index>) -> SubSequence { get }
+#else
+  //override subscript(bounds: Range<Index>) -> SubSequence { get }
+#endif
 
-  // FIXME: Associated type inference requires these.
+// FIXME: Associated type inference requires these.
+#if ELEMENTS
   @_borrowed
-  override subscript(position: Index) -> Element { get }
-  override var startIndex: Index { get }
-  override var endIndex: Index { get }
+  subscript(position: Index) -> Element { get }
+  var startIndex: Index { get }
+  var endIndex: Index { get }
+#else
+  //@_borrowed
+  //override subscript(position: Index) -> Element { get }
+  //override var startIndex: Index { get }
+  //override var endIndex: Index { get }
+#endif
 
   /// Returns the position immediately before the given index.
   ///
   /// - Parameter i: A valid index of the collection. `i` must be greater than
   ///   `startIndex`.
   /// - Returns: The index value immediately before `i`.
-  override func index(before i: Index) -> Index
+#if ELEMENTS
+  func index(before i: Index) -> Index
+#else
+  //override func index(before i: Index) -> Index
+#endif
 
   /// Replaces the given index with its predecessor.
   ///
   /// - Parameter i: A valid index of the collection. `i` must be greater than
   ///   `startIndex`.
-  override func formIndex(before i: inout Index)
+#if ELEMENTS
+  func formIndex(before i: inout Index)
+#else
+  //override func formIndex(before i: inout Index)
+#endif
 
   /// Returns the position immediately after the given index.
   ///
@@ -111,13 +136,21 @@ where SubSequence: RandomAccessCollection, Indices: RandomAccessCollection
   /// - Parameter i: A valid index of the collection. `i` must be less than
   ///   `endIndex`.
   /// - Returns: The index value immediately after `i`.
-  override func index(after i: Index) -> Index
+#if ELEMENTS
+  func index(after i: Index) -> Index
+#else
+  //override func index(after i: Index) -> Index
+#endif
 
   /// Replaces the given index with its successor.
   ///
   /// - Parameter i: A valid index of the collection. `i` must be less than
   ///   `endIndex`.
-  override func formIndex(after i: inout Index)
+#if ELEMENTS
+  func formIndex(after i: inout Index)
+#else
+  //override func formIndex(after i: inout Index)
+#endif
 
   /// Returns an index that is the specified distance from the given index.
   ///
@@ -274,7 +307,7 @@ extension RandomAccessCollection where Index : Strideable, Index.Stride == Int {
 }
 
 extension RandomAccessCollection
-where Index : Strideable, 
+where Index : Strideable,
       Index.Stride == Int,
       Indices == Range<Index> {
 
@@ -347,7 +380,7 @@ where Index : Strideable,
       result, bounds: ClosedRange(uncheckedBounds: (startIndex, endIndex)))
     return result
   }
-  
+
   /// Returns the distance between two indices.
   ///
   /// - Parameters:
@@ -367,5 +400,3 @@ where Index : Strideable,
     return start.distance(to: end)
   }
 }
-
-

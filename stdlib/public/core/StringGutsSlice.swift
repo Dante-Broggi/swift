@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -35,35 +35,42 @@ internal struct _StringGutsSlice {
 
   @inlinable
   internal var start: Int {
-    @inline(__always) get { return _offsetRange.lowerBound }
+    // @inline(__always)
+    get { return _offsetRange.lowerBound }
   }
   @inlinable
   internal var end: Int {
-    @inline(__always) get { return _offsetRange.upperBound }
+    // @inline(__always)
+    get { return _offsetRange.upperBound }
   }
 
   @inlinable
   internal var count: Int {
-    @inline(__always) get { return _offsetRange.count }
+    // @inline(__always)
+    get { return _offsetRange.count }
   }
 
   @inlinable
   internal var isNFCFastUTF8: Bool {
-    @inline(__always) get { return _guts.isNFCFastUTF8 }
+    // @inline(__always)
+    get { return _guts.isNFCFastUTF8 }
   }
 
   @inlinable
   internal var isASCII: Bool {
-    @inline(__always) get { return _guts.isASCII }
+    // @inline(__always)
+    get { return _guts.isASCII }
   }
 
   @inlinable
   internal var isFastUTF8: Bool {
-    @inline(__always) get { return _guts.isFastUTF8 }
+    // @inline(__always)
+    get { return _guts.isFastUTF8 }
   }
 
   internal var utf8Count: Int {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       if _fastPath(self.isFastUTF8) {
         return _offsetRange.count
       }
@@ -73,7 +80,8 @@ internal struct _StringGutsSlice {
 
   @inlinable
   internal var range: Range<String.Index> {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return String.Index(_encodedOffset: _offsetRange.lowerBound)
          ..< String.Index(_encodedOffset: _offsetRange.upperBound)
     }
@@ -91,7 +99,7 @@ internal struct _StringGutsSlice {
     startingAt idx: String.Index
   ) -> (Unicode.Scalar, scalarLength: Int) {
     let (scalar, len) = _guts.foreignErrorCorrectedScalar(startingAt: idx)
-    if _slowPath(idx.encoded(offsetBy: len) > range.upperBound) { 
+    if _slowPath(idx.encoded(offsetBy: len) > range.upperBound) {
       return (Unicode.Scalar._replacementCharacter, 1)
     }
     return (scalar, len)

@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -31,7 +31,8 @@ struct _StringGuts {
   // Empty string
   @inlinable @inline(__always)
   init() {
-    self.init(_StringObject(empty: ()))
+    let x = _StringObject(empty: ())
+    self.init(x)
   }
 }
 
@@ -246,7 +247,7 @@ extension _StringGuts {
   internal func _foreignCopyUTF8(
     into mbp: UnsafeMutableBufferPointer<UInt8>
   ) -> Int? {
-    #if _runtime(_ObjC)
+    #if OBJC
     // Currently, foreign  means NSString
     return _cocoaStringCopyUTF8(_object.cocoaObject, into: mbp)
     #else
@@ -278,32 +279,32 @@ extension _StringGuts {
 
 // Old SPI(corelibs-foundation)
 extension _StringGuts {
-  @available(*, deprecated)
+  // @available(*, deprecated)
   public // SPI(corelibs-foundation)
   var _isContiguousASCII: Bool {
     return !isSmall && isFastUTF8 && isASCII
   }
 
-  @available(*, deprecated)
+  // @available(*, deprecated)
   public // SPI(corelibs-foundation)
   var _isContiguousUTF16: Bool {
     return false
   }
 
   // FIXME: Remove. Still used by swift-corelibs-foundation
-  @available(*, deprecated)
+  // @available(*, deprecated)
   public var startASCII: UnsafeMutablePointer<UInt8> {
-    return UnsafeMutablePointer(mutating: _object.fastUTF8.baseAddress!)
+    return UnsafeMutablePointer<UInt8>(mutating: _object.fastUTF8.baseAddress!)
   }
 
   // FIXME: Remove. Still used by swift-corelibs-foundation
-  @available(*, deprecated)
+  // @available(*, deprecated)
   public var startUTF16: UnsafeMutablePointer<UTF16.CodeUnit> {
     fatalError("Not contiguous UTF-16")
   }
 }
 
-@available(*, deprecated)
+// @available(*, deprecated)
 public // SPI(corelibs-foundation)
 func _persistCString(_ p: UnsafePointer<CChar>?) -> [CChar]? {
   guard let s = p else { return nil }
@@ -314,4 +315,3 @@ func _persistCString(_ p: UnsafePointer<CChar>?) -> [CChar]? {
   }
   return result
 }
-

@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -12,14 +12,14 @@
 
 /// A value that represents either a success or a failure, including an
 /// associated value in each case.
-@_frozen
+// @_frozen
 public enum Result<Success, Failure: Error> {
   /// A success, storing a `Success` value.
   case success(Success)
-  
+
   /// A failure, storing a `Failure` value.
   case failure(Failure)
-  
+
   /// Returns a new result, mapping any success value using the given
   /// transformation.
   ///
@@ -48,7 +48,7 @@ public enum Result<Success, Failure: Error> {
       return .failure(failure)
     }
   }
-  
+
   /// Returns a new result, mapping any failure value using the given
   /// transformation.
   ///
@@ -85,7 +85,7 @@ public enum Result<Success, Failure: Error> {
       return .failure(transform(failure))
     }
   }
-  
+
   /// Returns a new result, mapping any success value using the given
   /// transformation and unwrapping the produced result.
   ///
@@ -103,13 +103,13 @@ public enum Result<Success, Failure: Error> {
       return .failure(failure)
     }
   }
-  
+
   /// Returns a new result, mapping any failure value using the given
   /// transformation and unwrapping the produced result.
   ///
   /// - Parameter transform: A closure that takes the failure value of the
   ///   instance.
-  /// - Returns: A `Result` instance, either from the closure or the previous 
+  /// - Returns: A `Result` instance, either from the closure or the previous
   ///   `.success`.
   public func flatMapError<NewFailure>(
     _ transform: (Failure) -> Result<Success, NewFailure>
@@ -121,7 +121,7 @@ public enum Result<Success, Failure: Error> {
       return transform(failure)
     }
   }
-  
+
   /// Returns the success value as a throwing expression.
   ///
   /// Use this method to retrieve the value of this result if it represents a

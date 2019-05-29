@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -189,7 +189,7 @@ extension String.UnicodeScalarView {
     }
   }
   @inlinable
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     return Iterator(_guts)
   }
 }
@@ -234,8 +234,10 @@ extension String {
   /// The string's value represented as a collection of Unicode scalar values.
   @inlinable
   public var unicodeScalars: UnicodeScalarView {
-    @inline(__always) get { return UnicodeScalarView(_guts) }
-    @inline(__always) set { _guts = newValue._guts }
+    // @inline(__always)
+    get { return UnicodeScalarView(_guts) }
+    // @inline(__always)
+    set { _guts = newValue._guts }
   }
 }
 
@@ -397,7 +399,7 @@ extension String.UnicodeScalarView : CustomReflectable {
 extension String.UnicodeScalarView {
   public typealias SubSequence = Substring.UnicodeScalarView
 
-  @available(swift, introduced: 4)
+  //@available(swift, introduced: 4)
   public subscript(r: Range<Index>) -> String.UnicodeScalarView.SubSequence {
     return String.UnicodeScalarView.SubSequence(self, _bounds: r)
   }

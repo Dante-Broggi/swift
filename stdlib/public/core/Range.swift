@@ -1,4 +1,4 @@
-//===--- Range.swift ------------------------------------------*- swift -*-===//
+﻿//===--- Range.swift ------------------------------------------*- swift -*-===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -63,7 +63,7 @@ public protocol RangeExpression {
   func relative<C: Collection>(
     to collection: C
   ) -> Range<Bound> where C.Index == Bound
-  
+
   /// Returns a Boolean value indicating whether the given element is contained
   /// within the range expression.
   ///
@@ -77,7 +77,7 @@ extension RangeExpression {
   @inlinable
   public static func ~= (pattern: Self, value: Bound) -> Bool {
     return pattern.contains(value)
-  }  
+  }
 }
 
 /// A half-open interval from a lower bound up to, but not including, an upper
@@ -125,7 +125,7 @@ extension RangeExpression {
 /// `Stride` types, they cannot be used as the bounds of a countable range. If
 /// you need to iterate over consecutive floating-point values, see the
 /// `stride(from:to:by:)` function.
-@_fixed_layout
+// @_fixed_layout
 public struct Range<Bound : Comparable> {
   /// The range's lower bound.
   ///
@@ -146,7 +146,7 @@ public struct Range<Bound : Comparable> {
   /// (`..<`) to form `Range` instances is preferred.
   ///
   /// - Parameter bounds: A tuple of the lower and upper bounds of the range.
-  @inlinable
+  // @inlinable
   public init(uncheckedBounds bounds: (lower: Bound, upper: Bound)) {
     self.lowerBound = bounds.lower
     self.upperBound = bounds.upper
@@ -162,7 +162,7 @@ public struct Range<Bound : Comparable> {
   /// - Parameter element: The element to check for containment.
   /// - Returns: `true` if `element` is contained in the range; otherwise,
   ///   `false`.
-  @inlinable
+  // @inlinable
   public func contains(_ element: Bound) -> Bool {
     return lowerBound <= element && element < upperBound
   }
@@ -174,7 +174,7 @@ public struct Range<Bound : Comparable> {
   ///     let empty: Range = 10..<10
   ///     print(empty.isEmpty)
   ///     // Prints "true"
-  @inlinable
+  // @inlinable
   public var isEmpty: Bool {
     return lowerBound == upperBound
   }
@@ -194,20 +194,20 @@ where Bound : Strideable, Bound.Stride : SignedInteger
   public typealias Indices = Range<Bound>
   public typealias SubSequence = Range<Bound>
 
-  @inlinable
+  // @inlinable
   public var startIndex: Index { return lowerBound }
 
-  @inlinable
+  // @inlinable
   public var endIndex: Index { return upperBound }
 
-  @inlinable
+  // @inlinable
   public func index(after i: Index) -> Index {
     _failEarlyRangeCheck(i, bounds: startIndex..<endIndex)
 
     return i.advanced(by: 1)
   }
 
-  @inlinable
+  // @inlinable
   public func index(before i: Index) -> Index {
     _precondition(i > lowerBound)
     _precondition(i <= upperBound)
@@ -215,7 +215,7 @@ where Bound : Strideable, Bound.Stride : SignedInteger
     return i.advanced(by: -1)
   }
 
-  @inlinable
+  // @inlinable
   public func index(_ i: Index, offsetBy n: Int) -> Index {
     let r = i.advanced(by: numericCast(n))
     _precondition(r >= lowerBound)
@@ -223,7 +223,7 @@ where Bound : Strideable, Bound.Stride : SignedInteger
     return r
   }
 
-  @inlinable
+  // @inlinable
   public func distance(from start: Index, to end: Index) -> Int {
     return numericCast(start.distance(to: end))
   }
@@ -232,29 +232,29 @@ where Bound : Strideable, Bound.Stride : SignedInteger
   ///
   /// - Parameter bounds: A range of the range's indices. The upper and lower
   ///   bounds of the `bounds` range must be valid indices of the collection.
-  @inlinable
+  // @inlinable
   public subscript(bounds: Range<Index>) -> Range<Bound> {
     return bounds
   }
 
   /// The indices that are valid for subscripting the range, in ascending
   /// order.
-  @inlinable
+  // @inlinable
   public var indices: Indices {
     return self
   }
 
-  @inlinable
+  // @inlinable
   public func _customContainsEquatableElement(_ element: Element) -> Bool? {
     return lowerBound <= element && element < upperBound
   }
 
-  @inlinable
+  // @inlinable
   public func _customIndexOfEquatableElement(_ element: Bound) -> Index?? {
     return lowerBound <= element && element < upperBound ? element : nil
   }
 
-  @inlinable
+  // @inlinable
   public func _customLastIndexOfEquatableElement(_ element: Bound) -> Index?? {
     // The first and last elements are the same because each element is unique.
     return _customIndexOfEquatableElement(element)
@@ -270,7 +270,7 @@ where Bound : Strideable, Bound.Stride : SignedInteger
   /// - Parameter position: The position of the element to access. `position`
   ///   must be a valid index of the range, and must not equal the range's end
   ///   index.
-  @inlinable
+  // @inlinable
   public subscript(position: Index) -> Element {
     // FIXME: swift-3-indexing-model: tests for the range check.
     _debugPrecondition(self.contains(position), "Index out of range")
@@ -278,7 +278,7 @@ where Bound : Strideable, Bound.Stride : SignedInteger
   }
 }
 
-extension Range where Bound: Strideable, Bound.Stride : SignedInteger {  
+extension Range where Bound: Strideable, Bound.Stride : SignedInteger {
   /// Creates an instance equivalent to the given `ClosedRange`.
   ///
   /// - Parameter other: A closed range to convert to a `Range` instance.
@@ -303,7 +303,7 @@ extension Range: RangeExpression {
   ///   is *not* guaranteed to be inside the bounds of `collection`. Callers
   ///   should apply the same preconditions to the return value as they would
   ///   to a range provided directly by the user.
-  @inlinable // trivial-implementation
+  // @inlinable // trivial-implementation
   public func relative<C: Collection>(to collection: C) -> Range<Bound>
   where C.Index == Bound {
     return Range(uncheckedBounds: (lower: lowerBound, upper: upperBound))
@@ -329,10 +329,10 @@ extension Range {
   ///
   /// - Parameter limits: The range to clamp the bounds of this range.
   /// - Returns: A new range clamped to the bounds of `limits`.
-  @inlinable // trivial-implementation
-  @inline(__always)
+  // @inlinable // trivial-implementation
+  // @inline(__always)
   public func clamped(to limits: Range) -> Range {
-    let lower =         
+    let lower =
       limits.lowerBound > self.lowerBound ? limits.lowerBound
           : limits.upperBound < self.lowerBound ? limits.upperBound
           : self.lowerBound
@@ -346,7 +346,7 @@ extension Range {
 
 extension Range : CustomStringConvertible {
   /// A textual representation of the range.
-  @inlinable // trivial-implementation
+  // @inlinable // trivial-implementation
   public var description: String {
     return "\(lowerBound)..<\(upperBound)"
   }
@@ -384,7 +384,7 @@ extension Range: Equatable {
   /// - Parameters:
   ///   - lhs: A range to compare.
   ///   - rhs: Another range to compare.
-  @inlinable
+  // @inlinable
   public static func == (lhs: Range<Bound>, rhs: Range<Bound>) -> Bool {
     return
       lhs.lowerBound == rhs.lowerBound &&
@@ -398,7 +398,7 @@ extension Range: Hashable where Bound: Hashable {
   ///
   /// - Parameter hasher: The hasher to use when combining the components
   ///   of this instance.
-  @inlinable
+  // @inlinable
   public func hash(into hasher: inout Hasher) {
     hasher.combine(lowerBound)
     hasher.combine(upperBound)
@@ -449,10 +449,10 @@ extension Range: Encodable where Bound: Encodable {
 ///     let numbers = [10, 20, 30, 40, 50, 60, 70]
 ///     print(numbers[..<3])
 ///     // Prints "[10, 20, 30]"
-@_fixed_layout
+// @_fixed_layout
 public struct PartialRangeUpTo<Bound: Comparable> {
   public let upperBound: Bound
-  
+
   @inlinable // trivial-implementation
   public init(_ upperBound: Bound) { self.upperBound = upperBound }
 }
@@ -463,7 +463,7 @@ extension PartialRangeUpTo: RangeExpression {
   where C.Index == Bound {
     return collection.startIndex..<self.upperBound
   }
-  
+
   @_transparent
   public func contains(_ element: Bound) -> Bool {
     return element < upperBound
@@ -505,10 +505,10 @@ extension PartialRangeUpTo: Encodable where Bound: Encodable {
 ///     let numbers = [10, 20, 30, 40, 50, 60, 70]
 ///     print(numbers[...3])
 ///     // Prints "[10, 20, 30, 40]"
-@_fixed_layout
-public struct PartialRangeThrough<Bound: Comparable> {  
+// @_fixed_layout
+public struct PartialRangeThrough<Bound: Comparable> {
   public let upperBound: Bound
-  
+
   @inlinable // trivial-implementation
   public init(_ upperBound: Bound) { self.upperBound = upperBound }
 }
@@ -620,7 +620,7 @@ extension PartialRangeThrough: Encodable where Bound: Encodable {
 /// `Bound`. For example, iterating over an instance of
 /// `PartialRangeFrom<Int>` traps when the sequence's next value would be
 /// above `Int.max`.
-@_fixed_layout
+// @_fixed_layout
 public struct PartialRangeFrom<Bound: Comparable> {
   public let lowerBound: Bound
 
@@ -647,7 +647,7 @@ extension PartialRangeFrom: Sequence
   public typealias Element = Bound
 
   /// The iterator for a `PartialRangeFrom` instance.
-  @_fixed_layout
+  // @_fixed_layout
   public struct Iterator: IteratorProtocol {
     @usableFromInline
     internal var _current: Bound
@@ -670,8 +670,8 @@ extension PartialRangeFrom: Sequence
 
   /// Returns an iterator for this sequence.
   @inlinable
-  public __consuming func makeIterator() -> Iterator { 
-    return Iterator(_current: lowerBound) 
+  public func makeIterator() -> Iterator {
+    return Iterator(_current: lowerBound)
   }
 }
 
@@ -827,7 +827,7 @@ extension Comparable {
 ///     let word2 = "grisly"
 ///     let changes = countLetterChanges(word1[...], word2[...])
 ///     // changes == 2
-@_frozen // namespace
+// @_frozen // namespace
 public enum UnboundedRange_ {
   // FIXME: replace this with a computed var named `...` when the language makes
   // that possible.
@@ -889,7 +889,7 @@ extension Collection {
   -> SubSequence where R.Bound == Index {
     return self[r.relative(to: self)]
   }
-  
+
   @inlinable
   public subscript(x: UnboundedRange) -> SubSequence {
     return self[startIndex...]
@@ -941,7 +941,7 @@ extension Range {
   /// - Parameter other: A range to check for elements in common.
   /// - Returns: `true` if this range and `other` have at least one element in
   ///   common; otherwise, `false`.
-  @inlinable
+  // @inlinable
   public func overlaps(_ other: Range<Bound>) -> Bool {
     // Disjoint iff the other range is completely before or after our range.
     // Additionally either `Range` (unlike a `ClosedRange`) could be empty, in
@@ -953,7 +953,7 @@ extension Range {
     return !isDisjoint
   }
 
-  @inlinable
+  // @inlinable
   public func overlaps(_ other: ClosedRange<Bound>) -> Bool {
     // Disjoint iff the other range is completely before or after our range.
     // Additionally the `Range` (unlike the `ClosedRange`) could be empty, in

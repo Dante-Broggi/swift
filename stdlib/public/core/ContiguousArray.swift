@@ -1,4 +1,4 @@
-//===--- ContiguousArray.swift --------------------------------*- swift -*-===//
+﻿//===--- ContiguousArray.swift --------------------------------*- swift -*-===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -33,7 +33,7 @@
 ///
 /// For more information about using arrays, see `Array` and `ArraySlice`, with
 /// which `ContiguousArray` shares most properties and methods.
-@_fixed_layout
+// @_fixed_layout
 public struct ContiguousArray<Element>: _DestructorSafeContainer {
   @usableFromInline
   internal typealias _Buffer = _ContiguousArrayBuffer<Element>
@@ -136,7 +136,7 @@ extension ContiguousArray: _ArrayProtocol {
   /// element. Otherwise, `nil`.
   @inlinable
   public var _baseAddressIfContiguous: UnsafeMutablePointer<Element>? {
-    @inline(__always) // FIXME(TODO: JIRA): Hack around test failure
+    // @inline(__always) // FIXME(TODO: JIRA): Hack around test failure
     get { return _buffer.firstElementAddressIfContiguous }
   }
 
@@ -182,7 +182,7 @@ extension ContiguousArray: RandomAccessCollection, MutableCollection {
   ///
   /// If the array is empty, `endIndex` is equal to `startIndex`.
   public var endIndex: Int {
-    @inlinable
+    // @inlinable
     get {
       return _getCount()
     }
@@ -444,6 +444,8 @@ extension ContiguousArray: RandomAccessCollection, MutableCollection {
 }
 
 extension ContiguousArray: ExpressibleByArrayLiteral {
+    typealias ArrayLiteralElement = Element
+
   /// Creates an array from the given array literal.
   ///
   /// Do not call this initializer directly. It is used by the compiler when
@@ -790,14 +792,14 @@ extension ContiguousArray: RangeReplaceableCollection {
     let oldCount = self.count
     let startNewElements = _buffer.firstElementAddress + oldCount
     let buf = UnsafeMutableBufferPointer(
-                start: startNewElements, 
+                start: startNewElements,
                 count: self.capacity - oldCount)
 
     let (remainder,writtenUpTo) = buf.initialize(from: newElements)
-    
+
     // trap on underflow from the sequence's underestimate:
     let writtenCount = buf.distance(from: buf.startIndex, to: writtenUpTo)
-    _precondition(newElementsCount <= writtenCount, 
+    _precondition(newElementsCount <= writtenCount,
       "newElements.underestimatedCount was an overestimate")
     // can't check for overflow as sequences can underestimate
 
@@ -929,7 +931,7 @@ extension ContiguousArray: RangeReplaceableCollection {
       return try body(&bufferPointer)
     }
   }
-  
+
   @inlinable
   public func withContiguousStorageIfAvailable<R>(
     _ body: (UnsafeBufferPointer<Element>) throws -> R
@@ -1149,7 +1151,7 @@ extension ContiguousArray {
     // a precondition and Array never lies about its count.
     guard var p = buffer.baseAddress
       else { _preconditionFailure("Attempt to copy contents into nil buffer pointer") }
-    _precondition(self.count <= buffer.count, 
+    _precondition(self.count <= buffer.count,
       "Insufficient space allocated to copy array contents")
 
     if let s = _baseAddressIfContiguous {

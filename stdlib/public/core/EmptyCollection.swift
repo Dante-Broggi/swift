@@ -1,4 +1,4 @@
-//===--- EmptyCollection.swift - A collection with no elements ------------===//
+﻿//===--- EmptyCollection.swift - A collection with no elements ------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -18,7 +18,7 @@
 //===----------------------------------------------------------------------===//
 
 /// A collection whose element type is `Element` but that is always empty.
-@_fixed_layout // trivial-implementation
+// @_fixed_layout // trivial-implementation
 public struct EmptyCollection<Element> {
   // no properties
 
@@ -29,14 +29,14 @@ public struct EmptyCollection<Element> {
 
 extension EmptyCollection {
   /// An iterator that never produces an element.
-  @_fixed_layout // trivial-implementation
+  // @_fixed_layout // trivial-implementation
   public struct Iterator {
     // no properties
-  
+
     /// Creates an instance.
     @inlinable // trivial-implementation
     public init() {}
-  }  
+  }
 }
 
 extension EmptyCollection.Iterator: IteratorProtocol, Sequence {

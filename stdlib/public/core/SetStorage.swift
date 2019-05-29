@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -82,15 +82,17 @@ internal class __RawSetStorage: __SwiftNativeNSSet {
   @inlinable
   @nonobjc
   internal final var _bucketCount: Int {
-    @inline(__always) get { return 1 &<< _scale }
+    // @inline(__always)
+    get { return 1 &<< _scale }
   }
 
   @inlinable
   @nonobjc
   internal final var _metadata: UnsafeMutablePointer<_HashTable.Word> {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       let address = Builtin.projectTailElems(self, _HashTable.Word.self)
-      return UnsafeMutablePointer(address)
+      return UnsafeMutablePointer<_HashTable.Word>(address)
     }
   }
 
@@ -99,7 +101,8 @@ internal class __RawSetStorage: __SwiftNativeNSSet {
   @inlinable
   @nonobjc
   internal final var _hashTable: _HashTable {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return _HashTable(words: _metadata, bucketCount: _bucketCount)
     }
   }
@@ -204,7 +207,7 @@ final internal class _SetStorage<Element: Hashable>
 
   @inlinable
   final internal var _elements: UnsafeMutablePointer<Element> {
-    @inline(__always)
+    // @inline(__always)
     get {
       return self._rawElements.assumingMemoryBound(to: Element.self)
     }

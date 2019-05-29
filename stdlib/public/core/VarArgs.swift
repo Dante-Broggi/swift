@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -162,7 +162,7 @@ internal func _withVaList<R>(
   return result
 }
 
-#if _runtime(_ObjC)
+#if OBJC
 // Excluded due to use of dynamic casting and Builtin.autorelease, neither
 // of which correctly work without the ObjC Runtime right now.
 // See rdar://problem/18801510
@@ -201,11 +201,12 @@ public func _encodeBitsAsWords<T>(_ x: T) -> [Int] {
   let result = [Int](
     repeating: 0,
     count: (MemoryLayout<T>.size + MemoryLayout<Int>.size - 1) / MemoryLayout<Int>.size)
-  _internalInvariant(!result.isEmpty)
+  _internalInvariant(result.count > 0)
   var tmp = x
   // FIXME: use UnsafeMutablePointer.assign(from:) instead of memcpy.
-  _memcpy(dest: UnsafeMutablePointer(result._baseAddressIfContiguous!),
-          src: UnsafeMutablePointer(Builtin.addressof(&tmp)),
+  // *Explicit Generic Params Added*
+  _memcpy(dest: UnsafeMutablePointer<CChar>(result._baseAddressIfContiguous!),
+          src: UnsafeMutablePointer<CChar>(Builtin.addressof(&tmp)),
           size: UInt(MemoryLayout<T>.size))
   return result
 }
@@ -355,7 +356,7 @@ extension UnsafeMutablePointer : CVarArg {
   }
 }
 
-#if _runtime(_ObjC)
+#if OBJC//_runtime(_ObjC)
 extension AutoreleasingUnsafeMutablePointer : CVarArg {
   /// Transform `self` into a series of machine words that can be
   /// appropriately interpreted by C varargs.

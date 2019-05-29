@@ -1,4 +1,4 @@
-//===--- RangeReplaceableCollection.swift ---------------------------------===//
+﻿//===--- RangeReplaceableCollection.swift ---------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -64,7 +64,8 @@
 public protocol RangeReplaceableCollection : Collection
   where SubSequence : RangeReplaceableCollection {
   // FIXME: Associated type inference requires this.
-  override associatedtype SubSequence
+  // override
+  //associatedtype SubSequence
 
   //===--- Fundamental Requirements ---------------------------------------===//
 
@@ -109,7 +110,7 @@ public protocol RangeReplaceableCollection : Collection
   ///   equivalent to `append(contentsOf:)`.
   mutating func replaceSubrange<C>(
     _ subrange: Range<Index>,
-    with newElements: __owned C
+    with newElements: C
   ) where C : Collection, C.Element == Element
 
   /// Prepares the collection to store the specified number of elements, when
@@ -166,7 +167,7 @@ public protocol RangeReplaceableCollection : Collection
   ///
   /// - Complexity: O(1) on average, over many calls to `append(_:)` on the
   ///   same collection.
-  mutating func append(_ newElement: __owned Element)
+  mutating func append(_ newElement: Element)
 
   /// Adds the elements of a sequence or collection to the end of this
   /// collection.
@@ -185,7 +186,7 @@ public protocol RangeReplaceableCollection : Collection
   /// - Parameter newElements: The elements to append to the collection.
   ///
   /// - Complexity: O(*m*), where *m* is the length of `newElements`.
-  mutating func append<S : Sequence>(contentsOf newElements: __owned S)
+  mutating func append<S : Sequence>(contentsOf newElements: S)
     where S.Element == Element
   // FIXME(ABI)#166 (Evolution): Consider replacing .append(contentsOf) with +=
   // suggestion in SE-91
@@ -213,7 +214,7 @@ public protocol RangeReplaceableCollection : Collection
   ///
   /// - Complexity: O(*n*), where *n* is the length of the collection. If
   ///   `i == endIndex`, this method is equivalent to `append(_:)`.
-  mutating func insert(_ newElement: __owned Element, at i: Index)
+  mutating func insert(_ newElement: Element, at i: Index)
 
   /// Inserts the elements of a sequence into the collection at the specified
   /// position.
@@ -240,7 +241,7 @@ public protocol RangeReplaceableCollection : Collection
   /// - Complexity: O(*n* + *m*), where *n* is length of this collection and
   ///   *m* is the length of `newElements`. If `i == endIndex`, this method
   ///   is equivalent to `append(contentsOf:)`.
-  mutating func insert<S : Collection>(contentsOf newElements: __owned S, at i: Index)
+  mutating func insert<S : Collection>(contentsOf newElements: S, at i: Index)
     where S.Element == Element
 
   /// Removes and returns the element at the specified position.
@@ -424,7 +425,7 @@ extension RangeReplaceableCollection {
   /// - Complexity: O(1) on average, over many calls to `append(_:)` on the
   ///   same collection.
   @inlinable
-  public mutating func append(_ newElement: __owned Element) {
+  public mutating func append(_ newElement: Element) {
     insert(newElement, at: endIndex)
   }
 
@@ -446,7 +447,7 @@ extension RangeReplaceableCollection {
   ///
   /// - Complexity: O(*m*), where *m* is the length of `newElements`.
   @inlinable
-  public mutating func append<S : Sequence>(contentsOf newElements: __owned S)
+  public mutating func append<S : Sequence>(contentsOf newElements: S)
     where S.Element == Element {
 
     let approximateCapacity = self.count +
@@ -482,7 +483,7 @@ extension RangeReplaceableCollection {
   ///   `i == endIndex`, this method is equivalent to `append(_:)`.
   @inlinable
   public mutating func insert(
-    _ newElement: __owned Element, at i: Index
+    _ newElement: Element, at i: Index
   ) {
     replaceSubrange(i..<i, with: CollectionOfOne(newElement))
   }
@@ -514,7 +515,7 @@ extension RangeReplaceableCollection {
   ///   is equivalent to `append(contentsOf:)`.
   @inlinable
   public mutating func insert<C : Collection>(
-    contentsOf newElements: __owned C, at i: Index
+    contentsOf newElements: C, at i: Index
   ) where C.Element == Element {
     replaceSubrange(i..<i, with: newElements)
   }
@@ -745,7 +746,7 @@ extension RangeReplaceableCollection {
   @inlinable
   public mutating func replaceSubrange<C: Collection, R: RangeExpression>(
     _ subrange: R,
-    with newElements: __owned C
+    with newElements: C
   ) where C.Element == Element, R.Bound == Index {
     self.replaceSubrange(subrange.relative(to: self), with: newElements)
   }
@@ -1079,8 +1080,8 @@ extension RangeReplaceableCollection {
   ///
   /// - Complexity: O(*n*), where *n* is the length of the collection.
   @inlinable
-  @available(swift, introduced: 4.0)
-  public __consuming func filter(
+  // @available(swift, introduced: 4.0)
+  public func filter(
     _ isIncluded: (Element) throws -> Bool
   ) rethrows -> Self {
     return try Self(self.lazy.filter(isIncluded))

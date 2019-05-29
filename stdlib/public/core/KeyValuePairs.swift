@@ -1,4 +1,4 @@
-//===--- KeyValuePairs.swift ----------------------------------------------===//
+﻿//===--- KeyValuePairs.swift ----------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -72,7 +72,7 @@
 ///     let pairs = IntPairs([1: 2, 1: 1, 3: 4, 2: 1])
 ///     print(pairs.elements)
 ///     // Prints "[(1, 2), (1, 1), (3, 4), (2, 1)]"
-@_fixed_layout // trivial-implementation
+// @_fixed_layout // trivial-implementation
 public struct KeyValuePairs<Key, Value> : ExpressibleByDictionaryLiteral {
   @usableFromInline // trivial-implementation
   internal let _elements: [(Key, Value)]
@@ -97,7 +97,7 @@ extension KeyValuePairs : RandomAccessCollection {
   public typealias Index = Int
   public typealias Indices = Range<Int>
   public typealias SubSequence = Slice<KeyValuePairs>
-  
+
   /// The position of the first element in a nonempty collection.
   ///
   /// If the `KeyValuePairs` instance is empty, `startIndex` is equal to

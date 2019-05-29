@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -63,7 +63,8 @@ internal final class _StringBreadcrumbs {
 
 extension _StringBreadcrumbs {
   var stride: Int {
-    @inline(__always) get { return _StringBreadcrumbs.breadcrumbStride }
+    // @inline(__always)
+    get { return _StringBreadcrumbs.breadcrumbStride }
   }
 
   // Fetch the lower-bound index corresponding to the given offset, returning
@@ -117,7 +118,7 @@ extension _StringGuts {
     if hasNativeStorage {
       mutPtr = _object.nativeStorage._breadcrumbsAddress
     } else {
-      mutPtr = UnsafeMutablePointer(
+      mutPtr = UnsafeMutablePointer<_StringBreadcrumbs?>(
         Builtin.addressof(&_object.sharedStorage._breadcrumbs))
     }
 
@@ -138,7 +139,7 @@ extension _StringGuts {
     // Thread-safe compare-and-swap
     let crumbs = _StringBreadcrumbs(String(self))
     _stdlib_atomicInitializeARCRef(
-      object: UnsafeMutableRawPointer(mutPtr).assumingMemoryBound(to: Optional<AnyObject>.self), 
+      object: UnsafeMutableRawPointer(mutPtr).assumingMemoryBound(to: Optional<AnyObject>.self),
       desired: crumbs)
   }
 }

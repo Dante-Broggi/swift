@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -38,10 +38,17 @@
 public protocol BidirectionalCollection: Collection
 where SubSequence: BidirectionalCollection, Indices: BidirectionalCollection {
   // FIXME: Only needed for associated type inference.
-  override associatedtype Element
-  override associatedtype Index
-  override associatedtype SubSequence
-  override associatedtype Indices
+  #if ELEMENTS
+  associatedtype Element
+  associatedtype Index: Comparable
+  //associatedtype SubSequence
+  //associatedtype Indices
+  #else
+  //override associatedtype Element
+  //override associatedtype Index
+  //override associatedtype SubSequence
+  //override associatedtype Indices
+  #endif
 
   /// Returns the position immediately before the given index.
   ///
@@ -65,13 +72,21 @@ where SubSequence: BidirectionalCollection, Indices: BidirectionalCollection {
   /// - Parameter i: A valid index of the collection. `i` must be less than
   ///   `endIndex`.
   /// - Returns: The index value immediately after `i`.
-  override func index(after i: Index) -> Index
+  #if ELEMENTS
+  func index(after i: Index) -> Index
+  #else
+  //override func index(after i: Index) -> Index
+  #endif
 
   /// Replaces the given index with its successor.
   ///
   /// - Parameter i: A valid index of the collection. `i` must be less than
   ///   `endIndex`.
-  override func formIndex(after i: inout Index)
+  #if ELEMENTS
+  func formIndex(after i: inout Index)
+  #else
+  //override func formIndex(after i: inout Index)
+  #endif
 
   /// Returns an index that is the specified distance from the given index.
   ///
@@ -183,8 +198,12 @@ where SubSequence: BidirectionalCollection, Indices: BidirectionalCollection {
   ///         i = c.index(after: i)
   ///     }
   ///     // c == MyFancyCollection([2, 4, 6, 8, 10])
-  override var indices: Indices { get }
-  
+  #if ELEMENTS
+  var indices: Indices { get }
+  #else
+  //override var indices: Indices { get }
+  #endif
+
   /// Accesses a contiguous subrange of the collection's elements.
   ///
   /// The accessed slice uses the same indices for the same elements as the
@@ -208,13 +227,25 @@ where SubSequence: BidirectionalCollection, Indices: BidirectionalCollection {
   ///   the range must be valid indices of the collection.
   ///
   /// - Complexity: O(1)
-  override subscript(bounds: Range<Index>) -> SubSequence { get }
+  #if ELEMENTS
+  subscript(bounds: Range<Index>) -> SubSequence { get }
+  #else
+  //override subscript(bounds: Range<Index>) -> SubSequence { get }
+  #endif
 
   // FIXME: Only needed for associated type inference.
-  @_borrowed
-  override subscript(position: Index) -> Element { get }
-  override var startIndex: Index { get }
-  override var endIndex: Index { get }
+
+  #if ELEMENTS
+  //@_borrowed
+  subscript(position: Index) -> Element { get }
+  var startIndex: Index { get }
+  var endIndex: Index { get }
+  #else
+  //@_borrowed
+  //override subscript(position: Index) -> Element { get }
+  //override var startIndex: Index { get }
+  //override var endIndex: Index { get }
+  #endif
 }
 
 /// Default implementation for bidirectional collections.
@@ -294,6 +325,8 @@ extension BidirectionalCollection {
   }
 }
 
+/*
+
 extension BidirectionalCollection where SubSequence == Self {
   /// Removes and returns the last element of the collection.
   ///
@@ -348,6 +381,8 @@ extension BidirectionalCollection where SubSequence == Self {
   }
 }
 
+*/
+
 extension BidirectionalCollection {
   /// Returns a subsequence containing all but the specified number of final
   /// elements.
@@ -369,7 +404,7 @@ extension BidirectionalCollection {
   ///   `RandomAccessCollection`; otherwise, O(*k*), where *k* is the number of
   ///   elements to drop.
   @inlinable // protocol-only
-  public __consuming func dropLast(_ k: Int) -> SubSequence {
+  public func dropLast(_ k: Int) -> SubSequence {
     _precondition(
       k >= 0, "Can't drop a negative number of elements from a collection")
     let end = index(
@@ -400,7 +435,7 @@ extension BidirectionalCollection {
   ///   `RandomAccessCollection`; otherwise, O(*k*), where *k* is equal to
   ///   `maxLength`.
   @inlinable // protocol-only
-  public __consuming func suffix(_ maxLength: Int) -> SubSequence {
+  public func suffix(_ maxLength: Int) -> SubSequence {
     _precondition(
       maxLength >= 0,
       "Can't take a suffix of negative length from a collection")
@@ -411,4 +446,3 @@ extension BidirectionalCollection {
     return self[start..<endIndex]
   }
 }
-

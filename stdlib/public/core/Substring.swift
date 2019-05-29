@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -19,7 +19,7 @@ extension String {
   ///
   /// - Complexity: O(*n*), where *n* is the length of `substring`.
   @inlinable
-  public init(_ substring: __shared Substring) {
+  public init(_ substring: Substring) {
     self = String._fromSubstring(substring)
   }
 }
@@ -125,7 +125,8 @@ extension Substring {
 
   @inlinable
   internal var _offsetRange: Range<Int> {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       let start = _slice.startIndex
       let end = _slice.endIndex
       _internalInvariant(start.transcodedOffset == 0 && end.transcodedOffset == 0)
@@ -705,9 +706,9 @@ extension Substring.UnicodeScalarView : RangeReplaceableCollection {
 }
 
 extension Substring : RangeReplaceableCollection {
-  @_specialize(where S == String)
-  @_specialize(where S == Substring)
-  @_specialize(where S == Array<Character>)
+  // @_specialize(where S == String)
+  // @_specialize(where S == Substring)
+  // @_specialize(where S == Array<Character>)
   public init<S : Sequence>(_ elements: S)
   where S.Element == Character {
     if let str = elements as? String {
@@ -783,7 +784,7 @@ extension Substring : ExpressibleByStringLiteral {
 // String/Substring Slicing
 extension String {
   @inlinable
-  @available(swift, introduced: 4)
+  // @available(swift, introduced: 4)
   public subscript(r: Range<Index>) -> Substring {
     _boundsCheck(r)
     return Substring(Slice(base: self, bounds: r))
@@ -792,10 +793,8 @@ extension String {
 
 extension Substring {
   @inlinable
-  @available(swift, introduced: 4)
+  // @available(swift, introduced: 4)
   public subscript(r: Range<Index>) -> Substring {
     return Substring(_slice[r])
   }
 }
-
-

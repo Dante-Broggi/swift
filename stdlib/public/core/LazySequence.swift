@@ -1,4 +1,4 @@
-//===--- LazySequence.swift -----------------------------------------------===//
+﻿//===--- LazySequence.swift -----------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -72,7 +72,7 @@
 ///       private var base: Base                  // The underlying iterator.
 ///       private let nextPartialResult: (ResultElement, Base.Element) -> ResultElement
 ///     }
-///     
+///
 ///     struct LazyScanSequence<Base: Sequence, ResultElement>
 ///       : LazySequenceProtocol // Chained operations on self are lazy, too
 ///     {
@@ -87,7 +87,7 @@
 ///     }
 ///
 /// and finally, we can give all lazy sequences a lazy `scan` method:
-///     
+///
 ///     extension LazySequenceProtocol {
 ///       /// Returns a sequence containing the results of
 ///       ///
@@ -176,7 +176,7 @@ extension LazySequenceProtocol where Elements: LazySequenceProtocol {
 /// implemented lazily.
 ///
 /// - See also: `LazySequenceProtocol`
-@_fixed_layout // lazy-performance
+// @_fixed_layout // lazy-performance
 public struct LazySequence<Base : Sequence> {
   @usableFromInline
   internal var _base: Base
@@ -195,10 +195,10 @@ extension LazySequence: Sequence {
   public typealias Iterator = Base.Iterator
 
   @inlinable
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     return _base.makeIterator()
   }
-  
+
   @inlinable // lazy-performance
   public var underestimatedCount: Int {
     return _base.underestimatedCount
@@ -206,19 +206,19 @@ extension LazySequence: Sequence {
 
   @inlinable // lazy-performance
   @discardableResult
-  public __consuming func _copyContents(
+  public func _copyContents(
     initializing buf: UnsafeMutableBufferPointer<Element>
   ) -> (Iterator, UnsafeMutableBufferPointer<Element>.Index) {
     return _base._copyContents(initializing: buf)
   }
 
   @inlinable // lazy-performance
-  public func _customContainsEquatableElement(_ element: Element) -> Bool? { 
+  public func _customContainsEquatableElement(_ element: Element) -> Bool? {
     return _base._customContainsEquatableElement(element)
   }
-  
+
   @inlinable // generic-performance
-  public __consuming func _copyToContiguousArray() -> ContiguousArray<Element> {
+  public func _copyToContiguousArray() -> ContiguousArray<Element> {
     return _base._copyToContiguousArray()
   }
 }

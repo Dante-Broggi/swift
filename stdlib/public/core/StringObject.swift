@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -174,7 +174,8 @@ extension _StringObject {
   // layout as on 64-bit platforms.
   @usableFromInline
   internal var rawBits: RawBitPattern {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       let count = UInt64(truncatingIfNeeded: UInt(bitPattern: _count))
       let payload = UInt64(truncatingIfNeeded: discriminatedObjectRawBits)
                   & _StringObject.Nibbles.largeAddressMask
@@ -230,7 +231,7 @@ extension _StringObject {
 
   @inlinable @inline(__always)
   internal init(rawUncheckedValue bits: RawBitPattern) {
-    self.init(zero:())
+    self.init(zero: ())
     self._countAndFlagsBits = bits.0
     self._object = Builtin.valueToBridgeObject(bits.1._value)
     _internalInvariant(self.rawBits == bits)
@@ -783,7 +784,7 @@ extension _StringObject {
   @inlinable @inline(__always)
   internal var nativeUTF8Start: UnsafePointer<UInt8> {
     _internalInvariant(largeFastIsTailAllocated)
-    return UnsafePointer(
+    return UnsafePointer<UInt8>(
       bitPattern: largeAddressBits &+ _StringObject.nativeBias
     )._unsafelyUnwrappedUnchecked
   }
@@ -791,7 +792,7 @@ extension _StringObject {
   @inlinable @inline(__always)
   internal var nativeUTF8: UnsafeBufferPointer<UInt8> {
     _internalInvariant(largeFastIsTailAllocated)
-    return UnsafeBufferPointer(start: nativeUTF8Start, count: largeCount)
+    return UnsafeBufferPointer<UInt8>(start: nativeUTF8Start, count: largeCount)
   }
 
   // Resilient way to fetch a pointer
@@ -810,7 +811,8 @@ extension _StringObject {
 
   @usableFromInline
   internal var sharedUTF8: UnsafeBufferPointer<UInt8> {
-    @_effects(releasenone) @inline(never) get {
+    // @_effects(releasenone) @inline(never)
+    get {
       _internalInvariant(largeFastIsShared)
       let start = self.getSharedUTF8Start()
       return UnsafeBufferPointer(start: start, count: largeCount)
@@ -900,7 +902,8 @@ extension _StringObject {
   // Whether the object stored can be bridged directly as a NSString
   @usableFromInline // @opaque
   internal var hasObjCBridgeableObject: Bool {
-    @_effects(releasenone) get {
+    // @_effects(releasenone)
+    get {
       // Currently, all mortal objects can zero-cost bridge
       return !self.isImmortal
     }

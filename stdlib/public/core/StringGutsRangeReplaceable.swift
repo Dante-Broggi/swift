@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -25,7 +25,8 @@ extension _StringGuts {
   // If natively stored and uniquely referenced, return the storage's total
   // capacity. Otherwise, nil.
   internal var uniqueNativeCapacity: Int? {
-    @inline(__always) mutating get {
+    // @inline(__always)
+    mutating get {
       guard isUniqueNative else { return nil }
       return _object.nativeStorage.capacity
     }
@@ -34,7 +35,8 @@ extension _StringGuts {
   // If natively stored and uniquely referenced, return the storage's spare
   // capacity. Otherwise, nil.
   internal var uniqueNativeUnusedCapacity: Int? {
-    @inline(__always) mutating get {
+    // @inline(__always)
+    mutating get {
       guard isUniqueNative else { return nil }
       return _object.nativeStorage.unusedCapacity
     }
@@ -42,7 +44,8 @@ extension _StringGuts {
 
   @usableFromInline // @testable
   internal var isUniqueNative: Bool {
-    @inline(__always) mutating get {
+    // @inline(__always)
+    mutating get {
       // Note: mutating so that self is `inout`.
       guard hasNativeStorage else { return false }
       defer { _fixLifetime(self) }
@@ -315,4 +318,3 @@ extension _StringGuts {
     self = _StringGuts(_object.nativeStorage)
   }
 }
-

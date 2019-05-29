@@ -1,4 +1,4 @@
-//===--- Reverse.swift - Sequence and collection reversal -----------------===//
+﻿//===--- Reverse.swift - Sequence and collection reversal -----------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -49,7 +49,7 @@ extension MutableCollection where Self: BidirectionalCollection {
 /// * `c.reversed()` does not create new storage
 /// * `c.reversed().map(f)` maps eagerly and returns a new array
 /// * `c.lazy.reversed().map(f)` maps lazily and returns a `LazyMapCollection`
-@_fixed_layout
+// @_fixed_layout
 public struct ReversedCollection<Base: BidirectionalCollection> {
   public let _base: Base
 
@@ -65,7 +65,7 @@ public struct ReversedCollection<Base: BidirectionalCollection> {
 
 extension ReversedCollection {
   // An iterator that can be much faster than the iterator of a reversed slice.
-  @_fixed_layout
+  // @_fixed_layout
   public struct Iterator {
     @usableFromInline
     internal let _base: Base
@@ -85,7 +85,7 @@ extension ReversedCollection {
 
 extension ReversedCollection.Iterator: IteratorProtocol, Sequence {
   public typealias Element = Base.Element
-  
+
   @inlinable
   @inline(__always)
   public mutating func next() -> Element? {
@@ -104,7 +104,7 @@ extension ReversedCollection: Sequence {
 
   @inlinable
   @inline(__always)
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     return Iterator(_base: _base)
   }
 }
@@ -112,7 +112,7 @@ extension ReversedCollection: Sequence {
 extension ReversedCollection {
   /// An index that traverses the same positions as an underlying index,
   /// with inverted traversal direction.
-  @_fixed_layout
+  // @_fixed_layout
   public struct Index {
     /// The position after this position in the underlying collection.
     ///
@@ -202,7 +202,7 @@ extension ReversedCollection.Index: Hashable where Base.Index: Hashable {
   }
 }
 
-extension ReversedCollection: BidirectionalCollection {  
+extension ReversedCollection: BidirectionalCollection {
   @inlinable
   public var startIndex: Index {
     return Index(_base.endIndex)
@@ -235,7 +235,7 @@ extension ReversedCollection: BidirectionalCollection {
   ) -> Index? {
     // FIXME: swift-3-indexing-model: `-n` can trap on Int.min.
     return _base.index(i.base, offsetBy: -n, limitedBy: limit.base)
-                .map(Index.init)
+                .map({ Index.init($0) })
   }
 
   @inlinable
@@ -256,8 +256,8 @@ extension ReversedCollection {
   ///
   /// - Complexity: O(1)
   @inlinable
-  @available(swift, introduced: 4.2)
-  public __consuming func reversed() -> Base {
+  //@available(swift, introduced: 4.2)
+  public func reversed() -> Base {
     return _base
   }
 }
@@ -289,7 +289,7 @@ extension BidirectionalCollection {
   ///
   /// - Complexity: O(1)
   @inlinable
-  public __consuming func reversed() -> ReversedCollection<Self> {
+  public func reversed() -> ReversedCollection<Self> {
     return ReversedCollection(_base: self)
   }
 }

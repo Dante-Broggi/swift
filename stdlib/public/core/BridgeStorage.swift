@@ -1,4 +1,4 @@
-//===--- BridgeStorage.swift - Discriminated storage for bridged types ----===//
+﻿//===--- BridgeStorage.swift - Discriminated storage for bridged types ----===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -18,10 +18,10 @@
 //  be a tagged pointer, and thus no extra bits may be available.
 //
 //===----------------------------------------------------------------------===//
-import SwiftShims
+// import SwiftShims
 
-@_fixed_layout
-@usableFromInline
+// @_fixed_layout
+// @usableFromInline
 internal struct _BridgeStorage<NativeClass: AnyObject> {
   @usableFromInline
   internal typealias Native = NativeClass
@@ -77,7 +77,8 @@ internal struct _BridgeStorage<NativeClass: AnyObject> {
 
   @inlinable
   internal var isNative: Bool {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       let result = Builtin.classifyBridgeObject(rawValue)
       return !Bool(Builtin.or_Int1(result.isObjCObject,
                                    result.isObjCTaggedPointer))
@@ -86,14 +87,16 @@ internal struct _BridgeStorage<NativeClass: AnyObject> {
 
   @inlinable
   static var flagMask: UInt {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return (1 as UInt) << _objectPointerLowSpareBitShift
     }
   }
 
   @inlinable
   internal var isUnflaggedNative: Bool {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return (_bitPattern(rawValue) &
         (_bridgeObjectTaggedPointerBits | _objCTaggedPointerBits |
           _objectPointerIsObjCBit | _BridgeStorage.flagMask)) == 0
@@ -102,14 +105,16 @@ internal struct _BridgeStorage<NativeClass: AnyObject> {
 
   @inlinable
   internal var isObjC: Bool {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return !isNative
     }
   }
 
   @inlinable
   internal var nativeInstance: Native {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       _internalInvariant(isNative)
       return Builtin.castReferenceFromBridgeObject(rawValue)
     }
@@ -117,7 +122,8 @@ internal struct _BridgeStorage<NativeClass: AnyObject> {
 
   @inlinable
   internal var unflaggedNativeInstance: Native {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       _internalInvariant(isNative)
       _internalInvariant(_nonPointerBits(rawValue) == 0)
       return Builtin.reinterpretCast(rawValue)
@@ -133,7 +139,8 @@ internal struct _BridgeStorage<NativeClass: AnyObject> {
 
   @inlinable
   internal var objCInstance: ObjC {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       _internalInvariant(isObjC)
       return Builtin.castReferenceFromBridgeObject(rawValue)
     }

@@ -1,4 +1,4 @@
-//===--- Mirror.swift -----------------------------------------------------===//
+﻿//===--- Mirror.swift -----------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -113,7 +113,8 @@ public struct Mirror {
   ///
   /// - Parameter subject: The instance for which to create a mirror.
   public init(reflecting subject: Any) {
-    if case let customized as CustomReflectable = subject {
+    //if case let customized as CustomReflectable = subject {
+    if case let customized = subject as CustomReflectable {
       self = customized.customMirror
     } else {
       self = Mirror(internalReflecting: subject)
@@ -186,7 +187,7 @@ public struct Mirror {
     }
     return Mirror._noSuperclassMirror
   }
-  
+
   /// Creates a mirror representing the given subject with a specified
   /// structure.
   ///
@@ -222,7 +223,7 @@ public struct Mirror {
     self.subjectType = Subject.self
     self._makeSuperclassMirror = Mirror._superclassIterator(
       subject, ancestorRepresentation)
-      
+
     self.children = Children(children)
     self.displayStyle = displayStyle
     self._defaultDescendantRepresentation
@@ -265,7 +266,7 @@ public struct Mirror {
     self.subjectType = Subject.self
     self._makeSuperclassMirror = Mirror._superclassIterator(
       subject, ancestorRepresentation)
-      
+
     let lazyChildren =
       unlabeledChildren.lazy.map { Child(label: nil, value: $0) }
     self.children = Children(lazyChildren)
@@ -313,7 +314,7 @@ public struct Mirror {
     self.subjectType = Subject.self
     self._makeSuperclassMirror = Mirror._superclassIterator(
       subject, ancestorRepresentation)
-      
+
     let lazyChildren = children.lazy.map { Child(label: $0.0, value: $0.1) }
     self.children = Children(lazyChildren)
 
@@ -437,7 +438,8 @@ extension Mirror {
     for e in [first] + rest {
       let children = Mirror(reflecting: result).children
       let position: Children.Index
-      if case let label as String = e {
+      //if case let label as String = e {
+      if case let label = e as String {
         position = children.firstIndex { $0.label == label } ?? children.endIndex
       }
       else if let offset = e as? Int {
@@ -503,9 +505,9 @@ extension String {
     _print_unlocked(instance, &self)
   }
 
-  // These overloads serve as fast paths for init(describing:), but they 
-  // also preserve source compatibility for clients which accidentally  
-  // used init(stringInterpolationSegment:) through constructs like 
+  // These overloads serve as fast paths for init(describing:), but they
+  // also preserve source compatibility for clients which accidentally
+  // used init(stringInterpolationSegment:) through constructs like
   // myArray.map(String.init).
 
   /// Creates a string representing the given value.

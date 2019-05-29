@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -66,7 +66,7 @@ public struct StaticString
     _precondition(
       hasPointerRepresentation,
       "StaticString should have pointer representation")
-    return UnsafePointer(bitPattern: UInt(_startPtrOrData))!
+    return UnsafePointer<UInt8>(bitPattern: UInt(_startPtrOrData))!
   }
 
   /// The stored Unicode scalar value.
@@ -148,8 +148,8 @@ public struct StaticString
         i += 1
       }
       UTF8.encode(unicodeScalar, into: sink)
-      return body(UnsafeBufferPointer(
-        start: UnsafePointer(Builtin.addressof(&buffer)),
+      return body(UnsafeBufferPointer<UInt8>(
+        start: UnsafePointer<UInt8>(Builtin.addressof(&buffer)),
         count: i))
     }
   }

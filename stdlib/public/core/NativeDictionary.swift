@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -12,8 +12,8 @@
 
 /// A wrapper around __RawDictionaryStorage that provides most of the
 /// implementation of Dictionary.
-@usableFromInline
-@_fixed_layout
+// @usableFromInline
+// @_fixed_layout
 internal struct _NativeDictionary<Key: Hashable, Value> {
   @usableFromInline
   internal typealias Element = (key: Key, value: Value)
@@ -31,7 +31,7 @@ internal struct _NativeDictionary<Key: Hashable, Value> {
 
   /// Constructs a dictionary adopting the given storage.
   @inlinable
-  internal init(_ storage: __owned __RawDictionaryStorage) {
+  internal init(_ storage: __RawDictionaryStorage) {
     self._storage = storage
   }
 
@@ -46,12 +46,12 @@ internal struct _NativeDictionary<Key: Hashable, Value> {
 
 #if _runtime(_ObjC)
   @inlinable
-  internal init(_ cocoa: __owned __CocoaDictionary) {
+  internal init(_ cocoa: __CocoaDictionary) {
     self.init(cocoa, capacity: cocoa.count)
   }
 
   @inlinable
-  internal init(_ cocoa: __owned __CocoaDictionary, capacity: Int) {
+  internal init(_ cocoa: __CocoaDictionary, capacity: Int) {
     if capacity == 0 {
       self._storage = __RawDictionaryStorage.empty
     } else {
@@ -74,7 +74,7 @@ extension _NativeDictionary { // Primitive fields
 
   @inlinable
   internal var capacity: Int {
-    @inline(__always)
+    // @inline(__always)
     get {
       return _assumeNonNegative(_storage._capacity)
     }
@@ -82,14 +82,16 @@ extension _NativeDictionary { // Primitive fields
 
   @inlinable
   internal var hashTable: _HashTable {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return _storage._hashTable
     }
   }
 
   @inlinable
   internal var age: Int32 {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return _storage._age
     }
   }
@@ -133,8 +135,8 @@ extension _NativeDictionary { // Low-level unchecked operations
   @inline(__always)
   internal func uncheckedInitialize(
     at bucket: Bucket,
-    toKey key: __owned Key,
-    value: __owned Value) {
+    toKey key: Key,
+    value: Value) {
     defer { _fixLifetime(self) }
     _internalInvariant(hashTable.isValid(bucket))
     (_keys + bucket.offset).initialize(to: key)
@@ -350,7 +352,8 @@ extension _NativeDictionary: _DictionaryBuffer {
 
   @inlinable
   internal var count: Int {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return _assumeNonNegative(_storage._count)
     }
   }
@@ -400,12 +403,12 @@ extension _NativeDictionary: _DictionaryBuffer {
 extension _NativeDictionary {
   @inlinable
   subscript(key: Key, isUnique isUnique: Bool) -> Value? {
-    @inline(__always)
+    // @inline(__always)
     get {
       // Dummy definition; don't use.
       return lookup(key)
     }
-    @inline(__always)
+    // @inline(__always)
     _modify {
       let (bucket, found) = mutatingFind(key, isUnique: isUnique)
       if found {
@@ -464,7 +467,7 @@ extension _NativeDictionary { // Insertions
   /// Storage must be uniquely referenced with adequate capacity.
   /// The `key` must not be already present in the Dictionary.
   @inlinable
-  internal func _unsafeInsertNew(key: __owned Key, value: __owned Value) {
+  internal func _unsafeInsertNew(key: Key, value: Value) {
     _internalInvariant(count + 1 <= capacity)
     let hashValue = self.hashValue(for: key)
     if _isDebugAssertConfiguration() {
@@ -490,8 +493,8 @@ extension _NativeDictionary { // Insertions
   /// capacity.
   @_alwaysEmitIntoClient @inlinable // Introduced in 5.1
   internal mutating func _unsafeUpdate(
-    key: __owned Key,
-    value: __owned Value
+    key: Key,
+    value: Value
   ) {
     let (bucket, found) = find(key)
     if found {
@@ -511,7 +514,7 @@ extension _NativeDictionary { // Insertions
   /// Storage must be uniquely referenced.
   /// The `key` must not be already present in the Dictionary.
   @inlinable
-  internal mutating func insertNew(key: __owned Key, value: __owned Value) {
+  internal mutating func insertNew(key: Key, value: Value) {
     _ = ensureUnique(isUnique: true, capacity: count + 1)
     _unsafeInsertNew(key: key, value: value)
   }
@@ -547,8 +550,8 @@ extension _NativeDictionary { // Insertions
   @inlinable
   internal func _insert(
     at bucket: Bucket,
-    key: __owned Key,
-    value: __owned Value) {
+    key: Key,
+    value: Value) {
     _internalInvariant(count < capacity)
     hashTable.insert(bucket)
     uncheckedInitialize(at: bucket, toKey: key, value: value)
@@ -557,7 +560,7 @@ extension _NativeDictionary { // Insertions
 
   @inlinable
   internal mutating func updateValue(
-    _ value: __owned Value,
+    _ value: Value,
     forKey key: Key,
     isUnique: Bool
   ) -> Value? {
@@ -573,7 +576,7 @@ extension _NativeDictionary { // Insertions
 
   @inlinable
   internal mutating func setValue(
-    _ value: __owned Value,
+    _ value: Value,
     forKey key: Key,
     isUnique: Bool
   ) {
@@ -735,7 +738,7 @@ extension _NativeDictionary { // High-level operations
 
   @inlinable
   internal mutating func merge<S: Sequence>(
-    _ keysAndValues: __owned S,
+    _ keysAndValues: S,
     isUnique: Bool,
     uniquingKeysWith combine: (Value, Value) throws -> Value
   ) rethrows where S.Element == (Key, Value) {
@@ -759,7 +762,7 @@ extension _NativeDictionary { // High-level operations
   @inlinable
   @inline(__always)
   internal init<S: Sequence>(
-    grouping values: __owned S,
+    grouping values: S,
     by keyForValue: (S.Element) throws -> Key
   ) rethrows where Value == [S.Element] {
     self.init()
@@ -776,8 +779,8 @@ extension _NativeDictionary { // High-level operations
 }
 
 extension _NativeDictionary: Sequence {
-  @usableFromInline
-  @_fixed_layout
+  //@usableFromInline
+  // @_fixed_layout
   internal struct Iterator {
     // The iterator is iterating over a frozen view of the collection state, so
     // it keeps its own reference to the dictionary.
@@ -788,14 +791,14 @@ extension _NativeDictionary: Sequence {
 
     @inlinable
     @inline(__always)
-    init(_ base: __owned _NativeDictionary) {
+    init(_ base: _NativeDictionary) {
       self.base = base
       self.iterator = base.hashTable.makeIterator()
     }
   }
 
   @inlinable
-  internal __consuming func makeIterator() -> Iterator {
+  internal func makeIterator() -> Iterator {
     return Iterator(self)
   }
 }
@@ -827,4 +830,3 @@ extension _NativeDictionary.Iterator: IteratorProtocol {
     return (key, value)
   }
 }
-

@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -40,13 +40,13 @@ extension _SwiftNewtypeWrapper where Self: Hashable, Self.RawValue: Hashable {
 }
 
 extension _SwiftNewtypeWrapper {
-  public __consuming func _toCustomAnyHashable() -> AnyHashable? {
+  public func _toCustomAnyHashable() -> AnyHashable? {
     return nil
   }
 }
 
 extension _SwiftNewtypeWrapper where Self: Hashable, Self.RawValue: Hashable {
-  public __consuming func _toCustomAnyHashable() -> AnyHashable? {
+  public func _toCustomAnyHashable() -> AnyHashable? {
     return AnyHashable(_box: _NewtypeWrapperAnyHashableBox(self))
   }
 }
@@ -82,7 +82,8 @@ where Base: _SwiftNewtypeWrapper & Hashable, Base.RawValue: Hashable {
   var _base: Any { return _value }
 
   func _unbox<T: Hashable>() -> T? {
-    return _value as? T ?? _value.rawValue as? T
+      // parens added
+    return (_value as? T) ?? _value.rawValue as? T
   }
 
   func _downCastConditional<T>(into result: UnsafeMutablePointer<T>) -> Bool {
@@ -98,7 +99,7 @@ where Base: _SwiftNewtypeWrapper & Hashable, Base.RawValue: Hashable {
   }
 }
 
-#if _runtime(_ObjC)
+#if OBJC
 extension _SwiftNewtypeWrapper where Self.RawValue : _ObjectiveCBridgeable {
   // Note: This is the only default typealias for _ObjectiveCType, because
   // constrained extensions aren't allowed to define types in different ways.
@@ -174,4 +175,3 @@ extension _SwiftNewtypeWrapper where Self.RawValue: AnyObject {
   }
 }
 #endif
-

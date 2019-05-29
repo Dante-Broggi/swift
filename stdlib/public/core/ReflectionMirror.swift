@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -9,6 +9,8 @@
 // See https://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 //
 //===----------------------------------------------------------------------===//
+
+/*
 
 @_silgen_name("swift_reflectionMirror_normalizedType")
 internal func _getNormalizedType<T>(_: T, type: Any.Type) -> Any.Type
@@ -30,24 +32,28 @@ internal func _getChild<T>(
 // Returns 'c' (class), 'e' (enum), 's' (struct), 't' (tuple), or '\0' (none)
 @_silgen_name("swift_reflectionMirror_displayStyle")
 internal func _getDisplayStyle<T>(_: T) -> CChar
+*/
 
 internal func getChild<T>(of value: T, type: Any.Type, index: Int) -> (label: String?, value: Any) {
   var nameC: UnsafePointer<CChar>? = nil
   var freeFunc: NameFreeFunc? = nil
-  
+
   let value = _getChild(of: value, type: type, index: index, outName: &nameC, outFreeFunc: &freeFunc)
-  
+
   let name = nameC.flatMap({ String(validatingUTF8: $0) })
   freeFunc?(nameC)
   return (name, value)
 }
 
 #if _runtime(_ObjC)
+
+/*
 @_silgen_name("swift_reflectionMirror_quickLookObject")
 internal func _getQuickLookObject<T>(_: T) -> AnyObject?
 
 @_silgen_name("_swift_stdlib_NSObject_isKindOfClass")
 internal func _isImpl(_ object: AnyObject, kindOf: AnyObject) -> Bool
+*/
 
 internal func _is(_ object: AnyObject, kindOf `class`: String) -> Bool {
   return _isImpl(object, kindOf: `class` as AnyObject)
@@ -69,11 +75,11 @@ internal func _getClassPlaygroundQuickLook(
       return .int(number.longLongValue)
     }
   }
-  
+
   if _is(object, kindOf: "NSAttributedString") {
     return .attributedString(object)
   }
-  
+
   if _is(object, kindOf: "NSImage") ||
      _is(object, kindOf: "UIImage") ||
      _is(object, kindOf: "NSImageView") ||
@@ -82,17 +88,17 @@ internal func _getClassPlaygroundQuickLook(
      _is(object, kindOf: "NSBitmapImageRep") {
     return .image(object)
   }
-  
+
   if _is(object, kindOf: "NSColor") ||
      _is(object, kindOf: "UIColor") {
     return .color(object)
   }
-  
+
   if _is(object, kindOf: "NSBezierPath") ||
      _is(object, kindOf: "UIBezierPath") {
     return .bezierPath(object)
   }
-  
+
   if _is(object, kindOf: "NSString") {
     return .text(_forceBridgeFromObjectiveC(object, String.self))
   }
@@ -107,19 +113,19 @@ extension Mirror {
               customAncestor: Mirror? = nil)
   {
     let subjectType = subjectType ?? _getNormalizedType(subject, type: type(of: subject))
-    
+
     let childCount = _getChildCount(subject, type: subjectType)
     let children = (0 ..< childCount).lazy.map({
       getChild(of: subject, type: subjectType, index: $0)
     })
     self.children = Children(children)
-    
+
     self._makeSuperclassMirror = {
       guard let subjectClass = subjectType as? AnyClass,
             let superclass = _getSuperclass(subjectClass) else {
         return nil
       }
-      
+
       // Handle custom ancestors. If we've hit the custom ancestor's subject type,
       // or descendants are suppressed, return it. Otherwise continue reflecting.
       if let customAncestor = customAncestor {
@@ -134,7 +140,7 @@ extension Mirror {
                     subjectType: superclass,
                     customAncestor: customAncestor)
     }
-    
+
     let rawDisplayStyle = _getDisplayStyle(subject)
     switch UnicodeScalar(Int(rawDisplayStyle)) {
     case "c": self.displayStyle = .class
@@ -144,11 +150,11 @@ extension Mirror {
     case "\0": self.displayStyle = nil
     default: preconditionFailure("Unknown raw display style '\(rawDisplayStyle)'")
     }
-    
+
     self.subjectType = subjectType
     self._defaultDescendantRepresentation = .generated
   }
-  
+
   internal static func quickLookObject(_ subject: Any) -> _PlaygroundQuickLook? {
 #if _runtime(_ObjC)
     let object = _getQuickLookObject(subject)

@@ -1,4 +1,4 @@
-//===--- ASCII.swift ------------------------------------------------------===//
+﻿//===--- ASCII.swift ------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -32,20 +32,20 @@ extension Unicode.ASCII : Unicode.Encoding {
   public static func _isScalar(_ x: CodeUnit) -> Bool {
     return true
   }
- 
+
   @inline(__always)
   @inlinable
   public static func decode(_ source: EncodedScalar) -> Unicode.Scalar {
     return Unicode.Scalar(_unchecked: UInt32(
         source.first._unsafelyUnwrappedUnchecked))
   }
-  
+
   @inline(__always)
   @inlinable
   public static func encode(
     _ source: Unicode.Scalar
   ) -> EncodedScalar? {
-    guard source.value < (1&<<7) else { return nil }
+    guard source.value < (1 &<< 7) else { return nil }
     return EncodedScalar(UInt8(truncatingIfNeeded: source.value))
   }
 
@@ -73,7 +73,7 @@ extension Unicode.ASCII : Unicode.Encoding {
     @inlinable
     public init() { }
   }
-  
+
   public typealias ForwardParser = Parser
   public typealias ReverseParser = Parser
 }

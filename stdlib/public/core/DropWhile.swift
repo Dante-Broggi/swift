@@ -1,4 +1,4 @@
-//===--- DropWhile.swift - Lazy views for drop(while:) --------*- swift -*-===//
+﻿//===--- DropWhile.swift - Lazy views for drop(while:) --------*- swift -*-===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -12,10 +12,10 @@
 
 /// A sequence whose elements consist of the elements that follow the initial
 /// consecutive elements of some base sequence that satisfy a given predicate.
-@_fixed_layout // lazy-performance
+// @_fixed_layout // lazy-performance
 public struct LazyDropWhileSequence<Base: Sequence> {
   public typealias Element = Base.Element
-  
+
   /// Create an instance with elements `transform(x)` for each element
   /// `x` of base.
   @inlinable // lazy-performance
@@ -37,10 +37,10 @@ extension LazyDropWhileSequence {
   /// This is the associated iterator for the `LazyDropWhileSequence`,
   /// `LazyDropWhileCollection`, and `LazyDropWhileBidirectionalCollection`
   /// types.
-  @_fixed_layout // lazy-performance
+  // @_fixed_layout // lazy-performance
   public struct Iterator {
     public typealias Element = Base.Element
-    
+
     @inlinable // lazy-performance
     internal init(_base: Base.Iterator, predicate: @escaping (Element) -> Bool) {
       self._base = _base
@@ -74,7 +74,7 @@ extension LazyDropWhileSequence.Iterator: IteratorProtocol {
       }
     }
     return nil
-  }  
+  }
 }
 
 extension LazyDropWhileSequence: Sequence {
@@ -82,7 +82,7 @@ extension LazyDropWhileSequence: Sequence {
   ///
   /// - Complexity: O(1).
   @inlinable // lazy-performance
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     return Iterator(_base: _base.makeIterator(), predicate: _predicate)
   }
 }
@@ -100,7 +100,7 @@ extension LazySequenceProtocol {
   ///   `false` otherwise. Once `predicate` returns `false` it will not be
   ///   called again.
   @inlinable // lazy-performance
-  public __consuming func drop(
+  public func drop(
     while predicate: @escaping (Elements.Element) -> Bool
   ) -> LazyDropWhileSequence<Self.Elements> {
     return LazyDropWhileSequence(_base: self.elements, predicate: predicate)
@@ -149,7 +149,7 @@ extension LazyDropWhileCollection: Collection {
   }
 }
 
-extension LazyDropWhileCollection: BidirectionalCollection 
+extension LazyDropWhileCollection: BidirectionalCollection
 where Base: BidirectionalCollection {
   @inlinable // lazy-performance
   public func index(before i: Index) -> Index {

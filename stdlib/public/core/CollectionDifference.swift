@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -10,25 +10,25 @@
 //
 //===----------------------------------------------------------------------===//
 
-/// A collection of insertions and removals that describe the difference 
+/// A collection of insertions and removals that describe the difference
 /// between two ordered collection states.
-@available(macOS 9999, iOS 9999, tvOS 9999, watchOS 9999, *) // FIXME(availability-5.1)
+// @available(macOS 9999, iOS 9999, tvOS 9999, watchOS 9999, *) // FIXME(availability-5.1)
 public struct CollectionDifference<ChangeElement> {
   /// A single change to a collection.
-  @_frozen
+  // @_frozen
   public enum Change {
     /// An insertion.
     ///
     /// The `offset` value is the offset of the inserted element in the final
     /// state of the collection after the difference is fully applied.
-    /// A non-`nil` `associatedWith` value is the offset of the complementary 
+    /// A non-`nil` `associatedWith` value is the offset of the complementary
     /// change.
     case insert(offset: Int, element: ChangeElement, associatedWith: Int?)
-    
+
     /// A removal.
     ///
     /// The `offset` value is the offset of the element to be removed in the
-    /// original state of the collection. A non-`nil` `associatedWith` value is 
+    /// original state of the collection. A non-`nil` `associatedWith` value is
     /// the offset of the complementary change.
     case remove(offset: Int, element: ChangeElement, associatedWith: Int?)
 
@@ -65,10 +65,10 @@ public struct CollectionDifference<ChangeElement> {
     }
   }
 
-  /// The insertions contained by this difference, from lowest offset to 
+  /// The insertions contained by this difference, from lowest offset to
   /// highest.
   public let insertions: [Change]
-  
+
   /// The removals contained by this difference, from lowest offset to highest.
   public let removals: [Change]
 
@@ -89,7 +89,7 @@ public struct CollectionDifference<ChangeElement> {
   private static func _validateChanges<Changes: Collection>(
     _ changes : Changes
   ) -> Bool where Changes.Element == Change {
-    if changes.isEmpty { return true }
+    if changes.count == 0 { return true }
 
     var insertAssocToOffset = Dictionary<Int,Int>()
     var removeOffsetToAssoc = Dictionary<Int,Int>()
@@ -107,7 +107,7 @@ public struct CollectionDifference<ChangeElement> {
       case .insert(_, _, _):
         if insertOffset.contains(offset) { return false }
         insertOffset.insert(offset)
-      } 
+      }
 
       if let assoc = change._associatedOffset {
         if assoc < 0 { return false }
@@ -127,11 +127,11 @@ public struct CollectionDifference<ChangeElement> {
 
   /// Creates a new collection difference from a collection of changes.
   ///
-  /// To find the difference between two collections, use the 
+  /// To find the difference between two collections, use the
   /// `difference(from:)` method declared on the `BidirectionalCollection`
   /// protocol.
   ///
-  /// The collection of changes passed as `changes` must meet these 
+  /// The collection of changes passed as `changes` must meet these
   /// requirements:
   ///
   /// - All insertion offsets are unique
@@ -181,7 +181,7 @@ public struct CollectionDifference<ChangeElement> {
 
     // Find first insertion via binary search
     let firstInsertIndex: Int
-    if sortedChanges.isEmpty {
+    if sortedChanges.count == 0 {
       firstInsertIndex = 0
     } else {
       var range = 0...sortedChanges.count
@@ -227,7 +227,7 @@ extension CollectionDifference: Collection {
   public typealias Element = Change
 
   /// The position of a collection difference.
-  @_fixed_layout
+  // @_fixed_layout
   public struct Index {
     // Opaque index type is isomorphic to Int
     @usableFromInline
@@ -317,7 +317,7 @@ extension CollectionDifference where ChangeElement: Hashable {
   /// Returns a new collection difference with associations between individual
   /// elements that have been removed and inserted only once.
   ///
-  /// - Returns: A collection difference with all possible moves inferred.
+  /// - Returns: An collection difference with all possible moves inferred.
   ///
   /// - Complexity: O(*n*) where *n* is the number of collection differences.
   public func inferringMoves() -> CollectionDifference<ChangeElement> {
@@ -333,7 +333,7 @@ extension CollectionDifference where ChangeElement: Hashable {
       }
       return result.filter { (_, v) -> Bool in v != .none }
     }()
-    
+
     let uniqueInsertions: [ChangeElement:Int?] = {
       var result = [ChangeElement:Int?](minimumCapacity: Swift.min(removals.count, insertions.count))
       for insertion in insertions {
@@ -382,7 +382,7 @@ extension CollectionDifference.Change: Codable where ChangeElement: Codable {
     let values = try decoder.container(keyedBy: _CodingKeys.self)
     let offset = try values.decode(Int.self, forKey: .offset)
     let element = try values.decode(ChangeElement.self, forKey: .element)
-    let associatedOffset = try values.decode(Int?.self, forKey: .associatedOffset)
+    let associatedOffset = try values.decode((Int?).self, forKey: .associatedOffset)
     let isRemove = try values.decode(Bool.self, forKey: .isRemove)
     if isRemove {
       self = .remove(offset: offset, element: element, associatedWith: associatedOffset)
@@ -399,7 +399,7 @@ extension CollectionDifference.Change: Codable where ChangeElement: Codable {
     case .insert(_, _, _):
       try container.encode(false, forKey: .isRemove)
     }
-    
+
     try container.encode(_offset, forKey: .offset)
     try container.encode(_element, forKey: .element)
     try container.encode(_associatedOffset, forKey: .associatedOffset)

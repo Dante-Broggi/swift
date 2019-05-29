@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -17,7 +17,7 @@
 extension Set where Element == AnyHashable {
   @inlinable
   public mutating func insert<ConcreteElement : Hashable>(
-    _ newMember: __owned ConcreteElement
+    _ newMember: ConcreteElement
   ) -> (inserted: Bool, memberAfterInsert: ConcreteElement) {
     let (inserted, memberAfterInsert) =
       insert(AnyHashable(newMember))
@@ -29,7 +29,7 @@ extension Set where Element == AnyHashable {
   @inlinable
   @discardableResult
   public mutating func update<ConcreteElement : Hashable>(
-    with newMember: __owned ConcreteElement
+    with newMember: ConcreteElement
   ) -> ConcreteElement? {
     return update(with: AnyHashable(newMember))
       .map { $0.base as! ConcreteElement }

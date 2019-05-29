@@ -1,4 +1,4 @@
-//===--- Stride.swift - Components for stride(...) iteration --------------===//
+﻿//===--- Stride.swift - Components for stride(...) iteration --------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -100,7 +100,7 @@ public protocol Strideable : Comparable {
   /// A type that represents the distance between two values.
   associatedtype Stride : SignedNumeric, Comparable
 
-  /// Returns the distance from this value to the given value, expressed as a 
+  /// Returns the distance from this value to the given value, expressed as a
   /// stride.
   ///
   /// If this type's `Stride` type conforms to `BinaryInteger`, then for two
@@ -273,7 +273,7 @@ extension StrideTo: Sequence {
   ///
   /// - Complexity: O(1).
   @inlinable
-  public __consuming func makeIterator() -> StrideToIterator<Element> {
+  public func makeIterator() -> StrideToIterator<Element> {
     return StrideToIterator(_start: _start, end: _end, stride: _stride)
   }
 
@@ -456,7 +456,7 @@ extension StrideThroughIterator: IteratorProtocol {
 // FIXME: should really be a Collection, as it is multipass
 /// A sequence of values formed by striding over a closed interval.
 ///
-/// Use the `stride(from:through:by:)` function to create `StrideThrough` 
+/// Use the `stride(from:through:by:)` function to create `StrideThrough`
 /// instances.
 @_fixed_layout
 public struct StrideThrough<Element: Strideable> {
@@ -466,7 +466,7 @@ public struct StrideThrough<Element: Strideable> {
   internal let _end: Element
   @usableFromInline
   internal let _stride: Element.Stride
-  
+
   @inlinable
   internal init(_start: Element, end: Element, stride: Element.Stride) {
     _precondition(stride != 0, "Stride size must not be zero")
@@ -481,7 +481,7 @@ extension StrideThrough: Sequence {
   ///
   /// - Complexity: O(1).
   @inlinable
-  public __consuming func makeIterator() -> StrideThroughIterator<Element> {
+  public func makeIterator() -> StrideThroughIterator<Element> {
     return StrideThroughIterator(_start: _start, end: _end, stride: _stride)
   }
 
@@ -594,8 +594,8 @@ where Element.Stride : BinaryInteger {
 ///     // Degrees: 270, radians: 4.71238898038469
 ///     // Degrees: 360, radians: 6.28318530717959
 ///
-/// You can use `stride(from:through:by:)` to create a sequence that strides 
-/// upward or downward. Pass a negative value as `stride` to create a sequence 
+/// You can use `stride(from:through:by:)` to create a sequence that strides
+/// upward or downward. Pass a negative value as `stride` to create a sequence
 /// from a higher start to a lower end:
 ///
 ///     for countdown in stride(from: 3, through: 1, by: -1) {
@@ -605,8 +605,8 @@ where Element.Stride : BinaryInteger {
 ///     // 2...
 ///     // 1...
 ///
-/// The value you pass as `end` is not guaranteed to be included in the 
-/// sequence. If stepping from `start` by `stride` does not produce `end`, 
+/// The value you pass as `end` is not guaranteed to be included in the
+/// sequence. If stepping from `start` by `stride` does not produce `end`,
 /// the last value in the sequence will be one step before going beyond `end`.
 ///
 ///     for multipleOfThree in stride(from: 3, through: 10, by: 3) {
@@ -616,7 +616,7 @@ where Element.Stride : BinaryInteger {
 ///     // 6
 ///     // 9
 ///
-/// If you pass a value as `stride` that moves away from `end`, the sequence 
+/// If you pass a value as `stride` that moves away from `end`, the sequence
 /// contains no values.
 ///
 ///     for x in stride(from: 0, through: 10, by: -1) {
@@ -628,11 +628,11 @@ where Element.Stride : BinaryInteger {
 ///   - start: The starting value to use for the sequence. If the sequence
 ///     contains any values, the first one is `start`.
 ///   - end: An end value to limit the sequence. `end` is an element of
-///     the resulting sequence if and only if it can be produced from `start` 
+///     the resulting sequence if and only if it can be produced from `start`
 ///     using steps of `stride`.
 ///   - stride: The amount to step by with each iteration. A positive `stride`
 ///     iterates upward; a negative `stride` iterates downward.
-/// - Returns: A sequence from `start` toward, and possibly including, `end`. 
+/// - Returns: A sequence from `start` toward, and possibly including, `end`.
 ///   Each value in the sequence is separated by `stride`.
 @inlinable
 public func stride<T>(

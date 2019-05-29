@@ -1,4 +1,4 @@
-//===--- UTF32.swift ------------------------------------------------------===//
+﻿//===--- UTF32.swift ------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -22,7 +22,8 @@ extension Unicode.UTF32 : Unicode.Encoding {
 
   @inlinable
   internal static var _replacementCodeUnit: CodeUnit {
-    @inline(__always) get { return 0xFFFD }
+    // @inline(__always)
+    get { return 0xFFFD }
   }
 
   @inlinable
@@ -55,13 +56,13 @@ extension Unicode.UTF32 : Unicode.Encoding {
   ) -> EncodedScalar? {
     return EncodedScalar(source.value)
   }
-  
+
   @_fixed_layout
   public struct Parser {
     @inlinable
     public init() { }
   }
-  
+
   public typealias ForwardParser = Parser
   public typealias ReverseParser = Parser
 }
@@ -80,7 +81,7 @@ extension UTF32.Parser : Unicode.Parser {
       // Check code unit is valid: not surrogate-reserved and within range.
       guard _fastPath((x &>> 11) != 0b1101_1 && x <= 0x10ffff)
       else { return .error(length: 1) }
-      
+
       // x is a valid scalar.
       return .valid(UTF32.EncodedScalar(x))
     }

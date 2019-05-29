@@ -1,4 +1,4 @@
-//===--- Repeat.swift - A Collection that repeats a value N times ---------===//
+﻿//===--- Repeat.swift - A Collection that repeats a value N times ---------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -25,7 +25,7 @@
 ///     // "Humperdinck"
 ///     // "Humperdinck"
 ///     // "Humperdinck"
-@_fixed_layout
+// @_fixed_layout
 public struct Repeated<Element> {
   /// The number of elements in this collection.
   public let count: Int
@@ -51,7 +51,7 @@ extension Repeated: RandomAccessCollection {
     self.count = count
     self.repeatedValue = repeatedValue
   }
-  
+
   /// The position of the first element in a nonempty collection.
   ///
   /// In a `Repeated` collection, `startIndex` is always equal to zero. If the

@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -10,15 +10,17 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if _runtime(_ObjC)
+#if OBJC//_runtime(_ObjC)
 
-import SwiftShims
+// import SwiftShims
 
+/*
 @_silgen_name("swift_stdlib_CFSetGetValues")
 internal
 func _stdlib_CFSetGetValues(
   _ nss: AnyObject,
   _: UnsafeMutablePointer<AnyObject>)
+*/
 
 /// Equivalent to `NSSet.allObjects`, but does not leave objects on the
 /// autorelease pool.
@@ -31,7 +33,7 @@ internal func _stdlib_NSSet_allObjects(_ object: AnyObject) -> _BridgingBuffer {
 
 extension _NativeSet { // Bridging
   @usableFromInline
-  internal __consuming func bridged() -> AnyObject {
+  internal func bridged() -> AnyObject {
     // We can zero-cost bridge if our keys are verbatim
     // or if we're the empty singleton.
 
@@ -68,7 +70,7 @@ final internal class _SwiftSetNSEnumerator<Element: Hashable>
     _internalInvariantFailure("don't call this designated initializer")
   }
 
-  internal init(_ base: __owned _NativeSet<Element>) {
+  internal init(_ base: _NativeSet<Element>) {
     _internalInvariant(_isBridgedVerbatimToObjectiveC(Element.self))
     self.base = base
     self.bridgedElements = nil
@@ -78,7 +80,7 @@ final internal class _SwiftSetNSEnumerator<Element: Hashable>
   }
 
   @nonobjc
-  internal init(_ deferred: __owned _SwiftDeferredNSSet<Element>) {
+  internal init(_ deferred: _SwiftDeferredNSSet<Element>) {
     _internalInvariant(!_isBridgedVerbatimToObjectiveC(Element.self))
     self.base = deferred.native
     self.bridgedElements = deferred.bridgeElements()
@@ -157,7 +159,7 @@ final internal class _SwiftDeferredNSSet<Element: Hashable>
   /// The unbridged elements.
   internal var native: _NativeSet<Element>
 
-  internal init(_ native: __owned _NativeSet<Element>) {
+  internal init(_ native: _NativeSet<Element>) {
     _internalInvariant(native.count > 0)
     _internalInvariant(!_isBridgedVerbatimToObjectiveC(Element.self))
     self.native = native
@@ -298,7 +300,7 @@ internal struct __CocoaSet {
   internal let object: AnyObject
 
   @inlinable
-  internal init(_ object: __owned AnyObject) {
+  internal init(_ object: AnyObject) {
     self.object = object
   }
 }
@@ -330,7 +332,7 @@ extension __CocoaSet: _SetBuffer {
 
   @usableFromInline // FIXME(cocoa-index): Should be inlinable
   internal var startIndex: Index {
-    @_effects(releasenone)
+    // @_effects(releasenone)
     get {
       let allKeys = _stdlib_NSSet_allObjects(self.object)
       return Index(Index.Storage(self, allKeys), offset: 0)
@@ -339,7 +341,7 @@ extension __CocoaSet: _SetBuffer {
 
   @usableFromInline // FIXME(cocoa-index): Should be inlinable
   internal var endIndex: Index {
-    @_effects(releasenone)
+    // @_effects(releasenone)
     get {
       let allKeys = _stdlib_NSSet_allObjects(self.object)
       return Index(Index.Storage(self, allKeys), offset: allKeys.count)
@@ -418,14 +420,14 @@ extension __CocoaSet {
     internal var _offset: Int
 
     internal var storage: Storage {
-      @inline(__always)
+      // @inline(__always)
       get {
         let storage = _bridgeObject(toNative: _storage)
         return unsafeDowncast(storage, to: Storage.self)
       }
     }
 
-    internal init(_ storage: __owned Storage, offset: Int) {
+    internal init(_ storage: Storage, offset: Int) {
       self._storage = _bridgeObject(fromNative: storage)
       self._offset = offset
     }
@@ -451,8 +453,8 @@ extension __CocoaSet.Index {
     internal var allKeys: _BridgingBuffer
 
     internal init(
-      _ base: __owned __CocoaSet,
-      _ allKeys: __owned _BridgingBuffer
+      _ base: __CocoaSet,
+      _ allKeys: _BridgingBuffer
     ) {
       self.base = base
       self.allKeys = allKeys
@@ -463,7 +465,7 @@ extension __CocoaSet.Index {
 extension __CocoaSet.Index {
   @usableFromInline
   internal var handleBitPattern: UInt {
-    @_effects(readonly)
+    // @_effects(readonly)
     get {
       return unsafeBitCast(storage, to: UInt.self)
     }
@@ -474,7 +476,7 @@ extension __CocoaSet.Index {
   @usableFromInline // FIXME(cocoa-index): Make inlinable
   @nonobjc
   internal var element: AnyObject {
-    @_effects(readonly)
+    // @_effects(readonly)
     get {
       _precondition(_offset < storage.allKeys.count,
         "Attempting to access Set elements using an invalid index")
@@ -485,7 +487,7 @@ extension __CocoaSet.Index {
   @usableFromInline // FIXME(cocoa-index): Make inlinable
   @nonobjc
   internal var age: Int32 {
-    @_effects(releasenone)
+    // @_effects(releasenone)
     get {
       return _HashTable.age(for: storage.base.object)
     }
@@ -549,13 +551,13 @@ extension __CocoaSet: Sequence {
     internal var itemIndex: Int = 0
     internal var itemCount: Int = 0
 
-    internal init(_ base: __owned __CocoaSet) {
+    internal init(_ base: __CocoaSet) {
       self.base = base
     }
   }
 
   @usableFromInline
-  internal __consuming func makeIterator() -> Iterator {
+  internal func makeIterator() -> Iterator {
     return Iterator(self)
   }
 }
@@ -601,7 +603,7 @@ extension __CocoaSet.Iterator: IteratorProtocol {
 
 extension Set {
   @inlinable
-  public __consuming func _bridgeToObjectiveCImpl() -> AnyObject {
+  public func _bridgeToObjectiveCImpl() -> AnyObject {
     guard _variant.isNative else {
       return _variant.asCocoa.object
     }
@@ -611,7 +613,7 @@ extension Set {
   /// Returns the native Dictionary hidden inside this NSDictionary;
   /// returns nil otherwise.
   public static func _bridgeFromObjectiveCAdoptingNativeStorageOf(
-    _ s: __owned AnyObject
+    _ s: AnyObject
   ) -> Set<Element>? {
 
     // Try all three NSSet impls that we currently provide.

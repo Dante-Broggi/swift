@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -31,15 +31,15 @@ internal protocol _DictionaryBuffer {
 }
 
 extension Dictionary {
-  @usableFromInline
-  @_fixed_layout
+  // @usableFromInline
+  // @_fixed_layout
   internal struct _Variant {
     @usableFromInline
     internal var object: _BridgeStorage<__RawDictionaryStorage>
 
     @inlinable
     @inline(__always)
-    init(native: __owned _NativeDictionary<Key, Value>) {
+    init(native: _NativeDictionary<Key, Value>) {
       self.object = _BridgeStorage(native: native._storage)
     }
 
@@ -56,7 +56,7 @@ extension Dictionary {
 #if _runtime(_ObjC)
     @inlinable
     @inline(__always)
-    init(cocoa: __owned __CocoaDictionary) {
+    init(cocoa: __CocoaDictionary) {
       self.object = _BridgeStorage(objC: cocoa.object)
     }
 #endif
@@ -92,12 +92,14 @@ extension Dictionary._Variant {
     set {
       self = .init(native: newValue)
     }
+    /*
     _modify {
       var native = _NativeDictionary<Key, Value>(object.unflaggedNativeInstance)
       self = .init(dummy: ())
       defer { object = .init(native: native._storage) }
       yield &native
     }
+    */
   }
 
 #if _runtime(_ObjC)
@@ -203,7 +205,7 @@ extension Dictionary._Variant: _DictionaryBuffer {
 
   @inlinable
   internal var count: Int {
-    @inline(__always)
+    // @inline(__always)
     get {
 #if _runtime(_ObjC)
       guard isNative else {
@@ -281,13 +283,13 @@ extension Dictionary._Variant: _DictionaryBuffer {
 extension Dictionary._Variant {
   @inlinable
   internal subscript(key: Key) -> Value? {
-    @inline(__always)
+    // @inline(__always)
     get {
       return lookup(key)
     }
-    @inline(__always)
+    // @inline(__always)
     _modify {
-#if _runtime(_ObjC)
+#if OBJC
       guard isNative else {
         let cocoa = asCocoa
         var native = _NativeDictionary<Key, Value>(
@@ -314,7 +316,7 @@ extension Dictionary._Variant {
   internal mutating func mutatingFind(
     _ key: Key
   ) -> (bucket: _NativeDictionary<Key, Value>.Bucket, found: Bool) {
-#if _runtime(_ObjC)
+#if OBJC
     guard isNative else {
       let cocoa = asCocoa
       var native = _NativeDictionary<Key, Value>(
@@ -331,7 +333,7 @@ extension Dictionary._Variant {
   @inlinable
   @inline(__always)
   internal mutating func ensureUniqueNative() -> _NativeDictionary<Key, Value> {
-#if _runtime(_ObjC)
+#if OBJC
     guard isNative else {
       let native = _NativeDictionary<Key, Value>(asCocoa)
       self = .init(native: native)
@@ -347,10 +349,10 @@ extension Dictionary._Variant {
 
   @inlinable
   internal mutating func updateValue(
-    _ value: __owned Value,
+    _ value: Value,
     forKey key: Key
   ) -> Value? {
-#if _runtime(_ObjC)
+#if OBJC
     guard isNative else {
       // Make sure we have space for an extra element.
       let cocoa = asCocoa
@@ -368,7 +370,7 @@ extension Dictionary._Variant {
 
   @inlinable
   internal mutating func setValue(_ value: __owned Value, forKey key: Key) {
-#if _runtime(_ObjC)
+#if OBJC
     if !isNative {
       // Make sure we have space for an extra element.
       let cocoa = asCocoa
@@ -393,7 +395,7 @@ extension Dictionary._Variant {
 
   @inlinable
   internal mutating func removeValue(forKey key: Key) -> Value? {
-#if _runtime(_ObjC)
+#if OBJC
     guard isNative else {
       let cocoaKey = _bridgeAnythingToObjectiveC(key)
       let cocoa = asCocoa
@@ -421,7 +423,7 @@ extension Dictionary._Variant {
     }
     guard count > 0 else { return }
 
-#if _runtime(_ObjC)
+#if OBJC
     guard isNative else {
       self = .init(native: _NativeDictionary(capacity: asCocoa.count))
       return
@@ -439,7 +441,7 @@ extension Dictionary._Variant {
   @inlinable
   @inline(__always)
   __consuming internal func makeIterator() -> Dictionary<Key, Value>.Iterator {
-#if _runtime(_ObjC)
+#if OBJC
     guard isNative else {
       return Dictionary.Iterator(_cocoa: asCocoa.makeIterator())
     }
@@ -453,7 +455,7 @@ extension Dictionary._Variant {
   internal func mapValues<T>(
     _ transform: (Value) throws -> T
   ) rethrows -> _NativeDictionary<Key, T> {
-#if _runtime(_ObjC)
+#if OBJC
     guard isNative else {
       return try asCocoa.mapValues(transform)
     }
@@ -466,7 +468,7 @@ extension Dictionary._Variant {
     _ keysAndValues: __owned S,
     uniquingKeysWith combine: (Value, Value) throws -> Value
   ) rethrows where S.Element == (Key, Value) {
-#if _runtime(_ObjC)
+#if OBJC
     guard isNative else {
       var native = _NativeDictionary<Key, Value>(asCocoa)
       try native.merge(
@@ -484,4 +486,3 @@ extension Dictionary._Variant {
       uniquingKeysWith: combine)
   }
 }
-

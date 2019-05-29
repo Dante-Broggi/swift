@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -34,10 +34,11 @@ public protocol _HasCustomAnyHashableRepresentation {
   ///         // Correct:
   ///         return AnyHashable(customRepresentation as Base)
   ///       }
-  __consuming func _toCustomAnyHashable() -> AnyHashable?
+  //__consuming
+  func _toCustomAnyHashable() -> AnyHashable?
 }
 
-@usableFromInline
+// @usableFromInline
 internal protocol _AnyHashableBox {
   var _canonicalBox: _AnyHashableBox { get }
 
@@ -123,7 +124,7 @@ internal struct _ConcreteHashableBox<Base : Hashable> : _AnyHashableBox {
 ///     print(descriptions[AnyHashable(43)])       // prints "nil"
 ///     print(descriptions[AnyHashable(Int8(43))]!) // prints "an Int8"
 ///     print(descriptions[AnyHashable(Set(["a", "b"]))]!) // prints "a set of strings"
-@_fixed_layout
+// @_fixed_layout
 public struct AnyHashable {
   internal var _box: _AnyHashableBox
 
@@ -174,7 +175,7 @@ public struct AnyHashable {
     // Attempt the downcast.
     if _box._downCastConditional(into: result) { return true }
 
-    #if _runtime(_ObjC)
+    #if OBJC
     // Bridge to Objective-C and then attempt the cast from there.
     // FIXME: This should also work without the Objective-C runtime.
     if let value = _bridgeAnythingToObjectiveC(_box._base) as? T {
@@ -257,12 +258,14 @@ internal func _makeAnyHashableUsingDefaultRepresentation<H : Hashable>(
   result.pointee = AnyHashable(_usingDefaultRepresentationOf: value)
 }
 
+/*
 /// Provided by AnyHashable.cpp.
 @_silgen_name("_swift_makeAnyHashableUpcastingToHashableBaseType")
 internal func _makeAnyHashableUpcastingToHashableBaseType<H : Hashable>(
   _ value: H,
   storingResultInto result: UnsafeMutablePointer<AnyHashable>
 )
+*/
 
 @inlinable
 public // COMPILER_INTRINSIC

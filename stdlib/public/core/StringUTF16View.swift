@@ -1,4 +1,4 @@
-//===--- StringUTF16.swift ------------------------------------------------===//
+﻿//===--- StringUTF16.swift ------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -301,7 +301,7 @@ extension String.UTF16View {
     }
   }
   @inlinable
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     return Iterator(_guts)
   }
 }
@@ -322,13 +322,15 @@ extension String {
   /// A UTF-16 encoding of `self`.
   @inlinable
   public var utf16: UTF16View {
-    @inline(__always) get { return UTF16View(_guts) }
-    @inline(__always) set { self = String(newValue._guts) }
+    // @inline(__always)
+    get { return UTF16View(_guts) }
+    // @inline(__always)
+    set { self = String(newValue._guts) }
   }
 
   /// Creates a string corresponding to the given sequence of UTF-16 code units.
   @inlinable @inline(__always)
-  @available(swift, introduced: 4.0)
+  // @available(swift, introduced: 4.0)
   public init(_ utf16: UTF16View) {
     self.init(utf16._guts)
   }
@@ -641,4 +643,3 @@ extension String {
     }
   }
 }
-

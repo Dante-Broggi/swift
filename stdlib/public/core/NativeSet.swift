@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -12,8 +12,8 @@
 
 /// A wrapper around __RawSetStorage that provides most of the
 /// implementation of Set.
-@usableFromInline
-@_fixed_layout
+// @usableFromInline
+// @_fixed_layout
 internal struct _NativeSet<Element: Hashable> {
   /// See the comments on __RawSetStorage and its subclasses to understand why we
   /// store an untyped storage here.
@@ -30,7 +30,7 @@ internal struct _NativeSet<Element: Hashable> {
   /// Constructs a native set adopting the given storage.
   @inlinable
   @inline(__always)
-  internal init(_ storage: __owned __RawSetStorage) {
+  internal init(_ storage: __RawSetStorage) {
     self._storage = storage
   }
 
@@ -43,14 +43,14 @@ internal struct _NativeSet<Element: Hashable> {
     }
   }
 
-#if _runtime(_ObjC)
+#if OBJC
   @inlinable
-  internal init(_ cocoa: __owned __CocoaSet) {
+  internal init(_ cocoa: __CocoaSet) {
     self.init(cocoa, capacity: cocoa.count)
   }
 
   @inlinable
-  internal init(_ cocoa: __owned __CocoaSet, capacity: Int) {
+  internal init(_ cocoa: __CocoaSet, capacity: Int) {
     if capacity == 0 {
       self._storage = __RawSetStorage.empty
     } else {
@@ -71,7 +71,7 @@ extension _NativeSet { // Primitive fields
 
   @inlinable
   internal var capacity: Int {
-    @inline(__always)
+    // @inline(__always)
     get {
       return _assumeNonNegative(_storage._capacity)
     }
@@ -79,14 +79,16 @@ extension _NativeSet { // Primitive fields
 
   @inlinable
   internal var hashTable: _HashTable {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return _storage._hashTable
     }
   }
 
   @inlinable
   internal var age: Int32 {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return _storage._age
     }
   }
@@ -117,7 +119,7 @@ extension _NativeSet { // Low-level unchecked operations
   @inline(__always)
   internal func uncheckedInitialize(
     at bucket: Bucket,
-    to element: __owned Element
+    to element: Element
   ) {
     _internalInvariant(hashTable.isValid(bucket))
     (_elements + bucket.offset).initialize(to: element)
@@ -127,7 +129,7 @@ extension _NativeSet { // Low-level unchecked operations
   @inline(__always)
   internal func uncheckedAssign(
     at bucket: Bucket,
-    to element: __owned Element
+    to element: Element
   ) {
     _internalInvariant(hashTable.isOccupied(bucket))
     (_elements + bucket.offset).pointee = element
@@ -260,7 +262,7 @@ extension _NativeSet {
   @inlinable
   @inline(__always)
   func validatedBucket(for index: Set<Element>.Index) -> Bucket {
-#if _runtime(_ObjC)
+#if OBJC
     guard index._isNative else {
       index._cocoaPath()
       let cocoa = index._asCocoa
@@ -319,7 +321,8 @@ extension _NativeSet: _SetBuffer {
 
   @inlinable
   internal var count: Int {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return _assumeNonNegative(_storage._count)
     }
   }
@@ -361,7 +364,7 @@ extension _NativeSet { // Insertions
   /// Storage must be uniquely referenced with adequate capacity.
   /// The `element` must not be already present in the Set.
   @inlinable
-  internal func _unsafeInsertNew(_ element: __owned Element) {
+  internal func _unsafeInsertNew(_ element: Element) {
     _internalInvariant(count + 1 <= capacity)
     let hashValue = self.hashValue(for: element)
     if _isDebugAssertConfiguration() {
@@ -386,13 +389,13 @@ extension _NativeSet { // Insertions
   /// Storage must be uniquely referenced.
   /// The `element` must not be already present in the Set.
   @inlinable
-  internal mutating func insertNew(_ element: __owned Element, isUnique: Bool) {
+  internal mutating func insertNew(_ element: Element, isUnique: Bool) {
     _ = ensureUnique(isUnique: isUnique, capacity: count + 1)
     _unsafeInsertNew(element)
   }
 
   @inlinable
-  internal func _unsafeInsertNew(_ element: __owned Element, at bucket: Bucket) {
+  internal func _unsafeInsertNew(_ element: Element, at bucket: Bucket) {
     hashTable.insert(bucket)
     uncheckedInitialize(at: bucket, to: element)
     _storage._count += 1
@@ -400,7 +403,7 @@ extension _NativeSet { // Insertions
 
   @inlinable
   internal mutating func insertNew(
-    _ element: __owned Element,
+    _ element: Element,
     at bucket: Bucket,
     isUnique: Bool
   ) {
@@ -419,7 +422,7 @@ extension _NativeSet { // Insertions
 
   @inlinable
   internal mutating func update(
-    with element: __owned Element,
+    with element: Element,
     isUnique: Bool
   ) -> Element? {
     var (bucket, found) = find(element)
@@ -446,7 +449,7 @@ extension _NativeSet { // Insertions
   /// (if any).  Storage must be uniquely referenced with adequate capacity.
   @_alwaysEmitIntoClient @inlinable // Introduced in 5.1
   internal mutating func _unsafeUpdate(
-    with element: __owned Element
+    with element: Element
   ) {
     let (bucket, found) = find(element)
     if found {
@@ -545,8 +548,8 @@ extension _NativeSet { // Deletion
 }
 
 extension _NativeSet: Sequence {
-  @usableFromInline
-  @_fixed_layout
+  // @usableFromInline
+  // @_fixed_layout
   internal struct Iterator {
     // The iterator is iterating over a frozen view of the collection state, so
     // it keeps its own reference to the set.
@@ -557,7 +560,7 @@ extension _NativeSet: Sequence {
 
     @inlinable
     @inline(__always)
-    init(_ base: __owned _NativeSet) {
+    init(_ base: _NativeSet) {
       self.base = base
       self.iterator = base.hashTable.makeIterator()
     }
@@ -565,7 +568,7 @@ extension _NativeSet: Sequence {
 
   @inlinable
   @inline(__always)
-  internal __consuming func makeIterator() -> Iterator {
+  internal func makeIterator() -> Iterator {
     return Iterator(self)
   }
 }

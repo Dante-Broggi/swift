@@ -1,4 +1,4 @@
-//===--- FloatingPoint.swift ----------------------------------*- swift -*-===//
+﻿//===--- FloatingPoint.swift ----------------------------------*- swift -*-===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -229,7 +229,7 @@ public protocol FloatingPoint : SignedNumeric, Strideable, Hashable
   ///   - magnitudeOf: A value from which to use the magnitude. The result of
   ///     the initializer has the same magnitude as `magnitudeOf`.
   init(signOf: Self, magnitudeOf: Self)
-  
+
   /// Creates a new value, rounded to the closest possible representation.
   ///
   /// If two representable values are equally close, the result is the value
@@ -1210,7 +1210,7 @@ public protocol FloatingPoint : SignedNumeric, Strideable, Hashable
 }
 
 /// The sign of a floating-point value.
-@_frozen // FIXME(sil-serialize-all)
+// @_frozen // FIXME(sil-serialize-all)
 public enum FloatingPointSign: Int {
   /// The sign for a positive value.
   case plus
@@ -1259,7 +1259,7 @@ public enum FloatingPointSign: Int {
 }
 
 /// The IEEE 754 floating-point classes.
-@_frozen // FIXME(sil-serialize-all)
+// @_frozen // FIXME(sil-serialize-all)
 public enum FloatingPointClassification {
   /// A signaling NaN ("not a number").
   ///
@@ -1743,7 +1743,7 @@ extension FloatingPoint {
   /// - If `x` is `-greatestFiniteMagnitude`, then `x.nextDown` is `-infinity`.
   @inlinable // FIXME(inline-always)
   public var nextDown: Self {
-    @inline(__always)
+    // @inline(__always)
     get {
       return -(-self).nextUp
     }
@@ -2268,7 +2268,7 @@ extension BinaryFloatingPoint {
 }
 
 extension BinaryFloatingPoint where Self.RawSignificand : FixedWidthInteger {
-  
+
   @inlinable
   public // @testable
   static func _convert<Source : BinaryInteger>(
@@ -2326,7 +2326,7 @@ extension BinaryFloatingPoint where Self.RawSignificand : FixedWidthInteger {
       significandBitPattern: significand
     ), fraction == 0)
   }
-  
+
   /// Creates a new value, rounded to the closest possible representation.
   ///
   /// If two representable values are equally close, the result is the value
@@ -2337,7 +2337,7 @@ extension BinaryFloatingPoint where Self.RawSignificand : FixedWidthInteger {
   public init<Source : BinaryInteger>(_ value: Source) {
     self = Self._convert(from: value).value
   }
-  
+
   /// Creates a new value, if the given integer can be represented exactly.
   ///
   /// If the given integer cannot be represented exactly, the result is `nil`.
@@ -2450,7 +2450,7 @@ extension BinaryFloatingPoint where Self.RawSignificand : FixedWidthInteger {
     var g = SystemRandomNumberGenerator()
     return Self.random(in: range, using: &g)
   }
-  
+
   /// Returns a random value within the specified range, using the given
   /// generator as a source for randomness.
   ///
@@ -2520,7 +2520,7 @@ extension BinaryFloatingPoint where Self.RawSignificand : FixedWidthInteger {
     let randFloat = delta * unitRandom + range.lowerBound
     return randFloat
   }
-  
+
   /// Returns a random value within the specified range.
   ///
   /// Use this method to generate a floating-point value within a specific

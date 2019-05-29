@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -39,7 +39,7 @@
 ///     let pointPointer = UnsafeMutableRawPointer.allocate(
 ///             bytes: count * MemoryLayout<Point>.stride,
 ///             alignedTo: MemoryLayout<Point>.alignment)
-@_frozen // namespace
+// @_frozen // namespace
 public enum MemoryLayout<T> {
   /// The contiguous memory footprint of `T`, in bytes.
   ///

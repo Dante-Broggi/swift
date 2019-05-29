@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -24,6 +24,7 @@ internal var _hashContainerDefaultMaxLoadFactorInverse: Double {
   return 1.0 / 0.75
 }
 
+/*
 #if _runtime(_ObjC)
 /// Call `[lhs isEqual: rhs]`.
 ///
@@ -32,7 +33,7 @@ internal var _hashContainerDefaultMaxLoadFactorInverse: Double {
 @_silgen_name("swift_stdlib_NSObject_isEqual")
 internal func _stdlib_NSObject_isEqual(_ lhs: AnyObject, _ rhs: AnyObject) -> Bool
 #endif
-
+*/
 
 /// A temporary view of an array of AnyObject as an array of Unmanaged<AnyObject>
 /// for fast iteration and transformation of the elements.
@@ -68,7 +69,7 @@ internal struct _UnmanagedAnyObjectArray {
   }
 }
 
-#if _runtime(_ObjC)
+#if OBJC //_runtime(_ObjC)
 /// An NSEnumerator implementation returning zero elements. This is useful when
 /// a concrete element type is not recoverable from the empty singleton.
 // NOTE: older runtimes called this class _SwiftEmptyNSEnumerator. The two
@@ -103,7 +104,7 @@ final internal class __SwiftEmptyNSEnumerator
 }
 #endif
 
-#if _runtime(_ObjC)
+#if OBJC //_runtime(_ObjC)
 /// This is a minimal class holding a single tail-allocated flat buffer,
 /// representing hash table storage for AnyObject elements. This is used to
 /// store bridged elements in deferred bridging scenarios.
@@ -143,7 +144,8 @@ internal final class __BridgingHashBuffer
   }
 
   internal subscript(bucket: _HashTable.Bucket) -> AnyObject {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       _internalInvariant(header.hashTable.isOccupied(bucket))
       defer { _fixLifetime(self) }
       return firstElementAddress[bucket.offset]

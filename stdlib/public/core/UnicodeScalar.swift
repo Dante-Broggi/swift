@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -487,7 +487,7 @@ extension Unicode.Scalar {
 
 extension Unicode.Scalar {
   /// Creates an instance of the NUL scalar value.
-  @available(*, unavailable, message: "use 'Unicode.Scalar(0)'")
+  //@available(*, unavailable, message: "use 'Unicode.Scalar(0)'")
   public init() {
     Builtin.unreachable()
   }
@@ -529,4 +529,3 @@ extension Unicode.Scalar {
     }
   }
 }
-

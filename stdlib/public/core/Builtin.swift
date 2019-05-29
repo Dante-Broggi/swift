@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -178,9 +178,11 @@ internal func _conditionallyUnreachable() -> Never {
   Builtin.conditionallyUnreachable()
 }
 
+/*
 @usableFromInline
 @_silgen_name("_swift_isClassOrObjCExistentialType")
 internal func _swift_isClassOrObjCExistentialType<T>(_ x: T.Type) -> Bool
+*/
 
 /// Returns `true` iff `T` is a class type or an `@objc` existential such as
 /// `AnyObject`.
@@ -303,6 +305,7 @@ func _uncheckedUnsafeAssume(_ condition: Bool) {
 
 //===--- Runtime shim wrappers --------------------------------------------===//
 
+/*
 /// Returns `true` iff the class indicated by `theClass` uses native
 /// Swift reference-counting.
 #if _runtime(_ObjC)
@@ -334,6 +337,7 @@ internal func getSwiftClassInstanceExtents(_ theClass: AnyClass)
 @_silgen_name("_swift_getObjCClassInstanceExtents")
 internal func getObjCClassInstanceExtents(_ theClass: AnyClass)
   -> (negative: UInt, positive: UInt)
+*/
 
 @inlinable
 @inline(__always)
@@ -357,37 +361,42 @@ internal func _isValidAddress(_ address: UInt) -> Bool {
 // calls
 @inlinable
 internal var _bridgeObjectTaggedPointerBits: UInt {
-  @inline(__always) get { return UInt(_swift_BridgeObject_TaggedPointerBits) }
+  // @inline(__always)
+  get { return UInt(_swift_BridgeObject_TaggedPointerBits) }
 }
 @inlinable
 internal var _objCTaggedPointerBits: UInt {
-  @inline(__always) get { return UInt(_swift_abi_ObjCReservedBitsMask) }
+  // @inline(__always)
+  get { return UInt(_swift_abi_ObjCReservedBitsMask) }
 }
 @inlinable
 internal var _objectPointerSpareBits: UInt {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return UInt(_swift_abi_SwiftSpareBitsMask) & ~_bridgeObjectTaggedPointerBits
     }
 }
 @inlinable
 internal var _objectPointerLowSpareBitShift: UInt {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       _internalInvariant(_swift_abi_ObjCReservedLowBits < 2,
         "num bits now differs from num-shift-amount, new platform?")
       return UInt(_swift_abi_ObjCReservedLowBits)
     }
 }
 
-#if arch(i386) || arch(arm) || arch(powerpc64) || arch(powerpc64le) || arch(
-  s390x)
+#if arch(i386) || arch(arm) || arch(powerpc64) || arch(powerpc64le) || arch(s390x)
 @inlinable
 internal var _objectPointerIsObjCBit: UInt {
-    @inline(__always) get { return 0x0000_0002 }
+    // @inline(__always)
+    get { return 0x0000_0002 }
 }
 #else
 @inlinable
 internal var _objectPointerIsObjCBit: UInt {
-  @inline(__always) get { return 0x4000_0000_0000_0000 }
+  // @inline(__always)
+  get { return 0x4000_0000_0000_0000 }
 }
 #endif
 
@@ -624,8 +633,10 @@ internal func _makeBridgeObject(
   )
 }
 
+/*
 @_silgen_name("_swift_class_getSuperclass")
 internal func _swift_class_getSuperclass(_ t: AnyClass) -> AnyClass?
+*/
 
 /// Returns the superclass of `t`, if any.  The result is `nil` if `t` is
 /// a root class or class protocol.
@@ -964,4 +975,3 @@ public func _openExistential<ExistentialType, ContainedType, ResultType>(
      as StaticString).utf8Start._rawValue)
   Builtin.unreachable()
 }
-

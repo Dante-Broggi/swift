@@ -1,4 +1,4 @@
-//===--- RuntimeFunctionCounters.swift ------------------------------------===//
+﻿//===--- RuntimeFunctionCounters.swift ------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -112,11 +112,13 @@ struct _RuntimeFunctionCounters {
   public static let runtimeFunctionNameToIndex: [String : Int] =
     getRuntimeFunctionNameToIndex()
 
+/*
   /// Get the names of all runtime functions whose calls are being
   /// tracked.
   @_silgen_name("_swift_getRuntimeFunctionNames")
   public static func _getRuntimeFunctionNames() ->
     UnsafePointer<UnsafePointer<CChar>>
+*/
 
   public static func getRuntimeFunctionNames() -> [String] {
     let names = _RuntimeFunctionCounters._getRuntimeFunctionNames()
@@ -131,6 +133,7 @@ struct _RuntimeFunctionCounters {
     return functionNames
   }
 
+/*
   /// Get the offsets of the collected runtime function counters inside
   /// the state.
   @_silgen_name("_swift_getRuntimeFunctionCountersOffsets")
@@ -151,6 +154,7 @@ struct _RuntimeFunctionCounters {
   public static func setGlobalRuntimeFunctionCountersUpdateHandler(
     handler: RuntimeFunctionCountersUpdateHandler?
   ) -> RuntimeFunctionCountersUpdateHandler?
+*/
 
   /// Collect all references inside the object using Mirrors.
   public static func collectAllReferencesInsideObject(_ value: Any) ->
@@ -285,7 +289,7 @@ internal struct _RuntimeFunctionCountersState: _RuntimeFunctionCountersStats {
   }
 
   subscript(_ index: Int) -> UInt32 {
-    @inline(never)
+    // @inline(never)
     get {
       if (index >= _RuntimeFunctionCounters.numRuntimeFunctionCounters) {
         fatalError("Counter index should be in the range " +
@@ -300,7 +304,7 @@ internal struct _RuntimeFunctionCountersState: _RuntimeFunctionCountersStats {
       return counter
     }
 
-    @inline(never)
+    // @inline(never)
     set {
       if (index >= _RuntimeFunctionCounters.numRuntimeFunctionCounters) {
         fatalError("Counter index should be in the range " +
@@ -316,6 +320,7 @@ internal struct _RuntimeFunctionCountersState: _RuntimeFunctionCountersStats {
 }
 
 extension _RuntimeFunctionCounters {
+/*
   @_silgen_name("_swift_getObjectRuntimeFunctionCounters")
   internal static func getObjectRuntimeFunctionCounters(
     _ object: UnsafeRawPointer, _ result: inout _RuntimeFunctionCountersState)
@@ -344,6 +349,7 @@ extension _RuntimeFunctionCounters {
   static
   public // @testable
   func setPerObjectRuntimeFunctionCountersMode(enable: Bool) -> Bool
+*/
 
   /// Enable runtime function counters updates by the runtime.
   static

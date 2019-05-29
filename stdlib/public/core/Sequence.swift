@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -331,13 +331,13 @@ public protocol Sequence {
   associatedtype Iterator : IteratorProtocol where Iterator.Element == Element
 
   /// A type that represents a subsequence of some of the sequence's elements.
-  // associatedtype SubSequence : Sequence = AnySequence<Element>
-  //   where Element == SubSequence.Element,
-  //         SubSequence.SubSequence == SubSequence
-  // typealias SubSequence = AnySequence<Element>
+   associatedtype SubSequence : Sequence = AnySequence<Element>
+     where Element == SubSequence.Element,
+           SubSequence.SubSequence == SubSequence
+   typealias SubSequence = AnySequence<Element>
 
   /// Returns an iterator over the elements of this sequence.
-  __consuming func makeIterator() -> Iterator
+  func makeIterator() -> Iterator
 
   /// A value less than or equal to the number of elements in the sequence,
   /// calculated nondestructively.
@@ -355,17 +355,17 @@ public protocol Sequence {
 
   /// Create a native array buffer containing the elements of `self`,
   /// in the same order.
-  __consuming func _copyToContiguousArray() -> ContiguousArray<Element>
+  func _copyToContiguousArray() -> ContiguousArray<Element>
 
   /// Copy `self` into an unsafe buffer, returning a partially-consumed
   /// iterator with any elements that didn't fit remaining.
-  __consuming func _copyContents(
+  func _copyContents(
     initializing ptr: UnsafeMutableBufferPointer<Element>
   ) -> (Iterator,UnsafeMutableBufferPointer<Element>.Index)
-  
+
   func withContiguousStorageIfAvailable<R>(
     _ body: (UnsafeBufferPointer<Element>) throws -> R
-  ) rethrows -> R?  
+  ) rethrows -> R?
 }
 
 // Provides a default associated type witness for Iterator when the
@@ -380,7 +380,7 @@ extension Sequence where Self: IteratorProtocol {
 extension Sequence where Self.Iterator == Self {
   /// Returns an iterator over the elements of this sequence.
   @inlinable
-  public __consuming func makeIterator() -> Self {
+  public func makeIterator() -> Self {
     return self
   }
 }
@@ -395,10 +395,10 @@ public struct DropFirstSequence<Base: Sequence> {
   internal let _base: Base
   @usableFromInline
   internal let _limit: Int
-  
-  @inlinable 
+
+  @inlinable
   public init(_ base: Base, dropping limit: Int) {
-    _precondition(limit >= 0, 
+    _precondition(limit >= 0,
       "Can't drop a negative number of elements from a sequence")
     _base = base
     _limit = limit
@@ -409,9 +409,9 @@ extension DropFirstSequence: Sequence {
   public typealias Element = Base.Element
   public typealias Iterator = Base.Iterator
   public typealias SubSequence = AnySequence<Element>
-  
+
   @inlinable
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     var it = _base.makeIterator()
     var dropped = 0
     while dropped < _limit, it.next() != nil { dropped &+= 1 }
@@ -419,7 +419,7 @@ extension DropFirstSequence: Sequence {
   }
 
   @inlinable
-  public __consuming func dropFirst(_ k: Int) -> DropFirstSequence<Base> {
+  public func dropFirst(_ k: Int) -> DropFirstSequence<Base> {
     // If this is already a _DropFirstSequence, we need to fold in
     // the current drop count and drop limit so no data is lost.
     //
@@ -455,18 +455,18 @@ extension PrefixSequence {
     internal var _base: Base.Iterator
     @usableFromInline
     internal var _remaining: Int
-    
+
     @inlinable
     internal init(_ base: Base.Iterator, maxLength: Int) {
       _base = base
       _remaining = maxLength
     }
-  }  
+  }
 }
 
 extension PrefixSequence.Iterator: IteratorProtocol {
   public typealias Element = Base.Element
-  
+
   @inlinable
   public mutating func next() -> Element? {
     if _remaining != 0 {
@@ -475,17 +475,17 @@ extension PrefixSequence.Iterator: IteratorProtocol {
     } else {
       return nil
     }
-  }  
+  }
 }
 
 extension PrefixSequence: Sequence {
   @inlinable
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     return Iterator(_base.makeIterator(), maxLength: _maxLength)
   }
 
   @inlinable
-  public __consuming func prefix(_ maxLength: Int) -> PrefixSequence<Base> {
+  public func prefix(_ maxLength: Int) -> PrefixSequence<Base> {
     let length = Swift.min(maxLength, self._maxLength)
     return PrefixSequence(_base, maxLength: length)
   }
@@ -499,22 +499,22 @@ extension PrefixSequence: Sequence {
 @_fixed_layout
 public struct DropWhileSequence<Base: Sequence> {
   public typealias Element = Base.Element
-  
+
   @usableFromInline
   internal var _iterator: Base.Iterator
   @usableFromInline
   internal var _nextElement: Element?
-  
+
   @inlinable
   internal init(iterator: Base.Iterator, predicate: (Element) throws -> Bool) rethrows {
     _iterator = iterator
     _nextElement = _iterator.next()
-    
+
     while let x = _nextElement, try predicate(x) {
       _nextElement = _iterator.next()
     }
   }
-  
+
   @inlinable
   internal init(_ base: Base, predicate: (Element) throws -> Bool) rethrows {
     self = try DropWhileSequence(iterator: base.makeIterator(), predicate: predicate)
@@ -528,7 +528,7 @@ extension DropWhileSequence {
     internal var _iterator: Base.Iterator
     @usableFromInline
     internal var _nextElement: Element?
-    
+
     @inlinable
     internal init(_ iterator: Base.Iterator, nextElement: Element?) {
       _iterator = iterator
@@ -539,7 +539,7 @@ extension DropWhileSequence {
 
 extension DropWhileSequence.Iterator: IteratorProtocol {
   public typealias Element = Base.Element
-  
+
   @inlinable
   public mutating func next() -> Element? {
     guard let next = _nextElement else { return nil }
@@ -553,9 +553,9 @@ extension DropWhileSequence: Sequence {
   public func makeIterator() -> Iterator {
     return Iterator(_iterator, nextElement: _nextElement)
   }
-  
+
   @inlinable
-  public __consuming func drop(
+  public func drop(
     while predicate: (Element) throws -> Bool
   ) rethrows -> DropWhileSequence<Base> {
     guard let x = _nextElement, try predicate(x) else { return self }
@@ -626,7 +626,7 @@ extension Sequence {
   ///
   /// - Complexity: O(*n*), where *n* is the length of the sequence.
   @inlinable
-  public __consuming func filter(
+  public func filter(
     _ isIncluded: (Element) throws -> Bool
   ) rethrows -> [Element] {
     return try _filter(isIncluded)
@@ -792,7 +792,7 @@ extension Sequence where Element : Equatable {
   ///
   /// - Complexity: O(*n*), where *n* is the length of the sequence.
   @inlinable
-  public __consuming func split(
+  public func split(
     separator: Element,
     maxSplits: Int = Int.max,
     omittingEmptySubsequences: Bool = true
@@ -856,7 +856,7 @@ extension Sequence {
   ///
   /// - Complexity: O(*n*), where *n* is the length of the sequence.
   @inlinable
-  public __consuming func split(
+  public func split(
     maxSplits: Int = Int.max,
     omittingEmptySubsequences: Bool = true,
     whereSeparator isSeparator: (Element) throws -> Bool
@@ -864,8 +864,8 @@ extension Sequence {
     _precondition(maxSplits >= 0, "Must take zero or more splits")
     let whole = Array(self)
     return try whole.split(
-                  maxSplits: maxSplits, 
-                  omittingEmptySubsequences: omittingEmptySubsequences, 
+                  maxSplits: maxSplits,
+                  omittingEmptySubsequences: omittingEmptySubsequences,
                   whereSeparator: isSeparator)
   }
 
@@ -887,7 +887,7 @@ extension Sequence {
   ///
   /// - Complexity: O(*n*), where *n* is the length of the sequence.
   @inlinable
-  public __consuming func suffix(_ maxLength: Int) -> [Element] {
+  public func suffix(_ maxLength: Int) -> [Element] {
     _precondition(maxLength >= 0, "Can't take a suffix of negative length from a sequence")
     guard maxLength != 0 else { return [] }
 
@@ -941,7 +941,7 @@ extension Sequence {
   ///   where *k* is the number of elements to drop from the beginning of
   ///   the sequence.
   @inlinable
-  public __consuming func dropFirst(_ k: Int = 1) -> DropFirstSequence<Self> {
+  public func dropFirst(_ k: Int = 1) -> DropFirstSequence<Self> {
     return DropFirstSequence(self, dropping: k)
   }
 
@@ -964,7 +964,7 @@ extension Sequence {
   ///
   /// - Complexity: O(*n*), where *n* is the length of the sequence.
   @inlinable
-  public __consuming func dropLast(_ k: Int = 1) -> [Element] {
+  public func dropLast(_ k: Int = 1) -> [Element] {
     _precondition(k >= 0, "Can't drop a negative number of elements from a sequence")
     guard k != 0 else { return Array(self) }
 
@@ -1014,7 +1014,7 @@ extension Sequence {
   /// - Complexity: O(*k*), where *k* is the number of elements to drop from
   ///   the beginning of the sequence.
   @inlinable
-  public __consuming func drop(
+  public func drop(
     while predicate: (Element) throws -> Bool
   ) rethrows -> DropWhileSequence<Self> {
     return try DropWhileSequence(self, predicate: predicate)
@@ -1039,7 +1039,7 @@ extension Sequence {
   ///
   /// - Complexity: O(1)
   @inlinable
-  public __consuming func prefix(_ maxLength: Int) -> PrefixSequence<Self> {
+  public func prefix(_ maxLength: Int) -> PrefixSequence<Self> {
     return PrefixSequence(self, maxLength: maxLength)
   }
 
@@ -1066,7 +1066,7 @@ extension Sequence {
   ///
   /// - Complexity: O(*k*), where *k* is the length of the result.
   @inlinable
-  public __consuming func prefix(
+  public func prefix(
     while predicate: (Element) throws -> Bool
   ) rethrows -> [Element] {
     var result = ContiguousArray<Element>()
@@ -1090,7 +1090,7 @@ extension Sequence {
   /// - Postcondition: The `Pointee`s at `buffer[startIndex..<returned index]` are
   ///   initialized.
   @inlinable
-  public __consuming func _copyContents(
+  public func _copyContents(
     initializing buffer: UnsafeMutableBufferPointer<Element>
   ) -> (Iterator,UnsafeMutableBufferPointer<Element>.Index) {
     var it = self.makeIterator()
@@ -1104,13 +1104,13 @@ extension Sequence {
     }
     return (it,buffer.endIndex)
   }
-    
+
   @inlinable
   public func withContiguousStorageIfAvailable<R>(
     _ body: (UnsafeBufferPointer<Element>) throws -> R
   ) rethrows -> R? {
     return nil
-  }  
+  }
 }
 
 // FIXME(ABI)#182

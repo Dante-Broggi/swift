@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -14,7 +14,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-import SwiftShims
+// import SwiftShims
 
 @inline(__always)
 internal func _loadPartialUnalignedUInt64LE(
@@ -91,12 +91,12 @@ extension Hasher {
     }
 
     internal var tail: UInt64 {
-      @inline(__always)
+      // @inline(__always)
       get { return value & ~(0xFF &<< 56) }
     }
 
     internal var byteCount: UInt64 {
-      @inline(__always)
+      // @inline(__always)
       get { return value &>> 56 }
     }
 
@@ -272,7 +272,7 @@ extension Hasher {
 ///   different values on every new execution of your program. The hash
 ///   algorithm implemented by `Hasher` may itself change between any two
 ///   versions of the standard library.
-@_fixed_layout // FIXME: Should be resilient (rdar://problem/38549901)
+// @_fixed_layout // FIXME: Should be resilient (rdar://problem/38549901)
 public struct Hasher {
   internal var _core: _Core
 
@@ -308,7 +308,7 @@ public struct Hasher {
   /// of test results.
   @inlinable
   internal static var _isDeterministic: Bool {
-    @inline(__always)
+    // @inline(__always)
     get {
       return _swift_stdlib_Hashing_parameters.deterministic
     }
@@ -318,7 +318,7 @@ public struct Hasher {
   /// once during process startup.
   @inlinable // @testable
   internal static var _executionSeed: (UInt64, UInt64) {
-    @inline(__always)
+    // @inline(__always)
     get {
       // The seed itself is defined in C++ code so that it is initialized during
       // static construction.  Almost every Swift program uses hash tables, so
@@ -405,7 +405,7 @@ public struct Hasher {
   ///
   /// - Returns: The hash value calculated by the hasher.
   @_effects(releasenone)
-  public __consuming func finalize() -> Int {
+  public func finalize() -> Int {
     var core = _core
     return Int(truncatingIfNeeded: core.finalize())
   }

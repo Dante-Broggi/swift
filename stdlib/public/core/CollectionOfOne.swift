@@ -1,4 +1,4 @@
-//===--- CollectionOfOne.swift - A Collection with one element ------------===//
+﻿//===--- CollectionOfOne.swift - A Collection with one element ------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -21,7 +21,7 @@
 ///     let toAdd = 100
 ///     let b = a + CollectionOfOne(toAdd)
 ///     // b == [1, 2, 3, 4, 100]
-@_fixed_layout // trivial-implementation
+// @_fixed_layout // trivial-implementation
 public struct CollectionOfOne<Element> {
   @usableFromInline // trivial-implementation
   internal var _element: Element
@@ -39,7 +39,7 @@ extension CollectionOfOne {
   /// An iterator that produces one or zero instances of an element.
   ///
   /// `IteratorOverOne` is the iterator for the `CollectionOfOne` type.
-  @_fixed_layout // trivial-implementation
+  // @_fixed_layout // trivial-implementation
   public struct Iterator {
     @usableFromInline // trivial-implementation
     internal var _elements: Element?
@@ -92,7 +92,7 @@ extension CollectionOfOne: RandomAccessCollection, MutableCollection {
   public var endIndex: Index {
     return 1
   }
-  
+
   /// Returns the position immediately after the given index.
   ///
   /// - Parameter i: A valid index of the collection. `i` must be `0`.
@@ -117,7 +117,7 @@ extension CollectionOfOne: RandomAccessCollection, MutableCollection {
   ///
   /// - Complexity: O(1)
   @inlinable // trivial-implementation
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     return Iterator(_elements: _element)
   }
 

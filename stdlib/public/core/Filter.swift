@@ -1,4 +1,4 @@
-//===--- Filter.swift -----------------------------------------*- swift -*-===//
+﻿//===--- Filter.swift -----------------------------------------*- swift -*-===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -16,7 +16,7 @@
 ///
 /// - Note: `s.lazy.filter { ... }`, for an arbitrary sequence `s`,
 ///   is a `LazyFilterSequence`.
-@_fixed_layout // lazy-performance
+// @_fixed_layout // lazy-performance
 public struct LazyFilterSequence<Base: Sequence> {
   @usableFromInline // lazy-performance
   internal var _base: Base
@@ -42,7 +42,7 @@ extension LazyFilterSequence {
   ///
   /// - Note: This is the associated `Iterator` of `LazyFilterSequence`
   /// and `LazyFilterCollection`.
-  @_fixed_layout // lazy-performance
+  // @_fixed_layout // lazy-performance
   public struct Iterator {
     /// The underlying iterator whose elements are being filtered.
     public var base: Base.Iterator { return _base }
@@ -64,7 +64,7 @@ extension LazyFilterSequence {
 
 extension LazyFilterSequence.Iterator: IteratorProtocol, Sequence {
   public typealias Element = Base.Element
-  
+
   /// Advances to the next element and returns it, or `nil` if no next element
   /// exists.
   ///
@@ -89,7 +89,7 @@ extension LazyFilterSequence: Sequence {
   ///
   /// - Complexity: O(1).
   @inlinable // lazy-performance
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     return Iterator(_base: _base.makeIterator(), _predicate)
   }
 
@@ -286,7 +286,7 @@ extension LazyFilterCollection: Collection {
   public subscript(bounds: Range<Index>) -> SubSequence {
     return SubSequence(_base: _base[bounds], _predicate)
   }
-  
+
   @inlinable
   public func _customLastIndexOfEquatableElement(_ element: Element) -> Index?? {
     guard _predicate(element) else { return .some(nil) }
@@ -326,7 +326,7 @@ extension LazySequenceProtocol {
   ///   traversal step invokes `predicate` on one or more underlying
   ///   elements.
   @inlinable // lazy-performance
-  public __consuming func filter(
+  public func filter(
     _ isIncluded: @escaping (Elements.Element) -> Bool
   ) -> LazyFilterSequence<Self.Elements> {
     return LazyFilterSequence(_base: self.elements, isIncluded)
@@ -334,8 +334,8 @@ extension LazySequenceProtocol {
 }
 
 extension LazyFilterSequence {
-  @available(swift, introduced: 5)
-  public __consuming func filter(
+  // @available(swift, introduced: 5)
+  public func filter(
     _ isIncluded: @escaping (Element) -> Bool
   ) -> LazyFilterSequence<Base> {
     return LazyFilterSequence(_base: _base) {

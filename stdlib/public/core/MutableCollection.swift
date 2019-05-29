@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -45,7 +45,7 @@
 /// To add conformance to the `MutableCollection` protocol to your own
 /// custom collection, upgrade your type's subscript to support both read
 /// and write access.
-/// 
+///
 /// A value stored into a subscript of a `MutableCollection` instance must
 /// subsequently be accessible at that same position. That is, for a mutable
 /// collection instance `a`, index `i`, and value `x`, the two sets of
@@ -53,7 +53,7 @@
 ///
 ///     a[i] = x
 ///     let y = a[i]
-///     
+///
 ///     // Must be equivalent to:
 ///     a[i] = x
 ///     let y = x
@@ -61,9 +61,9 @@ public protocol MutableCollection: Collection
 where SubSequence: MutableCollection
 {
   // FIXME: Associated type inference requires these.
-  override associatedtype Element
-  override associatedtype Index
-  override associatedtype SubSequence
+  associatedtype Element
+  associatedtype Index
+  associatedtype SubSequence
 
   /// Accesses the element at the specified position.
   ///
@@ -86,7 +86,7 @@ where SubSequence: MutableCollection
   ///
   /// - Complexity: O(1)
   @_borrowed
-  override subscript(position: Index) -> Element { get set }
+  subscript(position: Index) -> Element { get set }
 
   /// Accesses a contiguous subrange of the collection's elements.
   ///
@@ -112,7 +112,7 @@ where SubSequence: MutableCollection
   ///   the range must be valid indices of the collection.
   ///
   /// - Complexity: O(1)
-  override subscript(bounds: Range<Index>) -> SubSequence { get set }
+  subscript(bounds: Range<Index>) -> SubSequence { get set }
 
   /// Reorders the elements of the collection such that all the elements
   /// that match the given predicate are after all the elements that don't
@@ -166,7 +166,7 @@ where SubSequence: MutableCollection
   ///
   /// - Complexity: O(1)
   mutating func swapAt(_ i: Index, _ j: Index)
-  
+
   /// Call `body(p)`, where `p` is a pointer to the collection's
   /// mutable contiguous storage.  If no such storage exists, it is
   /// first created.  If the collection does not support an internal
@@ -295,4 +295,3 @@ public func swap<T>(_ a: inout T, _ b: inout T) {
   // Initialize P2.
   Builtin.initialize(tmp, p2)
 }
-

@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -46,7 +46,7 @@
 ///             default: fatalError("Index out of bounds.")
 ///             }
 ///         }
-///         
+///
 ///         func index(after i: Int) -> Int {
 ///             precondition(i < endIndex, "Can't advance beyond endIndex")
 ///             return i + 1
@@ -65,7 +65,7 @@
 ///     }
 ///     // Prints "15.0"
 ///     // Prints "20.0"
-@_fixed_layout
+// @_fixed_layout
 public struct IndexingIterator<Elements : Collection> {
   @usableFromInline
   internal let _elements: Elements
@@ -335,11 +335,12 @@ extension IndexingIterator: IteratorProtocol, Sequence {
 public protocol Collection: Sequence {
   // FIXME: ideally this would be in MigrationSupport.swift, but it needs
   // to be on the protocol instead of as an extension
-  @available(*, deprecated/*, obsoleted: 5.0*/, message: "all index distances are now of type Int")
-  typealias IndexDistance = Int  
+  // @available(*, deprecated/*, obsoleted: 5.0*/, message: "all index distances are now of type Int")
+  // typealias IndexDistance = Int
 
   // FIXME: Associated type inference requires this.
-  override associatedtype Element
+  // override
+  //associatedtype Element
 
   /// A type that represents a position in the collection.
   ///
@@ -352,7 +353,7 @@ public protocol Collection: Sequence {
   ///
   /// If the collection is empty, `startIndex` is equal to `endIndex`.
   var startIndex: Index { get }
- 
+
   /// The collection's "past the end" position---that is, the position one
   /// greater than the last valid subscript argument.
   ///
@@ -382,7 +383,8 @@ public protocol Collection: Sequence {
   // we get an `IndexingIterator` rather than properly deducing the
   // Iterator type from makeIterator(). <rdar://problem/21539115>
   /// Returns an iterator over the elements of the collection.
-  override __consuming func makeIterator() -> Iterator
+  // override
+  func makeIterator() -> Iterator
 
   /// A sequence that represents a contiguous subrange of the collection's
   /// elements.
@@ -458,10 +460,10 @@ public protocol Collection: Sequence {
   /// A type that represents the indices that are valid for subscripting the
   /// collection, in ascending order.
   associatedtype Indices : Collection = DefaultIndices<Self>
-    where Indices.Element == Index, 
+    where Indices.Element == Index,
           Indices.Index == Index,
           Indices.SubSequence == Indices
-        
+
   /// The indices that are valid for subscripting the collection, in ascending
   /// order.
   ///
@@ -511,7 +513,7 @@ public protocol Collection: Sequence {
   ///   `RandomAccessCollection`; otherwise, O(*n*), where *n* is the length
   ///   of the collection.
   var count: Int { get }
-  
+
   // The following requirements enable dispatching for firstIndex(of:) and
   // lastIndex(of:) when the element type is Equatable.
 
@@ -1003,7 +1005,7 @@ extension Collection where Iterator == IndexingIterator<Self> {
   /// Returns an iterator over the elements of the collection.
   @inlinable // trivial-implementation
   @inline(__always)
-  public __consuming func makeIterator() -> IndexingIterator<Self> {
+  public func makeIterator() -> IndexingIterator<Self> {
     return IndexingIterator(_elements: self)
   }
 }
@@ -1227,7 +1229,7 @@ extension Collection {
   ///   `RandomAccessCollection`; otherwise, O(*k*), where *k* is the number of
   ///   elements to drop from the beginning of the collection.
   @inlinable
-  public __consuming func dropFirst(_ k: Int = 1) -> SubSequence {
+  public func dropFirst(_ k: Int = 1) -> SubSequence {
     _precondition(k >= 0, "Can't drop a negative number of elements from a collection")
     let start = index(startIndex, offsetBy: k, limitedBy: endIndex) ?? endIndex
     return self[start..<endIndex]
@@ -1254,7 +1256,7 @@ extension Collection {
   ///   `RandomAccessCollection`; otherwise, O(*n*), where *n* is the length of
   ///   the collection.
   @inlinable
-  public __consuming func dropLast(_ k: Int = 1) -> SubSequence {
+  public func dropLast(_ k: Int = 1) -> SubSequence {
     _precondition(
       k >= 0, "Can't drop a negative number of elements from a collection")
     let amount = Swift.max(0, count - k)
@@ -1262,7 +1264,7 @@ extension Collection {
       offsetBy: amount, limitedBy: endIndex) ?? endIndex
     return self[startIndex..<end]
   }
-    
+
   /// Returns a subsequence by skipping elements while `predicate` returns
   /// `true` and returning the remaining elements.
   ///
@@ -1273,13 +1275,13 @@ extension Collection {
   ///
   /// - Complexity: O(*n*), where *n* is the length of the collection.
   @inlinable
-  public __consuming func drop(
+  public func drop(
     while predicate: (Element) throws -> Bool
   ) rethrows -> SubSequence {
     var start = startIndex
     while try start != endIndex && predicate(self[start]) {
       formIndex(after: &start)
-    } 
+    }
     return self[start..<endIndex]
   }
 
@@ -1304,7 +1306,7 @@ extension Collection {
   ///   `RandomAccessCollection`; otherwise, O(*k*), where *k* is the number of
   ///   elements to select from the beginning of the collection.
   @inlinable
-  public __consuming func prefix(_ maxLength: Int) -> SubSequence {
+  public func prefix(_ maxLength: Int) -> SubSequence {
     _precondition(
       maxLength >= 0,
       "Can't take a prefix of negative length from a collection")
@@ -1312,7 +1314,7 @@ extension Collection {
       offsetBy: maxLength, limitedBy: endIndex) ?? endIndex
     return self[startIndex..<end]
   }
-  
+
   /// Returns a subsequence containing the initial elements until `predicate`
   /// returns `false` and skipping the remaining elements.
   ///
@@ -1323,7 +1325,7 @@ extension Collection {
   ///
   /// - Complexity: O(*n*), where *n* is the length of the collection.
   @inlinable
-  public __consuming func prefix(
+  public func prefix(
     while predicate: (Element) throws -> Bool
   ) rethrows -> SubSequence {
     var end = startIndex
@@ -1354,7 +1356,7 @@ extension Collection {
   ///   `RandomAccessCollection`; otherwise, O(*n*), where *n* is the length of
   ///   the collection.
   @inlinable
-  public __consuming func suffix(_ maxLength: Int) -> SubSequence {
+  public func suffix(_ maxLength: Int) -> SubSequence {
     _precondition(
       maxLength >= 0,
       "Can't take a suffix of negative length from a collection")
@@ -1399,7 +1401,7 @@ extension Collection {
   ///
   /// - Complexity: O(1)
   @inlinable
-  public __consuming func prefix(upTo end: Index) -> SubSequence {
+  public func prefix(upTo end: Index) -> SubSequence {
     return self[startIndex..<end]
   }
 
@@ -1437,14 +1439,14 @@ extension Collection {
   ///
   /// - Complexity: O(1)
   @inlinable
-  public __consuming func suffix(from start: Index) -> SubSequence {
+  public func suffix(from start: Index) -> SubSequence {
     return self[start..<endIndex]
   }
 
   /// Returns a subsequence from the start of the collection through the
   /// specified position.
   ///
-  /// The resulting subsequence *includes* the element at the position `end`. 
+  /// The resulting subsequence *includes* the element at the position `end`.
   /// The following example searches for the index of the number `40` in an
   /// array of integers, and then prints the prefix of the array up to, and
   /// including, that index:
@@ -1471,7 +1473,7 @@ extension Collection {
   ///
   /// - Complexity: O(1)
   @inlinable
-  public __consuming func prefix(through position: Index) -> SubSequence {
+  public func prefix(through position: Index) -> SubSequence {
     return prefix(upTo: index(after: position))
   }
 
@@ -1524,7 +1526,7 @@ extension Collection {
   ///
   /// - Complexity: O(*n*), where *n* is the length of the collection.
   @inlinable
-  public __consuming func split(
+  public func split(
     maxSplits: Int = Int.max,
     omittingEmptySubsequences: Bool = true,
     whereSeparator isSeparator: (Element) throws -> Bool
@@ -1619,7 +1621,7 @@ extension Collection where Element : Equatable {
   ///
   /// - Complexity: O(*n*), where *n* is the length of the collection.
   @inlinable
-  public __consuming func split(
+  public func split(
     separator: Element,
     maxSplits: Int = Int.max,
     omittingEmptySubsequences: Bool = true

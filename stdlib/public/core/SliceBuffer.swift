@@ -1,4 +1,4 @@
-//===--- SliceBuffer.swift - Backing storage for ArraySlice<Element> ------===//
+﻿//===--- SliceBuffer.swift - Backing storage for ArraySlice<Element> ------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -103,7 +103,7 @@ internal struct _SliceBuffer<Element>
   internal var nativeBuffer: NativeBuffer {
     _internalInvariant(_hasNativeBuffer)
     return NativeBuffer(
-      owner as? __ContiguousArrayStorageBase ?? _emptyArrayStorage)
+      (owner as? __ContiguousArrayStorageBase) ?? _emptyArrayStorage)
   }
 
   @inlinable
@@ -122,7 +122,7 @@ internal struct _SliceBuffer<Element>
   internal mutating func replaceSubrange<C>(
     _ subrange: Range<Int>,
     with insertCount: Int,
-    elementsOf newValues: __owned C
+    elementsOf newValues: C
   ) where C : Collection, C.Element == Element {
 
     _invariantCheck()
@@ -241,7 +241,7 @@ internal struct _SliceBuffer<Element>
 
   @inlinable
   @discardableResult
-  internal __consuming func _copyContents(
+  internal func _copyContents(
     subRange bounds: Range<Int>,
     initializing target: UnsafeMutablePointer<Element>
   ) -> UnsafeMutablePointer<Element> {
@@ -254,7 +254,7 @@ internal struct _SliceBuffer<Element>
     return target + c
   }
 
-  public __consuming func _copyContents(
+  public func _copyContents(
     initializing buffer: UnsafeMutableBufferPointer<Element>
   ) -> (Iterator,UnsafeMutableBufferPointer<Element>.Index) {
     // This customization point is not implemented for internal types.
@@ -408,7 +408,7 @@ internal struct _SliceBuffer<Element>
 
 extension _SliceBuffer {
   @inlinable
-  internal __consuming func _copyToContiguousArray() -> ContiguousArray<Element> {
+  internal func _copyToContiguousArray() -> ContiguousArray<Element> {
     if _hasNativeBuffer {
       let n = nativeBuffer
       if count == n.count {

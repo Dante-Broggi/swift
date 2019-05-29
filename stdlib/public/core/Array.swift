@@ -1,4 +1,4 @@
-//===--- Array.swift ------------------------------------------*- swift -*-===//
+﻿//===--- Array.swift ------------------------------------------*- swift -*-===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -296,9 +296,9 @@
 /// - Note: The `ContiguousArray` and `ArraySlice` types are not bridged;
 ///   instances of those types always have a contiguous block of memory as
 ///   their storage.
-@_fixed_layout
+// @_fixed_layout
 public struct Array<Element>: _DestructorSafeContainer {
-  #if _runtime(_ObjC)
+  #if OBJC//_runtime(_ObjC)
   @usableFromInline
   internal typealias _Buffer = _ArrayBuffer<Element>
   #else
@@ -441,10 +441,10 @@ extension Array: _ArrayProtocol {
   @inlinable
   public // @testable
   var _owner: AnyObject? {
-    @inlinable // FIXME(inline-always)
-    @inline(__always)
+    //@inlinable // FIXME(inline-always)
+    //@inline(__always)
     get {
-      return _buffer.owner      
+      return _buffer.owner
     }
   }
 
@@ -452,7 +452,7 @@ extension Array: _ArrayProtocol {
   /// element. Otherwise, `nil`.
   @inlinable
   public var _baseAddressIfContiguous: UnsafeMutablePointer<Element>? {
-    @inline(__always) // FIXME(TODO: JIRA): Hack around test failure
+    //@inline(__always) // FIXME(TODO: JIRA): Hack around test failure
     get { return _buffer.firstElementAddressIfContiguous }
   }
 }
@@ -494,7 +494,7 @@ extension Array: RandomAccessCollection, MutableCollection {
   /// If the array is empty, `endIndex` is equal to `startIndex`.
   @inlinable
   public var endIndex: Int {
-    @inlinable
+    //@inlinable
     get {
       return _getCount()
     }
@@ -709,12 +709,14 @@ extension Array: RandomAccessCollection, MutableCollection {
         index, wasNativeTypeChecked: wasNativeTypeChecked,
         matchingSubscriptCheck: token)
     }
+    /*
     _modify {
       _makeMutableAndUnique() // makes the array native, too
       _checkSubscript_native(index)
       let address = _buffer.subscriptBaseAddress + index
       yield &address.pointee
     }
+    */
   }
 
   /// Accesses a contiguous subrange of the array's elements.
@@ -759,7 +761,7 @@ extension Array: RandomAccessCollection, MutableCollection {
       }
     }
   }
-  
+
   /// The number of elements in the array.
   @inlinable
   public var count: Int {
@@ -768,6 +770,8 @@ extension Array: RandomAccessCollection, MutableCollection {
 }
 
 extension Array: ExpressibleByArrayLiteral {
+    typealias ArrayLiteralElement = Element
+
   // Optimized implementation for Array
   /// Creates an array from the given array literal.
   ///
@@ -884,7 +888,7 @@ extension Array: RangeReplaceableCollection {
     return _Buffer(_buffer: newBuffer, shiftedToStartIndex: 0)
   }
 
-  /// Construct an Array of `count` uninitialized elements.
+  /// Construct a Array of `count` uninitialized elements.
   @inlinable
   internal init(_uninitializedCount count: Int) {
     _precondition(count >= 0, "Can't construct Array with count < 0")
@@ -903,7 +907,7 @@ extension Array: RangeReplaceableCollection {
   }
 
   /// Entry point for `Array` literal construction; builds and returns
-  /// an Array of `count` uninitialized elements.
+  /// a Array of `count` uninitialized elements.
   @inlinable
   @_semantics("array.uninitialized")
   internal static func _allocateUninitialized(
@@ -936,7 +940,7 @@ extension Array: RangeReplaceableCollection {
   }
 
   /// Entry point for aborting literal construction: deallocates
-  /// an Array containing only uninitialized elements.
+  /// a Array containing only uninitialized elements.
   @inlinable
   internal mutating func _deallocateUninitialized() {
     // Set the count to zero and just release as normal.
@@ -1151,14 +1155,14 @@ extension Array: RangeReplaceableCollection {
     let oldCount = self.count
     let startNewElements = _buffer.firstElementAddress + oldCount
     let buf = UnsafeMutableBufferPointer(
-                start: startNewElements, 
+                start: startNewElements,
                 count: self.capacity - oldCount)
 
     let (remainder,writtenUpTo) = buf.initialize(from: newElements)
-    
+
     // trap on underflow from the sequence's underestimate:
     let writtenCount = buf.distance(from: buf.startIndex, to: writtenUpTo)
-    _precondition(newElementsCount <= writtenCount, 
+    _precondition(newElementsCount <= writtenCount,
       "newElements.underestimatedCount was an overestimate")
     // can't check for overflow as sequences can underestimate
 
@@ -1305,7 +1309,7 @@ extension Array: RangeReplaceableCollection {
   }
 
   @inlinable
-  public __consuming func _copyToContiguousArray() -> ContiguousArray<Element> {
+  public func _copyToContiguousArray() -> ContiguousArray<Element> {
     if let n = _buffer.requestNativeBuffer() {
       return ContiguousArray(_buffer: n)
     }
@@ -1554,7 +1558,7 @@ extension Array {
   }
 
   @inlinable
-  public __consuming func _copyContents(
+  public func _copyContents(
     initializing buffer: UnsafeMutableBufferPointer<Element>
   ) -> (Iterator,UnsafeMutableBufferPointer<Element>.Index) {
 
@@ -1564,7 +1568,7 @@ extension Array {
     // a precondition and Array never lies about its count.
     guard var p = buffer.baseAddress
       else { _preconditionFailure("Attempt to copy contents into nil buffer pointer") }
-    _precondition(self.count <= buffer.count, 
+    _precondition(self.count <= buffer.count,
       "Insufficient space allocated to copy array contents")
 
     if let s = _baseAddressIfContiguous {
@@ -1783,7 +1787,7 @@ extension Array {
   }
 }
 
-#if _runtime(_ObjC)
+#if OBJC
 // We isolate the bridging of the Cocoa Array -> Swift Array here so that
 // in the future, we can eagerly bridge the Cocoa array. We need this function
 // to do the bridging in an ABI safe way. Even though this looks useless,
@@ -1833,7 +1837,7 @@ extension Array {
 
 extension Array: _HasCustomAnyHashableRepresentation
   where Element: Hashable {
-  public __consuming func _toCustomAnyHashable() -> AnyHashable? {
+  public func _toCustomAnyHashable() -> AnyHashable? {
     return AnyHashable(_box: _ArrayAnyHashableBox(self))
   }
 }

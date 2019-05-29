@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -137,8 +137,8 @@ extension String {
   /// - Returns: A tuple with the new string and a Boolean value that indicates
   ///   whether any repairs were made. If `isRepairing` is `false` and an
   ///   ill-formed sequence is detected, this method returns `nil`.
-  @_specialize(where Encoding == Unicode.UTF8)
-  @_specialize(where Encoding == Unicode.UTF16)
+  // @_specialize(where Encoding == Unicode.UTF8)
+  // @_specialize(where Encoding == Unicode.UTF16)
   @inlinable // Fold away specializations
   public static func decodeCString<Encoding : _UnicodeEncoding>(
     _ cString: UnsafePointer<Encoding.CodeUnit>?,
@@ -175,8 +175,8 @@ extension String {
   ///     before the first zero code unit.
   ///   - sourceEncoding: The encoding in which the code units should be
   ///     interpreted.
-  @_specialize(where Encoding == Unicode.UTF8)
-  @_specialize(where Encoding == Unicode.UTF16)
+  // @_specialize(where Encoding == Unicode.UTF8)
+  // @_specialize(where Encoding == Unicode.UTF16)
   @inlinable // Fold away specializations
   public init<Encoding: Unicode.Encoding>(
     decodingCString ptr: UnsafePointer<Encoding.CodeUnit>,
@@ -186,20 +186,23 @@ extension String {
   }
 }
 
-extension UnsafePointer where Pointee == UInt8 {
+extension UnsafePointer<UInt8> {
+//extension UnsafePointer where Pointee == UInt8 {
   @inlinable
   internal var _asCChar: UnsafePointer<CChar> {
-    @inline(__always) get {
+    // @inline(__always)
+     get {
       return UnsafeRawPointer(self).assumingMemoryBound(to: CChar.self)
     }
   }
 }
-extension UnsafePointer where Pointee == CChar {
+extension UnsafePointer<CChar> {
+//extension UnsafePointer where Pointee == CChar {
   @inlinable
   internal var _asUInt8: UnsafePointer<UInt8> {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return UnsafeRawPointer(self).assumingMemoryBound(to: UInt8.self)
     }
   }
 }
-

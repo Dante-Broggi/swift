@@ -1,4 +1,4 @@
-//===--- ArrayType.swift - Protocol for Array-like types ------------------===//
+﻿//===--- ArrayType.swift - Protocol for Array-like types ------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -10,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-@usableFromInline
+// @usableFromInline
 internal protocol _ArrayProtocol
   : RangeReplaceableCollection, ExpressibleByArrayLiteral
 where Indices == Range<Int> {
@@ -32,7 +32,7 @@ where Indices == Range<Int> {
   ///   mutable contiguous storage.
   ///
   /// - Complexity: O(`self.count`).
-  override mutating func reserveCapacity(_ minimumCapacity: Int)
+  mutating func reserveCapacity(_ minimumCapacity: Int)
 
   /// Insert `newElement` at index `i`.
   ///
@@ -41,7 +41,7 @@ where Indices == Range<Int> {
   /// - Complexity: O(`self.count`).
   ///
   /// - Precondition: `startIndex <= i`, `i <= endIndex`.
-  override mutating func insert(_ newElement: __owned Element, at i: Int)
+  mutating func insert(_ newElement: Element, at i: Int)
 
   /// Remove and return the element at the given index.
   ///
@@ -51,7 +51,7 @@ where Indices == Range<Int> {
   ///
   /// - Precondition: `count > index`.
   @discardableResult
-  override mutating func remove(at index: Int) -> Element
+  mutating func remove(at index: Int) -> Element
 
   //===--- implementation detail  -----------------------------------------===//
 
@@ -67,7 +67,7 @@ extension _ArrayProtocol {
   // efficient, we should make the default implementation coming from Sequence
   // preferred.
   @inlinable
-  public __consuming func filter(
+  public func filter(
     _ isIncluded: (Element) throws -> Bool
   ) rethrows -> [Element] {
     return try _filter(isIncluded)

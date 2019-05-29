@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -37,7 +37,7 @@ struct _SetBuilder<Element: Hashable> {
   }
 
   @inlinable
-  public __consuming func take() -> Set<Element> {
+  public func take() -> Set<Element> {
     _precondition(_target.count == _requestedCount,
       "The number of members added does not match the promised count")
     return Set(_native: _target)

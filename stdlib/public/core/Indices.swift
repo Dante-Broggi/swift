@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 /// A collection of indices for an arbitrary collection
-@_fixed_layout
+// @_fixed_layout
 public struct DefaultIndices<Elements: Collection> {
   @usableFromInline
   internal var _elements: Elements
@@ -101,6 +101,7 @@ where Elements: BidirectionalCollection {
 extension DefaultIndices: RandomAccessCollection
 where Elements: RandomAccessCollection { }
 
+/*
 extension Collection where Indices == DefaultIndices<Self> {
   /// The indices that are valid for subscripting the collection, in ascending
   /// order.
@@ -127,3 +128,4 @@ extension Collection where Indices == DefaultIndices<Self> {
       endIndex: self.endIndex)
   }
 }
+*/

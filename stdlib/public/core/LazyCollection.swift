@@ -1,4 +1,4 @@
-//===--- LazyCollection.swift ---------------------------------*- swift -*-===//
+﻿//===--- LazyCollection.swift ---------------------------------*- swift -*-===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -10,23 +10,23 @@
 //
 //===----------------------------------------------------------------------===//
 
-public protocol LazyCollectionProtocol: Collection, LazySequenceProtocol 
-where Elements : Collection {	}
+public protocol LazyCollectionProtocol: Collection, LazySequenceProtocol
+where Elements : Collection {    }
 
-extension LazyCollectionProtocol {		
-   // Lazy things are already lazy		
-   @inlinable // protocol-only		
-   public var lazy: LazyCollection<Elements> {		
-     return elements.lazy		
-   }		
- }		
-		
- extension LazyCollectionProtocol where Elements: LazyCollectionProtocol {		
-   // Lazy things are already lazy		
-   @inlinable // protocol-only		
-   public var lazy: Elements {		
-     return elements		
-   }		
+extension LazyCollectionProtocol {
+   // Lazy things are already lazy
+   @inlinable // protocol-only
+   public var lazy: LazyCollection<Elements> {
+	 return elements.lazy
+   }
+ }
+
+ extension LazyCollectionProtocol where Elements: LazyCollectionProtocol {
+   // Lazy things are already lazy
+   @inlinable // protocol-only
+   public var lazy: Elements {
+	 return elements
+   }
  }
 
 /// A collection containing the same elements as a `Base` collection,
@@ -65,7 +65,7 @@ extension LazyCollection : Collection {
   // TODO: swift-3-indexing-model - add docs
   @inlinable
   public func index(after i: Index) -> Index {
-    return _base.index(after: i)
+	return _base.index(after: i)
   }
 
   /// Accesses the element at `position`.
@@ -74,13 +74,13 @@ extension LazyCollection : Collection {
   ///   `position != endIndex`.
   @inlinable
   public subscript(position: Index) -> Element {
-    return _base[position]
+	return _base[position]
   }
 
   /// A Boolean value indicating whether the collection is empty.
   @inlinable
   public var isEmpty: Bool {
-    return _base.isEmpty
+	return _base.isEmpty
   }
 
   /// Returns the number of elements.
@@ -94,7 +94,7 @@ extension LazyCollection : Collection {
   ///   O(*n*) otherwise.
   @inlinable
   public var count: Int {
-    return _base.count
+	return _base.count
   }
 
   // The following requirement enables dispatching for firstIndex(of:) and
@@ -107,9 +107,9 @@ extension LazyCollection : Collection {
   /// - Complexity: Better than O(*n*)
   @inlinable
   public func _customIndexOfEquatableElement(
-    _ element: Element
-  ) -> Index?? {
-    return _base._customIndexOfEquatableElement(element)
+	_ element: Element
+  ) -> (Index?)? {
+	return _base._customIndexOfEquatableElement(element)
   }
 
   /// Returns `Optional(Optional(index))` if an element was found;
@@ -119,29 +119,29 @@ extension LazyCollection : Collection {
   /// - Complexity: Better than O(*n*)
   @inlinable
   public func _customLastIndexOfEquatableElement(
-    _ element: Element
-  ) -> Index?? {
-    return _base._customLastIndexOfEquatableElement(element)
+	_ element: Element
+  ) -> (Index?)? {
+	return _base._customLastIndexOfEquatableElement(element)
   }
 
   // TODO: swift-3-indexing-model - add docs
   @inlinable
   public func index(_ i: Index, offsetBy n: Int) -> Index {
-    return _base.index(i, offsetBy: n)
+	return _base.index(i, offsetBy: n)
   }
 
   // TODO: swift-3-indexing-model - add docs
   @inlinable
   public func index(
-    _ i: Index, offsetBy n: Int, limitedBy limit: Index
+	_ i: Index, offsetBy n: Int, limitedBy limit: Index
   ) -> Index? {
-    return _base.index(i, offsetBy: n, limitedBy: limit)
+	return _base.index(i, offsetBy: n, limitedBy: limit)
   }
 
   // TODO: swift-3-indexing-model - add docs
   @inlinable
   public func distance(from start: Index, to end: Index) -> Int {
-    return _base.distance(from:start, to: end)
+	return _base.distance(from:start, to: end)
   }
 }
 
@@ -151,7 +151,7 @@ extension LazyCollection : BidirectionalCollection
   where Base : BidirectionalCollection {
   @inlinable
   public func index(before i: Index) -> Index {
-    return _base.index(before: i)
+	return _base.index(before: i)
   }
 }
 

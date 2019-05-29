@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -14,7 +14,7 @@
 ///
 /// Using a builder can be faster than inserting members into an empty
 /// `Dictionary`.
-@_fixed_layout
+// @_fixed_layout
 public // SPI(Foundation)
 struct _DictionaryBuilder<Key: Hashable, Value> {
   @usableFromInline
@@ -36,7 +36,7 @@ struct _DictionaryBuilder<Key: Hashable, Value> {
   }
 
   @inlinable
-  public __consuming func take() -> Dictionary<Key, Value> {
+  public func take() -> Dictionary<Key, Value> {
     _precondition(_target.count == _requestedCount,
       "The number of members added does not match the promised count")
     return Dictionary(_native: _target)

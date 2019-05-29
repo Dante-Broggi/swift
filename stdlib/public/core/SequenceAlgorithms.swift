@@ -1,4 +1,4 @@
-//===--- SequenceAlgorithms.swift -----------------------------*- swift -*-===//
+﻿//===--- SequenceAlgorithms.swift -----------------------------*- swift -*-===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -324,11 +324,11 @@ extension Sequence {
     var iter2 = other.makeIterator()
     while true {
       switch (iter1.next(), iter2.next()) {
-      case let (e1?, e2?):
+      case let (.some(e1), .some(e2)):
         if try !areEquivalent(e1, e2) {
           return false
         }
-      case (_?, nil), (nil, _?): return false
+      case (.some(_), nil), (nil, .some(_)): return false
       case (nil, nil):           return true
       }
     }
@@ -407,7 +407,7 @@ extension Sequence {
   public func lexicographicallyPrecedes<OtherSequence: Sequence>(
     _ other: OtherSequence,
     by areInIncreasingOrder: (Element, Element) throws -> Bool
-  ) rethrows -> Bool 
+  ) rethrows -> Bool
   where OtherSequence.Element == Element {
     var iter1 = self.makeIterator()
     var iter2 = other.makeIterator()
@@ -632,7 +632,7 @@ extension Sequence {
     }
     return accumulator
   }
-  
+
   /// Returns the result of combining the elements of the sequence using the
   /// given closure.
   ///
@@ -679,7 +679,7 @@ extension Sequence {
   /// - Complexity: O(*n*), where *n* is the length of the sequence.
   @inlinable
   public func reduce<Result>(
-    into initialResult: __owned Result,
+    into initialResult: Result,
     _ updateAccumulatingResult:
       (_ partialResult: inout Result, Element) throws -> ()
   ) rethrows -> Result {
@@ -706,7 +706,7 @@ extension Sequence {
   ///
   /// - Complexity: O(*n*), where *n* is the length of the sequence.
   @inlinable
-  public __consuming func reversed() -> [Element] {
+  public func reversed() -> [Element] {
     // FIXME(performance): optimize to 1 pass?  But Array(self) can be
     // optimized to a memcpy() sometimes.  Those cases are usually collections,
     // though.

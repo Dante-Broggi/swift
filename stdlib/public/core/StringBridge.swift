@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -10,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-import SwiftShims
+// import SwiftShims
 
 /// Effectively an untyped NSString that doesn't require foundation.
 @usableFromInline
@@ -43,7 +43,7 @@ internal func _stdlib_binary_CFStringGetLength(
 internal func _stdlib_binary_CFStringGetCharactersPtr(
   _ source: _CocoaString
 ) -> UnsafeMutablePointer<UTF16.CodeUnit>? {
-  return UnsafeMutablePointer(
+  return UnsafeMutablePointer<UTF16.CodeUnit>(
     mutating: _swift_stdlib_CFStringGetCharactersPtr(source))
 }
 
@@ -159,11 +159,13 @@ internal func _cocoaGetCStringTrampoline(
 //
 
 private var kCFStringEncodingASCII : _swift_shims_CFStringEncoding {
-  @inline(__always) get { return 0x0600 }
+  // @inline(__always)
+  get { return 0x0600 }
 }
 
 private var kCFStringEncodingUTF8 : _swift_shims_CFStringEncoding {
-  @inline(__always) get { return 0x8000100 }
+  // @inline(__always)
+  get { return 0x8000100 }
 }
 
 internal enum _KnownCocoaString {
@@ -173,19 +175,20 @@ internal enum _KnownCocoaString {
 #if !(arch(i386) || arch(arm))
   case tagged
 #endif
-  
+
   @inline(__always)
   init(_ str: _CocoaString) {
-    
+
 #if !(arch(i386) || arch(arm))
     if _isObjCTaggedPointer(str) {
       self = .tagged
       return
     }
 #endif
-    
+
     switch unsafeBitCast(_swift_classOfObjCHeapObject(str), to: UInt.self) {
-    case unsafeBitCast(__StringStorage.self, to: UInt.self):
+    case unsafeBitCast(__StringStorage.self,
+                       to: UInt.self):
       self = .storage
     case unsafeBitCast(__SharedStringStorage.self, to: UInt.self):
       self = .shared
@@ -257,8 +260,8 @@ internal func _bridgeCocoaString(_ cocoaString: _CocoaString) -> _StringGuts {
     return _unsafeUncheckedDowncast(
       cocoaString, to: __SharedStringStorage.self).asString._guts
 #if !(arch(i386) || arch(arm))
-  case .tagged:
-    return _StringGuts(_SmallString(taggedCocoa: cocoaString))
+  //case .tagged:
+    //return _StringGuts(_SmallString(taggedCocoa: cocoaString))
 #endif
   case .cocoa:
     // "Copy" it into a value to be sure nobody will modify behind
@@ -272,13 +275,13 @@ internal func _bridgeCocoaString(_ cocoaString: _CocoaString) -> _StringGuts {
     //   3) If it's mutable with associated information, must make the call
     let immutableCopy
       = _stdlib_binary_CFStringCreateCopy(cocoaString) as AnyObject
-    
+
 #if !(arch(i386) || arch(arm))
     if _isObjCTaggedPointer(immutableCopy) {
       return _StringGuts(_SmallString(taggedCocoa: immutableCopy))
     }
 #endif
-    
+
     let (fastUTF8, isASCII): (Bool, Bool)
     switch _getCocoaStringPointer(immutableCopy) {
     case .ascii(_): (fastUTF8, isASCII) = (true, true)
@@ -286,7 +289,7 @@ internal func _bridgeCocoaString(_ cocoaString: _CocoaString) -> _StringGuts {
     default:  (fastUTF8, isASCII) = (false, false)
     }
     let length = _stdlib_binary_CFStringGetLength(immutableCopy)
-    
+
     return _StringGuts(
       cocoa: immutableCopy,
       providesFastUTF8: fastUTF8,
@@ -377,22 +380,22 @@ internal class __SwiftNativeNSString {
 // Special-case Index <-> Offset converters for bridging and use in accelerating
 // the UTF16View in general.
 extension StringProtocol {
-  @_specialize(where Self == String)
-  @_specialize(where Self == Substring)
+  // @_specialize(where Self == String)
+  // @_specialize(where Self == Substring)
   public // SPI(Foundation)
   func _toUTF16Offset(_ idx: Index) -> Int {
     return self.utf16.distance(from: self.utf16.startIndex, to: idx)
   }
 
-  @_specialize(where Self == String)
-  @_specialize(where Self == Substring)
+  // @_specialize(where Self == String)
+  // @_specialize(where Self == Substring)
   public // SPI(Foundation)
   func _toUTF16Index(_ offset: Int) -> Index {
     return self.utf16.index(self.utf16.startIndex, offsetBy: offset)
   }
 
-  @_specialize(where Self == String)
-  @_specialize(where Self == Substring)
+  // @_specialize(where Self == String)
+  // @_specialize(where Self == Substring)
   public // SPI(Foundation)
   func _toUTF16Offsets(_ indices: Range<Index>) -> Range<Int> {
     let lowerbound = _toUTF16Offset(indices.lowerBound)
@@ -402,8 +405,8 @@ extension StringProtocol {
       uncheckedBounds: (lower: lowerbound, upper: lowerbound + length))
   }
 
-  @_specialize(where Self == String)
-  @_specialize(where Self == Substring)
+  // @_specialize(where Self == String)
+  // @_specialize(where Self == Substring)
   public // SPI(Foundation)
   func _toUTF16Indices(_ range: Range<Int>) -> Range<Index> {
     let lowerbound = _toUTF16Index(range.lowerBound)

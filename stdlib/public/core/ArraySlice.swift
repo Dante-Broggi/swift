@@ -1,4 +1,4 @@
-//===--- ArraySlice.swift -------------------------------------*- swift -*-===//
+﻿//===--- ArraySlice.swift -------------------------------------*- swift -*-===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -113,7 +113,7 @@
 /// - Note: To safely reference the starting and ending indices of a slice,
 ///   always use the `startIndex` and `endIndex` properties instead of
 ///   specific values.
-@_fixed_layout
+// @_fixed_layout
 public struct ArraySlice<Element>: _DestructorSafeContainer {
   @usableFromInline
   internal typealias _Buffer = _SliceBuffer<Element>
@@ -185,7 +185,7 @@ extension ArraySlice {
   func _checkSubscript(
     _ index: Int, wasNativeTypeChecked: Bool
   ) -> _DependenceToken {
-#if _runtime(_ObjC)
+#if OBJC
     _buffer._checkValidSubscript(index)
 #else
     _buffer._checkValidSubscript(index)
@@ -266,7 +266,7 @@ extension ArraySlice: _ArrayProtocol {
   /// element. Otherwise, `nil`.
   @inlinable
   public var _baseAddressIfContiguous: UnsafeMutablePointer<Element>? {
-    @inline(__always) // FIXME(TODO: JIRA): Hack around test failure
+    // @inline(__always) // FIXME(TODO: JIRA): Hack around test failure
     get { return _buffer.firstElementAddressIfContiguous }
   }
 
@@ -290,6 +290,8 @@ extension ArraySlice: RandomAccessCollection, MutableCollection {
 
   /// The type that allows iteration over an array's elements.
   public typealias Iterator = IndexingIterator<ArraySlice>
+
+  public typealias SubSequence = ArraySlice
 
   /// The position of the first element in a nonempty array.
   ///
@@ -532,12 +534,14 @@ extension ArraySlice: RandomAccessCollection, MutableCollection {
         index, wasNativeTypeChecked: wasNativeTypeChecked,
         matchingSubscriptCheck: token)
     }
+    /*
     _modify {
       _makeMutableAndUnique() // makes the array native, too
       _checkSubscript_native(index)
       let address = _buffer.subscriptBaseAddress + index
       yield &address.pointee
     }
+    */
   }
 
   /// Accesses a contiguous subrange of the array's elements.
@@ -591,6 +595,7 @@ extension ArraySlice: RandomAccessCollection, MutableCollection {
 }
 
 extension ArraySlice: ExpressibleByArrayLiteral {
+    typealias ArrayLiteralElement = Element
   /// Creates an array from the given array literal.
   ///
   /// Do not call this initializer directly. It is used by the compiler when
@@ -942,14 +947,14 @@ extension ArraySlice: RangeReplaceableCollection {
     let oldCount = self.count
     let startNewElements = _buffer.firstElementAddress + oldCount
     let buf = UnsafeMutableBufferPointer(
-                start: startNewElements, 
+                start: startNewElements,
                 count: self.capacity - oldCount)
 
     let (remainder,writtenUpTo) = buf.initialize(from: newElements)
-    
+
     // trap on underflow from the sequence's underestimate:
     let writtenCount = buf.distance(from: buf.startIndex, to: writtenUpTo)
-    _precondition(newElementsCount <= writtenCount, 
+    _precondition(newElementsCount <= writtenCount,
       "newElements.underestimatedCount was an overestimate")
     // can't check for overflow as sequences can underestimate
 
@@ -992,7 +997,7 @@ extension ArraySlice: RangeReplaceableCollection {
     self.replaceSubrange((i &- 1)..<i, with: EmptyCollection())
     return result
   }
-  
+
   /// Removes and returns the element at the specified position.
   ///
   /// All the elements following the specified position are moved up to
@@ -1093,7 +1098,7 @@ extension ArraySlice: RangeReplaceableCollection {
   }
 
   @inlinable
-  public __consuming func _copyToContiguousArray() -> ContiguousArray<Element> {
+  public func _copyToContiguousArray() -> ContiguousArray<Element> {
     if let n = _buffer.requestNativeBuffer() {
       return ContiguousArray(_buffer: n)
     }
@@ -1254,7 +1259,7 @@ extension ArraySlice {
   }
 
   @inlinable
-  public __consuming func _copyContents(
+  public func _copyContents(
     initializing buffer: UnsafeMutableBufferPointer<Element>
   ) -> (Iterator,UnsafeMutableBufferPointer<Element>.Index) {
 
@@ -1264,7 +1269,7 @@ extension ArraySlice {
     // a precondition and Array never lies about its count.
     guard var p = buffer.baseAddress
       else { _preconditionFailure("Attempt to copy contents into nil buffer pointer") }
-    _precondition(self.count <= buffer.count, 
+    _precondition(self.count <= buffer.count,
       "Insufficient space allocated to copy array contents")
 
     if let s = _baseAddressIfContiguous {
@@ -1324,7 +1329,7 @@ extension ArraySlice {
   @_semantics("array.mutate_unknown")
   public mutating func replaceSubrange<C>(
     _ subrange: Range<Int>,
-    with newElements: __owned C
+    with newElements: C
   ) where C: Collection, C.Element == Element {
     _precondition(subrange.lowerBound >= _buffer.startIndex,
       "ArraySlice replace: subrange start is before the startIndex")

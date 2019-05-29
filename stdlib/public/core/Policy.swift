@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -25,7 +25,7 @@
 ///     func crashAndBurn() -> Never {
 ///         fatalError("Something very, very bad happened")
 ///     }
-@_frozen
+// @_frozen
 public enum Never {}
 
 extension Never: Error {}
@@ -61,7 +61,7 @@ extension Never: Hashable {}
 ///     let logger: (String) -> Void = logMessage
 ///     logger("This is a void function")
 ///     // Prints "Message: This is a void function"
-public typealias Void = ()
+// public typealias Void = ()
 
 //===----------------------------------------------------------------------===//
 // Aliases for floating point types
@@ -107,17 +107,21 @@ public typealias StringLiteralType = String
 //===----------------------------------------------------------------------===//
 // Default types for unconstrained number literals
 //===----------------------------------------------------------------------===//
+
+/*
 #if !os(Windows) && (arch(i386) || arch(x86_64))
 public typealias _MaxBuiltinFloatType = Builtin.FPIEEE80
 #else
 public typealias _MaxBuiltinFloatType = Builtin.FPIEEE64
 #endif
+*/
 
 //===----------------------------------------------------------------------===//
 // Standard protocols
 //===----------------------------------------------------------------------===//
 
-#if _runtime(_ObjC)
+
+#if OBJC
 /// The protocol to which all classes implicitly conform.
 ///
 /// You use `AnyObject` when you need the flexibility of an untyped object or
@@ -251,10 +255,11 @@ public typealias _MaxBuiltinFloatType = Builtin.FPIEEE64
 ///         print("'obj' does not have a 'getIntegerValue()' method")
 ///     }
 ///     // Prints "The value of 'obj' is 100"
-public typealias AnyObject = Builtin.AnyObject
+//public typealias AnyObject = Builtin.AnyObject
 #else
+
 /// The protocol to which all classes implicitly conform.
-public typealias AnyObject = Builtin.AnyObject
+//public typealias AnyObject = Builtin.AnyObject
 #endif
 
 /// The protocol to which all class types implicitly conform.
@@ -326,6 +331,8 @@ public func ~= <T : Equatable>(a: T, b: T) -> Bool {
 // Standard precedence groups
 //===----------------------------------------------------------------------===//
 
+#if !ELEMENTS
+/*
 precedencegroup AssignmentPrecedence {
   assignment: true
   associativity: right
@@ -373,16 +380,134 @@ precedencegroup MultiplicationPrecedence {
 precedencegroup BitwiseShiftPrecedence {
   higherThan: MultiplicationPrecedence
 }
-
+*/
+#endif
 
 //===----------------------------------------------------------------------===//
 // Standard operators
 //===----------------------------------------------------------------------===//
 
+#if ELEMENTS
+// Standard postfix operators.
+postfix operator ++ {}
+postfix operator -- {}
+postfix operator ... {}
+
+
+// Optional<T> unwrapping operator is built into the compiler as a part of
+// postfix expression grammar.
+//
+// postfix operator !
+
+// Standard prefix operators.
+prefix operator ++ {}
+prefix operator -- {}
+prefix operator ! {} //: Bool
+prefix operator ~ {} //: BinaryInteger
+prefix operator + {} //: AdditiveArithmetic
+prefix operator - {} //: SignedNumeric
+prefix operator ... {} //: Comparable
+prefix operator ..< {} //: Comparable
+
+// Standard infix operators.
+
+// "Exponentiative"
+
+infix operator  << {} //: BitwiseShiftPrecedence, BinaryInteger
+infix operator &<< {} //: BitwiseShiftPrecedence, FixedWidthInteger
+infix operator  >> {} //: BitwiseShiftPrecedence, BinaryInteger
+infix operator &>> {} //: BitwiseShiftPrecedence, FixedWidthInteger
+
+// "Multiplicative"
+
+infix operator   * {} //: MultiplicationPrecedence, Numeric
+infix operator  &* {} //: MultiplicationPrecedence, FixedWidthInteger
+infix operator   / {} //: MultiplicationPrecedence, BinaryInteger, FloatingPoint
+infix operator   % {} //: MultiplicationPrecedence, BinaryInteger
+infix operator   & {} //: MultiplicationPrecedence, BinaryInteger
+
+// "Additive"
+
+infix operator   + {} //: AdditionPrecedence, AdditiveArithmetic, String, Array, Strideable
+infix operator  &+ {} //: AdditionPrecedence, FixedWidthInteger
+infix operator   - {} //: AdditionPrecedence, AdditiveArithmetic, Strideable
+infix operator  &- {} //: AdditionPrecedence, FixedWidthInteger
+infix operator   | {} //: AdditionPrecedence, BinaryInteger
+infix operator   ^ {} //: AdditionPrecedence, BinaryInteger
+
+// FIXME: is this the right precedence level for "..." ?
+infix operator  ... {} //: RangeFormationPrecedence, Comparable
+infix operator  ..< {} //: RangeFormationPrecedence, Comparable
+
+// The cast operators 'as' and 'is' are hardcoded as if they had the
+// following attributes:
+// infix operator as : CastingPrecedence
+
+// "Coalescing"
+
+infix operator ?? {} //: NilCoalescingPrecedence
+
+// "Comparative"
+
+infix operator  <  {} //: ComparisonPrecedence, Comparable
+infix operator  <= {} //: ComparisonPrecedence, Comparable
+infix operator  >  {} //: ComparisonPrecedence, Comparable
+infix operator  >= {} //: ComparisonPrecedence, Comparable
+infix operator  == {} //: ComparisonPrecedence, Equatable
+infix operator  != {} //: ComparisonPrecedence, Equatable
+infix operator === {} //: ComparisonPrecedence
+infix operator !== {} //: ComparisonPrecedence
+// FIXME: ~= will be built into the compiler.
+infix operator  ~= {} //: ComparisonPrecedence
+
+// "Conjunctive"
+
+infix operator && {} //: LogicalConjunctionPrecedence, Bool
+
+// "Disjunctive"
+
+infix operator || {} //: LogicalDisjunctionPrecedence, Bool
+
+// User-defined ternary operators are not supported. The ? : operator is
+// hardcoded as if it had the following attributes:
+// operator ternary ? : : TernaryPrecedence
+
+// User-defined assignment operators are not supported. The = operator is
+// hardcoded as if it had the following attributes:
+// infix operator = : AssignmentPrecedence
+
+// Compound
+
+infix operator   *= {} //: AssignmentPrecedence, Numeric
+infix operator  &*= {} //: AssignmentPrecedence, FixedWidthInteger
+infix operator   /= {} //: AssignmentPrecedence, BinaryInteger
+infix operator   %= {} //: AssignmentPrecedence, BinaryInteger
+infix operator   += {} //: AssignmentPrecedence, AdditiveArithmetic, String, Array, Strideable
+infix operator  &+= {} //: AssignmentPrecedence, FixedWidthInteger
+infix operator   -= {} //: AssignmentPrecedence, AdditiveArithmetic, Strideable
+infix operator  &-= {} //: AssignmentPrecedence, FixedWidthInteger
+infix operator  <<= {} //: AssignmentPrecedence, BinaryInteger
+infix operator &<<= {} //: AssignmentPrecedence, FixedWidthInteger
+infix operator  >>= {} //: AssignmentPrecedence, BinaryInteger
+infix operator &>>= {} //: AssignmentPrecedence, FixedWidthInteger
+infix operator   &= {} //: AssignmentPrecedence, BinaryInteger
+infix operator   ^= {} //: AssignmentPrecedence, BinaryInteger
+infix operator   |= {} //: AssignmentPrecedence, BinaryInteger
+
+// Workaround for <rdar://problem/14011860> SubTLF: Default
+// implementations in protocols.  Library authors should ensure
+// that this operator never needs to be seen by end-users.  See
+// test/Prototypes/GenericDispatch.swift for a fully documented
+// example of how this operator is used, and how its use can be hidden
+// from users.
+infix operator ~> {}
+#else
+/*
 // Standard postfix operators.
 postfix operator ++
 postfix operator --
 postfix operator ... : Comparable
+
 
 // Optional<T> unwrapping operator is built into the compiler as a part of
 // postfix expression grammar.
@@ -491,3 +616,5 @@ infix operator   |= : AssignmentPrecedence, BinaryInteger
 // example of how this operator is used, and how its use can be hidden
 // from users.
 infix operator ~>
+*/
+#endif

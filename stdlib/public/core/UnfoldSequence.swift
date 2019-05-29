@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -49,7 +49,7 @@ public func sequence<T>(first: T, next: @escaping (T) -> T?) -> UnfoldFirstSeque
     case (let value, true):
       state.1 = false
       return value
-    case (let value?, _):
+    case let (.some(value), _):
       let nextValue = next(value)
       state.0 = nextValue
       return nextValue

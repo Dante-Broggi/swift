@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -10,10 +10,10 @@
 //
 //===----------------------------------------------------------------------===//
 
-import SwiftShims
+// import SwiftShims
 
 /// Command-line arguments for the current process.
-@_frozen // namespace
+// @_frozen // namespace
 public enum CommandLine {
   /// The backing static variable for argument count may come either from the
   /// entry point or it may need to be computed e.g. if we're in the REPL.

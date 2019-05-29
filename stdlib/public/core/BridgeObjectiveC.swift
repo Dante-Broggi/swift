@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -32,8 +32,8 @@ public protocol _ObjectiveCBridgeable {
   /// - parameter result: The location where the result is written. The optional
   ///   will always contain a value.
   static func _forceBridgeFromObjectiveC(
-    _ source: _ObjectiveCType,
-    result: inout Self?
+	_ source: _ObjectiveCType,
+	result: inout Self?
   )
 
   /// Try to bridge from an Objective-C object of the bridged class
@@ -52,8 +52,8 @@ public protocol _ObjectiveCBridgeable {
   ///   to determine success.
   @discardableResult
   static func _conditionallyBridgeFromObjectiveC(
-    _ source: _ObjectiveCType,
-    result: inout Self?
+	_ source: _ObjectiveCType,
+	result: inout Self?
   ) -> Bool
 
   /// Bridge from an Objective-C object of the bridged class type to a
@@ -80,10 +80,10 @@ public protocol _ObjectiveCBridgeable {
   /// dynamically failing.
   @_effects(readonly)
   static func _unconditionallyBridgeFromObjectiveC(_ source: _ObjectiveCType?)
-      -> Self
+	  -> Self
 }
 
-#if _runtime(_ObjC)
+#if OBJC//_runtime(_ObjC)
 
 //===--- Bridging for metatypes -------------------------------------------===//
 
@@ -98,41 +98,41 @@ public struct _BridgeableMetatype: _ObjectiveCBridgeable {
   internal var value: AnyObject.Type
 
   internal init(value: AnyObject.Type) {
-    self.value = value
+	self.value = value
   }
 
   public typealias _ObjectiveCType = AnyObject
 
   public func _bridgeToObjectiveC() -> AnyObject {
-    return value
+	return value
   }
 
   public static func _forceBridgeFromObjectiveC(
-    _ source: AnyObject,
-    result: inout _BridgeableMetatype?
+	_ source: AnyObject,
+	result: inout _BridgeableMetatype?
   ) {
-    result = _BridgeableMetatype(value: source as! AnyObject.Type)
+	result = _BridgeableMetatype(value: source as! AnyObject.Type)
   }
 
   public static func _conditionallyBridgeFromObjectiveC(
-    _ source: AnyObject,
-    result: inout _BridgeableMetatype?
+	_ source: AnyObject,
+	result: inout _BridgeableMetatype?
   ) -> Bool {
-    if let type = source as? AnyObject.Type {
-      result = _BridgeableMetatype(value: type)
-      return true
-    }
+	if let type = source as? AnyObject.Type {
+	  result = _BridgeableMetatype(value: type)
+	  return true
+	}
 
-    result = nil
-    return false
+	result = nil
+	return false
   }
 
   @_effects(readonly)
   public static func _unconditionallyBridgeFromObjectiveC(_ source: AnyObject?)
-      -> _BridgeableMetatype {
-    var result: _BridgeableMetatype?
-    _forceBridgeFromObjectiveC(source!, result: &result)
-    return result!
+	  -> _BridgeableMetatype {
+	var result: _BridgeableMetatype?
+	_forceBridgeFromObjectiveC(source!, result: &result)
+	return result!
   }
 }
 
@@ -160,14 +160,15 @@ public struct _BridgeableMetatype: _ObjectiveCBridgeable {
 @inlinable
 public func _bridgeAnythingToObjectiveC<T>(_ x: T) -> AnyObject {
   if _fastPath(_isClassOrObjCExistential(T.self)) {
-    return unsafeBitCast(x, to: AnyObject.self)
+	return unsafeBitCast(x, to: AnyObject.self)
   }
   return _bridgeAnythingNonVerbatimToObjectiveC(x)
 }
-
+/*
 @_silgen_name("")
 public // @testable
 func _bridgeAnythingNonVerbatimToObjectiveC<T>(_ x: __owned T) -> AnyObject
+*/
 
 /// Convert a purportedly-nonnull `id` value from Objective-C into an Any.
 ///
@@ -178,7 +179,7 @@ func _bridgeAnythingNonVerbatimToObjectiveC<T>(_ x: __owned T) -> AnyObject
 // COMPILER_INTRINSIC
 public func _bridgeAnyObjectToAny(_ possiblyNullObject: AnyObject?) -> Any {
   if let nonnullObject = possiblyNullObject {
-    return nonnullObject // AnyObject-in-Any
+	return nonnullObject // AnyObject-in-Any
   }
   return possiblyNullObject as Any
 }
@@ -197,7 +198,7 @@ public func _bridgeAnyObjectToAny(_ possiblyNullObject: AnyObject?) -> Any {
 @inlinable
 public func _forceBridgeFromObjectiveC<T>(_ x: AnyObject, _: T.Type) -> T {
   if _fastPath(_isClassOrObjCExistential(T.self)) {
-    return x as! T
+	return x as! T
   }
 
   var result: T?
@@ -236,7 +237,7 @@ public func _conditionallyBridgeFromObjectiveC<T>(
   _: T.Type
 ) -> T? {
   if _fastPath(_isClassOrObjCExistential(T.self)) {
-    return x as? T
+	return x as? T
   }
 
   var result: T?
@@ -257,6 +258,7 @@ public func _conditionallyBridgeFromObjectiveC_bridgeable<T:_ObjectiveCBridgeabl
   return result
 }
 
+/*
 @_silgen_name("")
 @usableFromInline
 internal func _bridgeNonVerbatimFromObjectiveC<T>(
@@ -264,13 +266,14 @@ internal func _bridgeNonVerbatimFromObjectiveC<T>(
   _ nativeType: T.Type,
   _ result: inout T?
 )
+*/
 
 /// Helper stub to upcast to Any and store the result to an inout Any?
 /// on the C++ runtime's behalf.
 @_silgen_name("_bridgeNonVerbatimFromObjectiveCToAny")
 internal func _bridgeNonVerbatimFromObjectiveCToAny(
-    _ x: AnyObject,
-    _ result: inout Any?
+	_ x: AnyObject,
+	_ result: inout Any?
 ) {
   result = x as Any
 }
@@ -278,12 +281,13 @@ internal func _bridgeNonVerbatimFromObjectiveCToAny(
 /// Helper stub to upcast to Optional on the C++ runtime's behalf.
 @_silgen_name("_bridgeNonVerbatimBoxedValue")
 internal func _bridgeNonVerbatimBoxedValue<NativeType>(
-    _ x: UnsafePointer<NativeType>,
-    _ result: inout NativeType?
+	_ x: UnsafePointer<NativeType>,
+	_ result: inout NativeType?
 ) {
   result = x.pointee
 }
 
+/*
 /// Runtime optional to conditionally perform a bridge from an object to a value
 /// type.
 ///
@@ -297,6 +301,7 @@ public func _bridgeNonVerbatimFromObjectiveCConditional<T>(
   _ nativeType: T.Type,
   _ result: inout T?
 ) -> Bool
+*/
 
 /// Determines if values of a given type can be converted to an Objective-C
 /// representation.
@@ -305,13 +310,15 @@ public func _bridgeNonVerbatimFromObjectiveCConditional<T>(
 /// - otherwise, returns whether `T` conforms to `_ObjectiveCBridgeable`.
 public func _isBridgedToObjectiveC<T>(_: T.Type) -> Bool {
   if _fastPath(_isClassOrObjCExistential(T.self)) {
-    return true
+	return true
   }
   return _isBridgedNonVerbatimToObjectiveC(T.self)
 }
 
+/*
 @_silgen_name("")
 public func _isBridgedNonVerbatimToObjectiveC<T>(_: T.Type) -> Bool
+*/
 
 /// A type that's bridged "verbatim" does not conform to
 /// `_ObjectiveCBridgeable`, and can have its bits reinterpreted as an
@@ -326,13 +333,15 @@ public func _isBridgedVerbatimToObjectiveC<T>(_: T.Type) -> Bool {
 @inlinable // FIXME(sil-serialize-all)
 public func _getBridgedObjectiveCType<T>(_: T.Type) -> Any.Type? {
   if _fastPath(_isClassOrObjCExistential(T.self)) {
-    return T.self
+	return T.self
   }
   return _getBridgedNonVerbatimObjectiveCType(T.self)
 }
 
+/*
 @_silgen_name("")
 public func _getBridgedNonVerbatimObjectiveCType<T>(_: T.Type) -> Any.Type?
+*/
 
 // -- Pointer argument bridging
 
@@ -365,7 +374,7 @@ public struct AutoreleasingUnsafeMutablePointer<Pointee /* TODO : class */>
   @_transparent
   public // COMPILER_INTRINSIC
   init(_ _rawValue: Builtin.RawPointer) {
-    self._rawValue = _rawValue
+	self._rawValue = _rawValue
   }
 
   /// Access the `Pointee` instance referenced by `self`.
@@ -374,36 +383,40 @@ public struct AutoreleasingUnsafeMutablePointer<Pointee /* TODO : class */>
   ///   `Pointee`.
   @inlinable
   public var pointee: Pointee {
-    @_transparent _read {
-      // We can do a strong load normally.
-      yield UnsafePointer(self).pointee
-    }
-    /// Set the value the pointer points to, copying over the previous value.
-    ///
-    /// AutoreleasingUnsafeMutablePointers are assumed to reference a
-    /// value with __autoreleasing ownership semantics, like 'NSFoo**'
-    /// in ARC. This autoreleases the argument before trivially
-    /// storing it to the referenced memory.
-    @_transparent nonmutating set {
-      // Autorelease the object reference.
-      typealias OptionalAnyObject = AnyObject?
-      let newAnyObject = unsafeBitCast(newValue, to: OptionalAnyObject.self)
-      Builtin.retain(newAnyObject)
-      Builtin.autorelease(newAnyObject)
-      // Trivially assign it as an OpaquePointer; the pointer references an
-      // autoreleasing slot, so retains/releases of the original value are
-      // unneeded.
-      typealias OptionalUnmanaged = Unmanaged<AnyObject>?
-      UnsafeMutablePointer<Pointee>(_rawValue).withMemoryRebound(
-        to: OptionalUnmanaged.self, capacity: 1) {
-        if let newAnyObject = newAnyObject {
-          $0.pointee = Unmanaged.passUnretained(newAnyObject)
-        }
-        else {
-          $0.pointee = nil
-        }
-      }
-    }
+	// @_transparent
+	// _read {
+	get {
+	  // We can do a strong load normally.
+	  // yield
+	  return UnsafePointer<Pointee>(self).pointee
+	}
+	/// Set the value the pointer points to, copying over the previous value.
+	///
+	/// AutoreleasingUnsafeMutablePointers are assumed to reference a
+	/// value with __autoreleasing ownership semantics, like 'NSFoo**'
+	/// in ARC. This autoreleases the argument before trivially
+	/// storing it to the referenced memory.
+	// @_transparent
+	nonmutating set {
+	  // Autorelease the object reference.
+	  typealias OptionalAnyObject = AnyObject?
+	  let newAnyObject = unsafeBitCast(newValue, to: OptionalAnyObject.self)
+	  Builtin.retain(newAnyObject)
+	  Builtin.autorelease(newAnyObject)
+	  // Trivially assign it as an OpaquePointer; the pointer references an
+	  // autoreleasing slot, so retains/releases of the original value are
+	  // unneeded.
+	  typealias OptionalUnmanaged = Unmanaged<AnyObject>?
+	  UnsafeMutablePointer<Pointee>(_rawValue).withMemoryRebound(
+		to: OptionalUnmanaged.self, capacity: 1) {
+		if let newAnyObject = newAnyObject {
+		  $0.pointee = Unmanaged.passUnretained(newAnyObject)
+		}
+		else {
+		  $0.pointee = nil
+		}
+	  }
+	}
   }
 
   /// Access the `i`th element of the raw array pointed to by
@@ -412,42 +425,42 @@ public struct AutoreleasingUnsafeMutablePointer<Pointee /* TODO : class */>
   /// - Precondition: `self != nil`.
   @inlinable // unsafe-performance
   public subscript(i: Int) -> Pointee {
-    @_transparent
-    _read {
-      // We can do a strong load normally.
-      yield ((UnsafePointer<Pointee>(self) + i).pointee)
-    }
+	// @_transparent
+	_read {
+	  // We can do a strong load normally.
+	  yield ((UnsafePointer<Pointee>(self) + i).pointee)
+	}
   }
 
-  /// Explicit construction from an UnsafeMutablePointer.		
-  ///		
-  /// This is inherently unsafe; UnsafeMutablePointer assumes the		
-  /// referenced memory has +1 strong ownership semantics, whereas		
-  /// AutoreleasingUnsafeMutablePointer implies +0 semantics.		
-  ///		
-  /// - Warning: Accessing `pointee` as a type that is unrelated to		
-  ///   the underlying memory's bound type is undefined.		
-  @_transparent		
-  public init<U>(_ from: UnsafeMutablePointer<U>) {		
-   self._rawValue = from._rawValue		
-  }		
-
-  /// Explicit construction from an UnsafeMutablePointer.		
-  ///		
-  /// Returns nil if `from` is nil.		
-  ///		
-  /// This is inherently unsafe; UnsafeMutablePointer assumes the		
-  /// referenced memory has +1 strong ownership semantics, whereas		
-  /// AutoreleasingUnsafeMutablePointer implies +0 semantics.		
-  ///		
-  /// - Warning: Accessing `pointee` as a type that is unrelated to		
-  ///   the underlying memory's bound type is undefined.		
-  @_transparent		
-  public init?<U>(_ from: UnsafeMutablePointer<U>?) {		
-   guard let unwrapped = from else { return nil }		
-   self.init(unwrapped)		
+  /// Explicit construction from an UnsafeMutablePointer.
+  ///
+  /// This is inherently unsafe; UnsafeMutablePointer assumes the
+  /// referenced memory has +1 strong ownership semantics, whereas
+  /// AutoreleasingUnsafeMutablePointer implies +0 semantics.
+  ///
+  /// - Warning: Accessing `pointee` as a type that is unrelated to
+  ///   the underlying memory's bound type is undefined.
+  @_transparent
+  public init<U>(_ from: UnsafeMutablePointer<U>) {
+   self._rawValue = from._rawValue
   }
-     
+
+  /// Explicit construction from an UnsafeMutablePointer.
+  ///
+  /// Returns nil if `from` is nil.
+  ///
+  /// This is inherently unsafe; UnsafeMutablePointer assumes the
+  /// referenced memory has +1 strong ownership semantics, whereas
+  /// AutoreleasingUnsafeMutablePointer implies +0 semantics.
+  ///
+  /// - Warning: Accessing `pointee` as a type that is unrelated to
+  ///   the underlying memory's bound type is undefined.
+  @_transparent
+  public init?<U>(_ from: UnsafeMutablePointer<U>?) {
+   guard let unwrapped = from else { return nil }
+   self.init(unwrapped)
+  }
+
   /// Explicit construction from a UnsafePointer.
   ///
   /// This is inherently unsafe because UnsafePointers do not imply
@@ -457,7 +470,7 @@ public struct AutoreleasingUnsafeMutablePointer<Pointee /* TODO : class */>
   ///   the underlying memory's bound type is undefined.
   @usableFromInline @_transparent
   internal init<U>(_ from: UnsafePointer<U>) {
-    self._rawValue = from._rawValue
+	self._rawValue = from._rawValue
   }
 
   /// Explicit construction from a UnsafePointer.
@@ -471,8 +484,8 @@ public struct AutoreleasingUnsafeMutablePointer<Pointee /* TODO : class */>
   ///   the underlying memory's bound type is undefined.
   @usableFromInline @_transparent
   internal init?<U>(_ from: UnsafePointer<U>?) {
-    guard let unwrapped = from else { return nil }
-    self.init(unwrapped)
+	guard let unwrapped = from else { return nil }
+	self.init(unwrapped)
   }
 }
 
@@ -483,7 +496,7 @@ extension UnsafeMutableRawPointer {
   /// - Parameter other: The pointer to convert.
   @_transparent
   public init<T>(_ other: AutoreleasingUnsafeMutablePointer<T>) {
-    _rawValue = other._rawValue
+	_rawValue = other._rawValue
   }
 
   /// Creates a new raw pointer from an `AutoreleasingUnsafeMutablePointer`
@@ -493,8 +506,8 @@ extension UnsafeMutableRawPointer {
   ///   result is `nil`.
   @_transparent
   public init?<T>(_ other: AutoreleasingUnsafeMutablePointer<T>?) {
-    guard let unwrapped = other else { return nil }
-    self.init(unwrapped)
+	guard let unwrapped = other else { return nil }
+	self.init(unwrapped)
   }
 }
 
@@ -505,7 +518,7 @@ extension UnsafeRawPointer {
   /// - Parameter other: The pointer to convert.
   @_transparent
   public init<T>(_ other: AutoreleasingUnsafeMutablePointer<T>) {
-    _rawValue = other._rawValue
+	_rawValue = other._rawValue
   }
 
   /// Creates a new raw pointer from an `AutoreleasingUnsafeMutablePointer`
@@ -515,8 +528,8 @@ extension UnsafeRawPointer {
   ///   result is `nil`.
   @_transparent
   public init?<T>(_ other: AutoreleasingUnsafeMutablePointer<T>?) {
-    guard let unwrapped = other else { return nil }
-    self.init(unwrapped)
+	guard let unwrapped = other else { return nil }
+	self.init(unwrapped)
   }
 }
 
@@ -541,29 +554,29 @@ internal struct _CocoaFastEnumerationStackBuf {
 
   @_transparent
   internal var count: Int {
-    return 16
+	return 16
   }
 
   internal init() {
-    _item0 = nil
-    _item1 = _item0
-    _item2 = _item0
-    _item3 = _item0
-    _item4 = _item0
-    _item5 = _item0
-    _item6 = _item0
-    _item7 = _item0
-    _item8 = _item0
-    _item9 = _item0
-    _item10 = _item0
-    _item11 = _item0
-    _item12 = _item0
-    _item13 = _item0
-    _item14 = _item0
-    _item15 = _item0
+	_item0 = nil
+	_item1 = _item0
+	_item2 = _item0
+	_item3 = _item0
+	_item4 = _item0
+	_item5 = _item0
+	_item6 = _item0
+	_item7 = _item0
+	_item8 = _item0
+	_item9 = _item0
+	_item10 = _item0
+	_item11 = _item0
+	_item12 = _item0
+	_item13 = _item0
+	_item14 = _item0
+	_item15 = _item0
 
-    _internalInvariant(MemoryLayout.size(ofValue: self) >=
-                   MemoryLayout<Optional<UnsafeRawPointer>>.size * count)
+	_internalInvariant(MemoryLayout.size(ofValue: self) >=
+				   MemoryLayout<Optional<UnsafeRawPointer>>.size * count)
   }
 }
 
@@ -576,14 +589,14 @@ public func _getObjCTypeEncoding<T>(_ type: T.Type) -> UnsafePointer<Int8> {
   // This must be `@_transparent` because `Builtin.getObjCTypeEncoding` is
   // only supported by the compiler for concrete types that are representable
   // in ObjC.
-  return UnsafePointer(Builtin.getObjCTypeEncoding(type))
+  return UnsafePointer<Int8>(Builtin.getObjCTypeEncoding(type))
 }
 
 #endif
 
 //===--- Bridging without the ObjC runtime --------------------------------===//
 
-#if !_runtime(_ObjC)
+#if !OBJC //!_runtime(_ObjC)
 
 /// Convert `x` from its Objective-C representation to its Swift
 /// representation.
@@ -618,16 +631,16 @@ protocol _NSSwiftValue: class {
   static var null: AnyObject { get }
 }
 
-@usableFromInline
+// @usableFromInline
 internal class __SwiftValue {
   @usableFromInline
   let value: Any
-  
+
   @usableFromInline
   init(_ value: Any) {
-    self.value = value
+	self.value = value
   }
-  
+
   @usableFromInline
   static let null = __SwiftValue(Optional<Any>.none as Any)
 }
@@ -640,24 +653,24 @@ public func swift_unboxFromSwiftValueWithType<T>(
   ) -> Bool {
 
   if source === _nullPlaceholder {
-    if let unpacked = Optional<Any>.none as? T {
-      result.initialize(to: unpacked)
-      return true
-    }
+	if let unpacked = Optional<Any>.none as? T {
+	  result.initialize(to: unpacked)
+	  return true
+	}
   }
-    
+
   if let box = source as? __SwiftValue {
-    if let value = box.value as? T {
-      result.initialize(to: value)
-      return true
-    }
+	if let value = box.value as? T {
+	  result.initialize(to: value)
+	  return true
+	}
   } else if let box = source as? _NSSwiftValue {
-    if let value = box.value as? T {
-      result.initialize(to: value)
-      return true
-    }
+	if let value = box.value as? T {
+	  result.initialize(to: value)
+	  return true
+	}
   }
-  
+
   return false
 }
 
@@ -665,25 +678,26 @@ public func swift_unboxFromSwiftValueWithType<T>(
 @_silgen_name("swift_swiftValueConformsTo")
 public func _swiftValueConformsTo<T>(_ type: T.Type) -> Bool {
   if let foundationType = _foundationSwiftValueType {
-    return foundationType is T.Type
+	return foundationType is T.Type
   } else {
-    return __SwiftValue.self is T.Type
+	return __SwiftValue.self is T.Type
   }
 }
 
+/*
 @_silgen_name("_swift_extractDynamicValue")
 public func _extractDynamicValue<T>(_ value: T) -> AnyObject?
 
 @_silgen_name("_swift_bridgeToObjectiveCUsingProtocolIfPossible")
 public func _bridgeToObjectiveCUsingProtocolIfPossible<T>(_ value: T) -> AnyObject?
-
+*/
 internal protocol _Unwrappable {
   func _unwrap() -> Any?
 }
 
 extension Optional: _Unwrappable {
   internal func _unwrap() -> Any? {
-    return self
+	return self
   }
 }
 
@@ -692,18 +706,18 @@ private let _foundationSwiftValueType = _typeByName("Foundation.__SwiftValue") a
 @usableFromInline
 internal var _nullPlaceholder: AnyObject {
   if let foundationType = _foundationSwiftValueType {
-    return foundationType.null
+	return foundationType.null
   } else {
-    return __SwiftValue.null
+	return __SwiftValue.null
   }
 }
 
 @usableFromInline
 func _makeSwiftValue(_ value: Any) -> AnyObject {
   if let foundationType = _foundationSwiftValueType {
-    return foundationType.init(value)
+	return foundationType.init(value)
   } else {
-    return __SwiftValue(value)
+	return __SwiftValue(value)
   }
 }
 
@@ -724,36 +738,35 @@ func _makeSwiftValue(_ value: Any) -> AnyObject {
 public func _bridgeAnythingToObjectiveC<T>(_ x: T) -> AnyObject {
   var done = false
   var result: AnyObject!
-  
+
   let source: Any = x
-  
+
   if let dynamicSource = _extractDynamicValue(x) {
-    result = dynamicSource as AnyObject
-    done = true 
+	result = dynamicSource as AnyObject
+	done = true
   }
-  
+
   if !done, let wrapper = source as? _Unwrappable {
-    if let value = wrapper._unwrap() {
-      result = value as AnyObject
-    } else {
-      result = _nullPlaceholder
-    }
-    
-    done = true
+	if let value = wrapper._unwrap() {
+	  result = value as AnyObject
+	} else {
+	  result = _nullPlaceholder
+	}
+
+	done = true
   }
 
   if !done {
-    if type(of: source) as? AnyClass != nil {
-      result = unsafeBitCast(x, to: AnyObject.self)
-    } else if let object = _bridgeToObjectiveCUsingProtocolIfPossible(source) {
-      result = object
-    } else {
-      result = _makeSwiftValue(source)
-    }
+	if type(of: source) as? AnyClass != nil {
+	  result = unsafeBitCast(x, to: AnyObject.self)
+	} else if let object = _bridgeToObjectiveCUsingProtocolIfPossible(source) {
+	  result = object
+	} else {
+	  result = _makeSwiftValue(source)
+	}
   }
-  
+
   return result
 }
 
 #endif // !_runtime(_ObjC)
-

@@ -1,4 +1,4 @@
-//===--- Integers.swift.gyb -----------------------------------*- swift -*-===//
+﻿//===--- Integers.swift.gyb -----------------------------------*- swift -*-===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -557,7 +557,7 @@ extension AdditiveArithmetic {
 ///     // Prints "23 is greater than -23."
 public protocol BinaryInteger :
   Hashable, Numeric, CustomStringConvertible, Strideable
-  where Magnitude : BinaryInteger, Magnitude.Magnitude == Magnitude
+  where Magnitude : BinaryInteger// , Magnitude.Magnitude == Magnitude
 {
   /// A Boolean value indicating whether this type is a signed integer type.
   ///
@@ -1291,7 +1291,7 @@ extension BinaryInteger {
     -> (quotient: Self, remainder: Self) {
     return (self / rhs, self % rhs)
   }
-  
+
   @inlinable
   public func isMultiple(of other: Self) -> Bool {
     // Nothing but zero is a multiple of zero.
@@ -2611,7 +2611,7 @@ extension FixedWidthInteger {
       generator.next(upperBound: delta)
     )
   }
-  
+
   /// Returns a random value within the specified range.
   ///
   /// Use this method to generate an integer within a specific range. This
@@ -2689,7 +2689,7 @@ extension FixedWidthInteger {
       generator.next(upperBound: delta)
     )
   }
-  
+
   /// Returns a random value within the specified range.
   ///
   /// Use this method to generate an integer within a specific range. This
@@ -3328,7 +3328,7 @@ extension UnsignedInteger {
   /// instead of the `magnitude` property is encouraged.
   @inlinable // FIXME(inline-always)
   public var magnitude: Self {
-    @inline(__always)
+    // @inline(__always)
     get { return self }
   }
 
@@ -3337,7 +3337,7 @@ extension UnsignedInteger {
   /// This property is always `false` for unsigned integer types.
   @inlinable // FIXME(inline-always)
   public static var isSigned: Bool {
-    @inline(__always)
+    // @inline(__always)
     get { return false }
   }
 }
@@ -3441,7 +3441,7 @@ extension SignedInteger {
   /// This property is always `true` for signed integer types.
   @inlinable // FIXME(inline-always)
   public static var isSigned: Bool {
-    @inline(__always)
+    // @inline(__always)
     get { return true }
   }
 }
@@ -3531,7 +3531,7 @@ extension SignedInteger where Self : FixedWidthInteger {
   public static var min: Self {
     return (-1 as Self) &<< Self._highBitIndex
   }
-  
+
   @inlinable
   public func isMultiple(of other: Self) -> Bool {
     // Nothing but zero is a multiple of zero.

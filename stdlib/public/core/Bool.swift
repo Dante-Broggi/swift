@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -60,7 +60,7 @@
 /// bridged into Swift as `Bool`. The single `Bool` type in Swift guarantees
 /// that functions, methods, and properties imported from C and Objective-C
 /// have a consistent type interface.
-@_fixed_layout
+// @_fixed_layout
 public struct Bool {
   @usableFromInline
   internal var _value: Builtin.Int1
@@ -77,7 +77,7 @@ public struct Bool {
 
   @usableFromInline @_transparent
   internal init(_ v: Builtin.Int1) { self._value = v }
-  
+
   /// Creates an instance equal to the given Boolean value.
   ///
   /// - Parameter value: The Boolean value to copy.
@@ -116,7 +116,7 @@ public struct Bool {
   ) -> Bool {
     return (generator.next() >> 17) & 1 == 0
   }
-  
+
   /// Returns a random Boolean value.
   ///
   /// This method returns `true` and `false` with equal probability.

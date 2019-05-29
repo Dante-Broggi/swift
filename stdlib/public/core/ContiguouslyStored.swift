@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -10,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-@usableFromInline
+// @usableFromInline
 internal protocol _HasContiguousBytes {
   func withUnsafeBytes<R>(
     _ body: (UnsafeRawBufferPointer) throws -> R
@@ -21,13 +21,15 @@ internal protocol _HasContiguousBytes {
 extension _HasContiguousBytes {
   @inlinable
   var _providesContiguousBytesNoCopy: Bool {
-    @inline(__always) get { return true }
+    // @inline(__always)
+    get { return true }
   }
 }
 extension Array: _HasContiguousBytes {
   @inlinable
   var _providesContiguousBytesNoCopy: Bool {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
 #if _runtime(_ObjC)
       return _buffer._isNative
 #else
@@ -76,7 +78,8 @@ extension UnsafeMutableRawBufferPointer: _HasContiguousBytes {
 extension String: _HasContiguousBytes {
   @inlinable
   internal var _providesContiguousBytesNoCopy: Bool {
-    @inline(__always) get { return self._guts.isFastUTF8 }
+    // @inline(__always)
+    get { return self._guts.isFastUTF8 }
   }
 
   @inlinable @inline(__always)
@@ -90,7 +93,8 @@ extension String: _HasContiguousBytes {
 extension Substring: _HasContiguousBytes {
   @inlinable
   internal var _providesContiguousBytesNoCopy: Bool {
-    @inline(__always) get { return self._wholeGuts.isFastUTF8 }
+    // @inline(__always)
+    get { return self._wholeGuts.isFastUTF8 }
   }
 
   @inlinable @inline(__always)

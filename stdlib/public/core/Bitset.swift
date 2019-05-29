@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -16,8 +16,8 @@
 /// Because `_UnsafeBitset` implements a flat bit vector, it isn't suitable for
 /// holding arbitrarily large integers. The maximal element a bitset can store
 /// is fixed at its initialization.
-@_fixed_layout
-@usableFromInline // @testable
+// @_fixed_layout
+// @usableFromInline // @testable
 internal struct _UnsafeBitset {
   @usableFromInline
   internal let words: UnsafeMutablePointer<Word>
@@ -77,7 +77,7 @@ extension _UnsafeBitset {
 
   @inlinable
   internal var capacity: Int {
-    @inline(__always)
+    // @inline(__always)
     get {
       return wordCount &* Word.capacity
     }
@@ -198,7 +198,7 @@ extension _UnsafeBitset {
 extension _UnsafeBitset.Word {
   @inlinable
   internal static var capacity: Int {
-    @inline(__always)
+    // @inline(__always)
     get {
       return UInt.bitWidth
     }
@@ -237,7 +237,7 @@ extension _UnsafeBitset.Word {
 extension _UnsafeBitset.Word {
   @inlinable
   var minimum: Int? {
-    @inline(__always)
+    // @inline(__always)
     get {
       guard value != 0 else { return nil }
       return value.trailingZeroBitCount
@@ -246,7 +246,7 @@ extension _UnsafeBitset.Word {
 
   @inlinable
   var maximum: Int? {
-    @inline(__always)
+    // @inline(__always)
     get {
       guard value != 0 else { return nil }
       return _UnsafeBitset.Word.capacity &- 1 &- value.leadingZeroBitCount
@@ -255,7 +255,7 @@ extension _UnsafeBitset.Word {
 
   @inlinable
   var complement: _UnsafeBitset.Word {
-    @inline(__always)
+    // @inline(__always)
     get {
       return _UnsafeBitset.Word(~value)
     }
@@ -289,7 +289,7 @@ extension _UnsafeBitset.Word {
 extension _UnsafeBitset.Word {
   @inlinable
   internal static var empty: _UnsafeBitset.Word {
-    @inline(__always)
+    // @inline(__always)
     get {
       return _UnsafeBitset.Word(0)
     }
@@ -297,7 +297,7 @@ extension _UnsafeBitset.Word {
 
   @inlinable
   internal static var allBits: _UnsafeBitset.Word {
-    @inline(__always)
+    // @inline(__always)
     get {
       return _UnsafeBitset.Word(UInt.max)
     }
@@ -321,7 +321,7 @@ extension _UnsafeBitset.Word: Sequence, IteratorProtocol {
 
   @inlinable
   internal var isEmpty: Bool {
-    @inline(__always)
+    // @inline(__always)
     get {
       return value == 0
     }

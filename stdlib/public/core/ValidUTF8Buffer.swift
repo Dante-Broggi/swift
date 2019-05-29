@@ -1,4 +1,4 @@
-//===--- ValidUTF8Buffer.swift - Bounded Collection of Valid UTF-8 --------===//
+﻿//===--- ValidUTF8Buffer.swift - Bounded Collection of Valid UTF-8 --------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -184,6 +184,7 @@ extension _ValidUTF8Buffer : RangeReplaceableCollection {
     return i == endIndex || indices.contains(i)
   }
 
+/*
   @inlinable
   @inline(__always)
   public mutating func replaceSubrange<C: Collection>(
@@ -197,6 +198,7 @@ extension _ValidUTF8Buffer : RangeReplaceableCollection {
     for x in self[target.upperBound...] { r.append(x) }
     self = r
   }
+*/
 }
 
 extension _ValidUTF8Buffer {

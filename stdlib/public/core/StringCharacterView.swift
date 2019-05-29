@@ -1,4 +1,4 @@
-//===--- StringCharacterView.swift - String's Collection of Characters ----===//
+﻿//===--- StringCharacterView.swift - String's Collection of Characters ----===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -245,8 +245,7 @@ extension String {
   }
 
   @inlinable
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     return Iterator(_guts)
   }
 }
-

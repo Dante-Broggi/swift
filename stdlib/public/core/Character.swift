@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -61,7 +61,7 @@
 /// [glossary]: http://www.unicode.org/glossary/
 /// [clusters]: http://www.unicode.org/glossary/#extended_grapheme_cluster
 /// [scalars]: http://www.unicode.org/glossary/#unicode_scalar_value
-@_fixed_layout
+// @_fixed_layout
 public struct Character {
   @usableFromInline
   internal var _str: String

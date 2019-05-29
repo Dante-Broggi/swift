@@ -1,4 +1,4 @@
-//===--- ArrayShared.swift ------------------------------------*- swift -*-===//
+﻿//===--- ArrayShared.swift ------------------------------------*- swift -*-===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -11,7 +11,7 @@
 
 /// This type is used as a result of the _checkSubscript call to associate the
 /// call with the array access call it guards.
-@_fixed_layout
+// @_fixed_layout
 public struct _DependenceToken {
   @inlinable
   public init() {
@@ -52,14 +52,14 @@ func _allocateUninitializedArray<Element>(_  builtinCount: Builtin.Word)
 @_semantics("array.dealloc_uninitialized")
 public // COMPILER_INTRINSIC
 func _deallocateUninitializedArray<Element>(
-  _ array: __owned Array<Element>
+  _ array: Array<Element>
 ) {
   var array = array
   array._deallocateUninitialized()
 }
 
 
-extension Collection {  
+extension Collection {
   // Utility method for collections that wish to implement
   // CustomStringConvertible and CustomDebugStringConvertible using a bracketed
   // list of elements, like an array.
@@ -92,7 +92,7 @@ extension _ArrayBufferProtocol {
   @inline(never)
   internal mutating func _arrayOutOfPlaceReplace<C: Collection>(
     _ bounds: Range<Int>,
-    with newValues: __owned C,
+    with newValues: C,
     count insertCount: Int
   ) where C.Element == Element {
 
@@ -206,7 +206,7 @@ extension _ArrayBufferProtocol {
     _ dest: inout _ContiguousArrayBuffer<Element>,
     _ headCount: Int, // Count of initial source elements to copy/move
     _ newCount: Int,  // Number of new elements to insert
-    _ initializeNewElements: 
+    _ initializeNewElements:
         ((UnsafeMutablePointer<Element>, _ count: Int) -> ()) = { ptr, count in
       _internalInvariant(count == 0)
     }
@@ -289,9 +289,9 @@ extension _ArrayBufferProtocol {
   /// Append items from `newItems` to a buffer.
   @inlinable
   internal mutating func _arrayAppendSequence<S: Sequence>(
-    _ newItems: __owned S
+    _ newItems: S
   ) where S.Element == Element {
-    
+
     // this function is only ever called from append(contentsOf:)
     // which should always have exhausted its capacity before calling
     _internalInvariant(count == capacity)
@@ -306,7 +306,7 @@ extension _ArrayBufferProtocol {
 
       // grow capacity, first time around and when filled
       var newBuffer = _forceCreateUniqueMutableBuffer(
-        countForNewBuffer: newCount, 
+        countForNewBuffer: newCount,
         // minNewCapacity handles the exponential growth, just
         // need to request 1 more than current count/capacity
         minNewCapacity: newCount + 1)

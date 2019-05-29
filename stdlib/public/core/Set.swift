@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -168,13 +168,13 @@ public struct Set<Element: Hashable> {
 
   /// Private initializer.
   @inlinable
-  internal init(_native: __owned _NativeSet<Element>) {
+  internal init(_native: _NativeSet<Element>) {
     _variant = _Variant(native: _native)
   }
 
-#if _runtime(_ObjC)
+#if OBJC
   @inlinable
-  internal init(_cocoa: __owned __CocoaSet) {
+  internal init(_cocoa: __CocoaSet) {
     _variant = _Variant(cocoa: _cocoa)
   }
 
@@ -187,7 +187,7 @@ public struct Set<Element: Hashable> {
   ///   is a reference type).
   @inlinable
   public // SPI(Foundation)
-  init(_immutableCocoaSet: __owned AnyObject) {
+  init(_immutableCocoaSet: AnyObject) {
     _internalInvariant(_isBridgedVerbatimToObjectiveC(Element.self),
       "Set can be backed by NSSet _variant only when the member type can be bridged verbatim to Objective-C")
     self.init(_cocoa: __CocoaSet(_immutableCocoaSet))
@@ -237,7 +237,7 @@ extension Set: Sequence {
   /// Returns an iterator over the members of the set.
   @inlinable
   @inline(__always)
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     return _variant.makeIterator()
   }
 
@@ -294,8 +294,8 @@ extension Set {
   ///   included in the returned set.
   /// - Returns: A set of the elements that `isIncluded` allows.
   @inlinable
-  @available(swift, introduced: 4.0)
-  public __consuming func filter(
+  // @available(swift, introduced: 4.0)
+  public func filter(
     _ isIncluded: (Element) throws -> Bool
   ) rethrows -> Set {
     // FIXME(performance): Eliminate rehashes by using a bitmap.
@@ -365,7 +365,7 @@ extension Set: Collection {
   @inline(__always)
   public func _customIndexOfEquatableElement(
      _ member: Element
-    ) -> Index?? {
+    ) -> (Index?)? {
     return Optional(firstIndex(of: member))
   }
 
@@ -409,7 +409,7 @@ extension Set: Equatable {
   ///   `false`.
   @inlinable
   public static func == (lhs: Set<Element>, rhs: Set<Element>) -> Bool {
-#if _runtime(_ObjC)
+#if OBJC
     switch (lhs._variant.isNative, rhs._variant.isNative) {
     case (true, true):
       return lhs._variant.asNative.isEqual(to: rhs._variant.asNative)
@@ -452,7 +452,7 @@ extension Set: Hashable {
 }
 
 extension Set: _HasCustomAnyHashableRepresentation {
-  public __consuming func _toCustomAnyHashable() -> AnyHashable? {
+  public func _toCustomAnyHashable() -> AnyHashable? {
     return AnyHashable(_box: _SetAnyHashableBox(self))
   }
 }
@@ -461,7 +461,7 @@ internal struct _SetAnyHashableBox<Element: Hashable>: _AnyHashableBox {
   internal let _value: Set<Element>
   internal let _canonical: Set<AnyHashable>
 
-  internal init(_ value: __owned Set<Element>) {
+  internal init(_ value: Set<Element>) {
     self._value = value
     self._canonical = value as Set<AnyHashable>
   }
@@ -541,7 +541,7 @@ extension Set: SetAlgebra {
   @inlinable
   @discardableResult
   public mutating func insert(
-    _ newMember: __owned Element
+    _ newMember: Element
   ) -> (inserted: Bool, memberAfterInsert: Element) {
     return _variant.insert(newMember)
   }
@@ -568,7 +568,7 @@ extension Set: SetAlgebra {
   ///   other means.
   @inlinable
   @discardableResult
-  public mutating func update(with newMember: __owned Element) -> Element? {
+  public mutating func update(with newMember: Element) -> Element? {
     return _variant.update(with: newMember)
   }
 
@@ -679,7 +679,7 @@ extension Set: SetAlgebra {
   ///
   /// - Parameter sequence: The elements to use as members of the new set.
   @inlinable
-  public init<Source: Sequence>(_ sequence: __owned Source)
+  public init<Source: Sequence>(_ sequence: Source)
   where Source.Element == Element {
     self.init(minimumCapacity: sequence.underestimatedCount)
     if let s = sequence as? Set<Element> {
@@ -713,7 +713,7 @@ extension Set: SetAlgebra {
   public func isSubset<S: Sequence>(of possibleSuperset: S) -> Bool
   where S.Element == Element {
     guard !isEmpty else { return true }
-    
+
     let other = Set(possibleSuperset)
     return isSubset(of: other)
   }
@@ -762,7 +762,7 @@ extension Set: SetAlgebra {
   /// - Returns: `true` if the set is a superset of `possibleSubset`;
   ///   otherwise, `false`.
   @inlinable
-  public func isSuperset<S: Sequence>(of possibleSubset: __owned S) -> Bool
+  public func isSuperset<S: Sequence>(of possibleSubset: S) -> Bool
     where S.Element == Element {
     for member in possibleSubset {
       if !contains(member) {
@@ -841,7 +841,7 @@ extension Set: SetAlgebra {
   /// - Parameter other: A sequence of elements. `other` must be finite.
   /// - Returns: A new set with the unique elements of this set and `other`.
   @inlinable
-  public __consuming func union<S: Sequence>(_ other: __owned S) -> Set<Element>
+  public func union<S: Sequence>(_ other: S) -> Set<Element>
   where S.Element == Element {
     var newSet = self
     newSet.formUnion(other)
@@ -862,7 +862,7 @@ extension Set: SetAlgebra {
   ///
   /// - Parameter other: A sequence of elements. `other` must be finite.
   @inlinable
-  public mutating func formUnion<S: Sequence>(_ other: __owned S)
+  public mutating func formUnion<S: Sequence>(_ other: S)
   where S.Element == Element {
     for item in other {
       insert(item)
@@ -884,13 +884,13 @@ extension Set: SetAlgebra {
   /// - Parameter other: A sequence of elements. `other` must be finite.
   /// - Returns: A new set.
   @inlinable
-  public __consuming func subtracting<S: Sequence>(_ other: S) -> Set<Element>
+  public func subtracting<S: Sequence>(_ other: S) -> Set<Element>
   where S.Element == Element {
     return self._subtracting(other)
   }
 
   @inlinable
-  internal __consuming func _subtracting<S: Sequence>(
+  internal func _subtracting<S: Sequence>(
     _ other: S
   ) -> Set<Element>
   where S.Element == Element {
@@ -947,7 +947,7 @@ extension Set: SetAlgebra {
   /// - Parameter other: A sequence of elements. `other` must be finite.
   /// - Returns: A new set.
   @inlinable
-  public __consuming func intersection<S: Sequence>(_ other: S) -> Set<Element>
+  public func intersection<S: Sequence>(_ other: S) -> Set<Element>
   where S.Element == Element {
     let otherSet = Set(other)
     return intersection(otherSet)
@@ -1002,8 +1002,8 @@ extension Set: SetAlgebra {
   /// - Parameter other: A sequence of elements. `other` must be finite.
   /// - Returns: A new set.
   @inlinable
-  public __consuming func symmetricDifference<S: Sequence>(
-    _ other: __owned S
+  public func symmetricDifference<S: Sequence>(
+    _ other: S
   ) -> Set<Element>
   where S.Element == Element {
     var newSet = self
@@ -1029,7 +1029,7 @@ extension Set: SetAlgebra {
   /// - Parameter other: A sequence of elements. `other` must be finite.
   @inlinable
   public mutating func formSymmetricDifference<S: Sequence>(
-    _ other: __owned S)
+    _ other: S)
   where S.Element == Element {
     let otherSet = Set(other)
     formSymmetricDifference(otherSet)
@@ -1128,7 +1128,7 @@ extension Set {
   public func isDisjoint(with other: Set<Element>) -> Bool {
     return _isDisjoint(with: other)
   }
-    
+
   @inlinable
   internal func _isDisjoint<S: Sequence>(with other: S) -> Bool
   where S.Element == Element {
@@ -1157,7 +1157,7 @@ extension Set {
   /// - Parameter other: Another set.
   /// - Returns: A new set.
   @inlinable
-  public __consuming func subtracting(_ other: Set<Element>) -> Set<Element> {
+  public func subtracting(_ other: Set<Element>) -> Set<Element> {
     return self._subtracting(other)
   }
 
@@ -1224,7 +1224,7 @@ extension Set {
   /// - Parameter other: Another set.
   /// - Returns: A new set.
   @inlinable
-  public __consuming func intersection(_ other: Set<Element>) -> Set<Element> {
+  public func intersection(_ other: Set<Element>) -> Set<Element> {
     var newSet = Set<Element>()
     for member in self {
       if other.contains(member) {
@@ -1252,7 +1252,7 @@ extension Set {
   ///
   /// - Parameter other: Another set.
   @inlinable
-  public mutating func formSymmetricDifference(_ other: __owned Set<Element>) {
+  public mutating func formSymmetricDifference(_ other: Set<Element>) {
     for member in other {
       if contains(member) {
         remove(member)
@@ -1278,7 +1278,7 @@ extension Set {
     @usableFromInline
     internal enum _Variant {
       case native(_HashTable.Index)
-#if _runtime(_ObjC)
+#if OBJC
       case cocoa(__CocoaSet.Index)
 #endif
     }
@@ -1288,7 +1288,7 @@ extension Set {
 
     @inlinable
     @inline(__always)
-    internal init(_variant: __owned _Variant) {
+    internal init(_variant: _Variant) {
       self._variant = _variant
     }
 
@@ -1298,10 +1298,10 @@ extension Set {
       self.init(_variant: .native(index))
     }
 
-#if _runtime(_ObjC)
+#if OBJC
     @inlinable
     @inline(__always)
-    internal init(_cocoa index: __owned __CocoaSet.Index) {
+    internal init(_cocoa index: __CocoaSet.Index) {
       self.init(_variant: .cocoa(index))
     }
 #endif
@@ -1309,7 +1309,7 @@ extension Set {
 }
 
 extension Set.Index {
-#if _runtime(_ObjC)
+#if OBJC
   @usableFromInline @_transparent
   internal var _guaranteedNative: Bool {
     return _canBeClass(Element.self) == 0
@@ -1334,7 +1334,7 @@ extension Set.Index {
   }
 #endif
 
-#if _runtime(_ObjC)
+#if OBJC
   @usableFromInline @_transparent
   internal var _isNative: Bool {
     switch _variant {
@@ -1352,15 +1352,15 @@ extension Set.Index {
     switch _variant {
     case .native(let nativeIndex):
       return nativeIndex
-#if _runtime(_ObjC)
-    case .cocoa:
-      _preconditionFailure(
-        "Attempting to access Set elements using an invalid index")
+#if OBJC
+    //case .cocoa:
+      //_preconditionFailure(
+        //"Attempting to access Set elements using an invalid index")
 #endif
     }
   }
 
-#if _runtime(_ObjC)
+#if OBJC
   @usableFromInline
   internal var _asCocoa: __CocoaSet.Index {
     @_transparent
@@ -1396,12 +1396,12 @@ extension Set.Index: Equatable {
     switch (lhs._variant, rhs._variant) {
     case (.native(let lhsNative), .native(let rhsNative)):
       return lhsNative == rhsNative
-  #if _runtime(_ObjC)
-    case (.cocoa(let lhsCocoa), .cocoa(let rhsCocoa)):
-      lhs._cocoaPath()
-      return lhsCocoa == rhsCocoa
-    default:
-      _preconditionFailure("Comparing indexes from different sets")
+  #if OBJC
+    //case (.cocoa(let lhsCocoa), .cocoa(let rhsCocoa)):
+      //lhs._cocoaPath()
+      //return lhsCocoa == rhsCocoa
+    //default:
+      //_preconditionFailure("Comparing indexes from different sets")
   #endif
     }
   }
@@ -1414,14 +1414,14 @@ extension Set.Index: Comparable {
     rhs: Set<Element>.Index
   ) -> Bool {
     switch (lhs._variant, rhs._variant) {
-    case (.native(let lhsNative), .native(let rhsNative)):
+    case let (.native(lhsNative), .native(rhsNative)):
       return lhsNative < rhsNative
-  #if _runtime(_ObjC)
-    case (.cocoa(let lhsCocoa), .cocoa(let rhsCocoa)):
-      lhs._cocoaPath()
-      return lhsCocoa < rhsCocoa
-    default:
-      _preconditionFailure("Comparing indexes from different sets")
+  #if OBJC
+    //case let (.cocoa(lhsCocoa), .cocoa(rhsCocoa)):
+      //lhs._cocoaPath()
+      //return lhsCocoa < rhsCocoa
+    //default:
+      //_preconditionFailure("Comparing indexes from different sets")
   #endif
     }
   }
@@ -1435,7 +1435,7 @@ extension Set.Index: Hashable {
   ///   of this instance.
   public // FIXME(cocoa-index): Make inlinable
   func hash(into hasher: inout Hasher) {
-#if _runtime(_ObjC)
+#if OBJC
     guard _isNative else {
       hasher.combine(1 as UInt8)
       hasher.combine(_asCocoa._offset)
@@ -1466,7 +1466,7 @@ extension Set {
     @_frozen
     internal enum _Variant {
       case native(_NativeSet<Element>.Iterator)
-#if _runtime(_ObjC)
+#if OBJC
       case cocoa(__CocoaSet.Iterator)
 #endif
     }
@@ -1475,18 +1475,18 @@ extension Set {
     internal var _variant: _Variant
 
     @inlinable
-    internal init(_variant: __owned _Variant) {
+    internal init(_variant: _Variant) {
       self._variant = _variant
     }
 
     @inlinable
-    internal init(_native: __owned _NativeSet<Element>.Iterator) {
+    internal init(_native: _NativeSet<Element>.Iterator) {
       self.init(_variant: .native(_native))
     }
 
-#if _runtime(_ObjC)
+#if OBJC
     @usableFromInline
-    internal init(_cocoa: __owned __CocoaSet.Iterator) {
+    internal init(_cocoa: __CocoaSet.Iterator) {
       self.init(_variant: .cocoa(_cocoa))
     }
 #endif
@@ -1494,7 +1494,7 @@ extension Set {
 }
 
 extension Set.Iterator {
-#if _runtime(_ObjC)
+#if OBJC
   @usableFromInline @_transparent
   internal var _guaranteedNative: Bool {
     return _canBeClass(Element.self) == 0
@@ -1510,7 +1510,7 @@ extension Set.Iterator {
   }
 #endif
 
-#if _runtime(_ObjC)
+#if OBJC
   @usableFromInline @_transparent
   internal var _isNative: Bool {
     switch _variant {
@@ -1529,9 +1529,9 @@ extension Set.Iterator {
       switch _variant {
       case .native(let nativeIterator):
         return nativeIterator
-#if _runtime(_ObjC)
-      case .cocoa:
-        _internalInvariantFailure("internal error: does not contain a native index")
+#if OBJC
+      //case .cocoa:
+        //_internalInvariantFailure("internal error: does not contain a native index")
 #endif
       }
     }
@@ -1540,7 +1540,7 @@ extension Set.Iterator {
     }
   }
 
-#if _runtime(_ObjC)
+#if OBJC
   @usableFromInline @_transparent
   internal var _asCocoa: __CocoaSet.Iterator {
     get {
@@ -1563,7 +1563,7 @@ extension Set.Iterator: IteratorProtocol {
   @inlinable
   @inline(__always)
   public mutating func next() -> Element? {
-#if _runtime(_ObjC)
+#if OBJC
     guard _isNative else {
       guard let cocoaElement = _asCocoa.next() else { return nil }
       return _forceBridgeFromObjectiveC(cocoaElement, Element.self)

@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -46,7 +46,8 @@ extension String {
   /// A Boolean value indicating whether a string has no characters.
   @inlinable
   public var isEmpty: Bool {
-    @inline(__always) get { return _guts.isEmpty }
+    // @inline(__always)
+    get { return _guts.isEmpty }
   }
 }
 

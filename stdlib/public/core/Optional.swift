@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -118,7 +118,7 @@
 ///
 /// Unconditionally unwrapping a `nil` instance with `!` triggers a runtime
 /// error.
-@_frozen
+// @_frozen
 public enum Optional<Wrapped> : ExpressibleByNilLiteral {
   // The compiler has special knowledge of Optional<Wrapped>, including the fact
   // that it is an `enum` with cases named `none` and `some`.
@@ -185,7 +185,7 @@ public enum Optional<Wrapped> : ExpressibleByNilLiteral {
   ///     // Prints "Optional(1764)"
   ///
   /// - Parameter transform: A closure that takes the unwrapped value
-  ///   of the instance.  
+  ///   of the instance.
   /// - Returns: The result of the given closure. If this instance is `nil`,
   ///   returns `nil`.
   @inlinable
@@ -239,7 +239,7 @@ public enum Optional<Wrapped> : ExpressibleByNilLiteral {
   ///   postfix `!` operator.
   @inlinable
   public var unsafelyUnwrapped: Wrapped {
-    @inline(__always)
+    // @inline(__always)
     get {
       if let x = self {
         return x
@@ -254,7 +254,7 @@ public enum Optional<Wrapped> : ExpressibleByNilLiteral {
   /// overhead for users, even in Debug builds.
   @inlinable
   internal var _unsafelyUnwrappedUnchecked: Wrapped {
-    @inline(__always)
+    // @inline(__always)
     get {
       if let x = self {
         return x
@@ -360,7 +360,7 @@ extension Optional : Equatable where Wrapped : Equatable {
   @inlinable
   public static func ==(lhs: Wrapped?, rhs: Wrapped?) -> Bool {
     switch (lhs, rhs) {
-    case let (l?, r?):
+    case let (.some(l), .some(r)):
       return l == r
     case (nil, nil):
       return true
@@ -390,7 +390,7 @@ extension Optional: Hashable where Wrapped: Hashable {
 
 // Enable pattern matching against the nil literal, even if the element type
 // isn't equatable.
-@_fixed_layout
+// @_fixed_layout
 public struct _OptionalNilComparisonType : ExpressibleByNilLiteral {
   /// Create an instance initialized with `nil`.
   @_transparent
@@ -669,11 +669,13 @@ public func ?? <T>(optional: T?, defaultValue: @autoclosure () throws -> T?)
 
 #if _runtime(_ObjC)
 extension Optional : _ObjectiveCBridgeable {
+    /*
   // The object that represents `none` for an Optional of this type.
   internal static var _nilSentinel : AnyObject {
     @_silgen_name("_swift_Foundation_getOptionalNilSentinelObject")
     get
   }
+*/
 
   public func _bridgeToObjectiveC() -> AnyObject {
     // Bridge a wrapped value by unwrapping.

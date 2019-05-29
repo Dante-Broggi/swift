@@ -1,4 +1,4 @@
-//===--- CocoaArray.swift - A subset of the NSArray interface -------------===//
+﻿//===--- CocoaArray.swift - A subset of the NSArray interface -------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -18,8 +18,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if _runtime(_ObjC)
-import SwiftShims
+#if OBJC //_runtime(_ObjC)
+// import SwiftShims
 
 /// A wrapper around any `_NSArrayCore` (represented as AnyObject) that gives it
 /// `Collection` conformance.  Why not make `_NSArrayCore` conform directly?
@@ -39,7 +39,8 @@ internal struct _CocoaArrayWrapper : RandomAccessCollection {
   }
 
   internal var core: _NSArrayCore {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return unsafeBitCast(buffer, to: _NSArrayCore.self)
     }
   }
@@ -126,7 +127,7 @@ internal struct _CocoaArrayWrapper : RandomAccessCollection {
   }
 
   @usableFromInline
-  __consuming internal func _copyContents(
+  internal func _copyContents(
     subRange bounds: Range<Int>,
     initializing target: UnsafeMutablePointer<AnyObject>
   ) -> UnsafeMutablePointer<AnyObject> {

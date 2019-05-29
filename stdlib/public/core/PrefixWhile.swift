@@ -1,4 +1,4 @@
-//===-- PrefixWhile.swift - Lazy views for prefix(while:) -----*- swift -*-===//
+﻿//===-- PrefixWhile.swift - Lazy views for prefix(while:) -----*- swift -*-===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -13,10 +13,10 @@
 
 /// A sequence whose elements consist of the initial consecutive elements of
 /// some base sequence that satisfy a given predicate.
-@_fixed_layout // lazy-performance
+// @_fixed_layout // lazy-performance
 public struct LazyPrefixWhileSequence<Base: Sequence> {
   public typealias Element = Base.Element
-  
+
   @inlinable // lazy-performance
   internal init(_base: Base, predicate: @escaping (Element) -> Bool) {
     self._base = _base
@@ -37,7 +37,7 @@ extension LazyPrefixWhileSequence {
   /// This is the associated iterator for the `LazyPrefixWhileSequence`,
   /// `LazyPrefixWhileCollection`, and `LazyPrefixWhileBidirectionalCollection`
   /// types.
-  @_fixed_layout // lazy-performance
+  // @_fixed_layout // lazy-performance
   public struct Iterator {
     public typealias Element = Base.Element
 
@@ -73,7 +73,7 @@ extension LazyPrefixWhileSequence.Iterator: IteratorProtocol, Sequence {
 
 extension LazyPrefixWhileSequence: Sequence {
   @inlinable // lazy-performance
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     return Iterator(_base: _base.makeIterator(), predicate: _predicate)
   }
 }
@@ -91,7 +91,7 @@ extension LazySequenceProtocol {
   ///   `false` otherwise. Once `predicate` returns `false` it will not be
   ///   called again.
   @inlinable // lazy-performance
-  public __consuming func prefix(
+  public func prefix(
     while predicate: @escaping (Elements.Element) -> Bool
   ) -> LazyPrefixWhileSequence<Self.Elements> {
     return LazyPrefixWhileSequence(_base: self.elements, predicate: predicate)
@@ -118,7 +118,7 @@ extension LazyPrefixWhileCollection {
     case index(Base.Index)
     case pastEnd
   }
-  
+
   /// A position in a `LazyPrefixWhileCollection` or
   /// `LazyPrefixWhileBidirectionalCollection` instance.
   @_fixed_layout // lazy-performance
@@ -147,7 +147,7 @@ extension LazyPrefixWhileCollection {
 extension LazyPrefixWhileSequence.Index: Comparable where Base: Collection {
   @inlinable // lazy-performance
   public static func == (
-    lhs: LazyPrefixWhileCollection<Base>.Index, 
+    lhs: LazyPrefixWhileCollection<Base>.Index,
     rhs: LazyPrefixWhileCollection<Base>.Index
   ) -> Bool {
     switch (lhs._value, rhs._value) {
@@ -162,7 +162,7 @@ extension LazyPrefixWhileSequence.Index: Comparable where Base: Collection {
 
   @inlinable // lazy-performance
   public static func < (
-    lhs: LazyPrefixWhileCollection<Base>.Index, 
+    lhs: LazyPrefixWhileCollection<Base>.Index,
     rhs: LazyPrefixWhileCollection<Base>.Index
   ) -> Bool {
     switch (lhs._value, rhs._value) {

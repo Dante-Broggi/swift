@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -10,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-import SwiftShims
+// import SwiftShims
 
 /// An instance of this class has all `Dictionary` data tail-allocated.
 /// Enough bytes are allocated to hold the bitmap for marking valid entries,
@@ -19,9 +19,9 @@ import SwiftShims
 // NOTE: older runtimes called this class _RawDictionaryStorage. The two
 // must coexist without a conflicting ObjC class name, so it was
 // renamed. The old name must not be used in the new runtime.
-@_fixed_layout
-@usableFromInline
-@_objc_non_lazy_realization
+// @_fixed_layout
+// @usableFromInline
+// @_objc_non_lazy_realization
 internal class __RawDictionaryStorage: __SwiftNativeNSDictionary {
   // NOTE: The precise layout of this type is relied on in the runtime to
   // provide a statically allocated empty singleton.  See
@@ -87,15 +87,17 @@ internal class __RawDictionaryStorage: __SwiftNativeNSDictionary {
   @inlinable
   @nonobjc
   internal final var _bucketCount: Int {
-    @inline(__always) get { return 1 &<< _scale }
+    // @inline(__always)
+    get { return 1 &<< _scale }
   }
 
   @inlinable
   @nonobjc
   internal final var _metadata: UnsafeMutablePointer<_HashTable.Word> {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       let address = Builtin.projectTailElems(self, _HashTable.Word.self)
-      return UnsafeMutablePointer(address)
+      return UnsafeMutablePointer<_HashTable.Word>(address)
     }
   }
 
@@ -104,7 +106,8 @@ internal class __RawDictionaryStorage: __SwiftNativeNSDictionary {
   @inlinable
   @nonobjc
   internal final var _hashTable: _HashTable {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       return _HashTable(words: _metadata, bucketCount: _bucketCount)
     }
   }
@@ -115,8 +118,8 @@ internal class __RawDictionaryStorage: __SwiftNativeNSDictionary {
 // NOTE: older runtimes called this class _EmptyDictionarySingleton.
 // The two must coexist without a conflicting ObjC class name, so it was
 // renamed. The old name must not be used in the new runtime.
-@_fixed_layout
-@usableFromInline
+// @_fixed_layout
+// @usableFromInline
 internal class __EmptyDictionarySingleton: __RawDictionaryStorage {
   @nonobjc
   internal override init(_doNotCallMe: ()) {
@@ -135,7 +138,7 @@ internal class __EmptyDictionarySingleton: __RawDictionaryStorage {
 #endif
 }
 
-#if _runtime(_ObjC)
+#if OBJC //_runtime(_ObjC)
 extension __EmptyDictionarySingleton: _NSDictionaryCore {
   @objc(copyWithZone:)
   internal func copy(with zone: _SwiftNSZone?) -> AnyObject {
@@ -198,7 +201,7 @@ extension __RawDictionaryStorage {
   }
 }
 
-@usableFromInline
+// @usableFromInline
 final internal class _DictionaryStorage<Key: Hashable, Value>
   : __RawDictionaryStorage, _NSDictionaryCore {
   // This type is made with allocWithTailElems, so no init is ever called.
@@ -228,7 +231,7 @@ final internal class _DictionaryStorage<Key: Hashable, Value>
 
   @inlinable
   final internal var _keys: UnsafeMutablePointer<Key> {
-    @inline(__always)
+    // @inline(__always)
     get {
       return self._rawKeys.assumingMemoryBound(to: Key.self)
     }
@@ -236,7 +239,7 @@ final internal class _DictionaryStorage<Key: Hashable, Value>
 
   @inlinable
   final internal var _values: UnsafeMutablePointer<Value> {
-    @inline(__always)
+    // @inline(__always)
     get {
       return self._rawValues.assumingMemoryBound(to: Value.self)
     }
@@ -334,14 +337,14 @@ final internal class _DictionaryStorage<Key: Hashable, Value>
     guard count > 0 else { return }
     var i = 0 // Current position in the output buffers
     switch (_UnmanagedAnyObjectArray(keys), _UnmanagedAnyObjectArray(objects)) {
-    case (let unmanagedKeys?, let unmanagedObjects?):
+    case let (.some(unmanagedKeys), .some(unmanagedObjects)):
       for (key, value) in asNative {
         unmanagedObjects[i] = _bridgeAnythingToObjectiveC(value)
         unmanagedKeys[i] = _bridgeAnythingToObjectiveC(key)
         i += 1
         guard i < count else { break }
       }
-    case (let unmanagedKeys?, nil):
+    case (let .some(unmanagedKeys), nil):
       for (key, _) in asNative {
         unmanagedKeys[i] = _bridgeAnythingToObjectiveC(key)
         i += 1

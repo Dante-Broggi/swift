@@ -1,4 +1,4 @@
-//===--- Random.swift -----------------------------------------------------===//
+﻿//===--- Random.swift -----------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -10,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-import SwiftShims
+// import SwiftShims
 
 /// A type that provides uniformly distributed random data.
 ///
@@ -131,7 +131,7 @@ extension RandomNumberGenerator {
 /// - Apple platforms use `arc4random_buf(3)`.
 /// - Linux platforms use `getrandom(2)` when available; otherwise, they read
 ///   from `/dev/urandom`.
-@_fixed_layout
+// @_fixed_layout
 public struct SystemRandomNumberGenerator : RandomNumberGenerator {
   /// Creates a new instance of the system's default random number generator.
   @inlinable

@@ -1,4 +1,4 @@
-//===--- DebuggerSupport.swift --------------------------------------------===//
+﻿//===--- DebuggerSupport.swift --------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -10,9 +10,9 @@
 //
 //===----------------------------------------------------------------------===//
 
-import SwiftShims
+// import SwiftShims
 
-@_frozen // namespace
+// @_frozen // namespace
 public enum _DebuggerSupport {
   private enum CollectionStatus {
     case notACollection
@@ -21,22 +21,22 @@ public enum _DebuggerSupport {
     case element
     case pair
     case elementOfPair
-  
+
     internal var isCollection: Bool {
       return self != .notACollection
     }
-  
+
     internal func getChildStatus(child: Mirror) -> CollectionStatus {
       let disposition = child.displayStyle
-    
+
       if disposition == .collection { return .collectionOfElements }
       if disposition == .dictionary { return .collectionOfPairs }
       if disposition == .set { return .collectionOfElements }
-    
+
       if self == .collectionOfElements { return .element }
       if self == .collectionOfPairs { return .pair }
       if self == .pair { return .elementOfPair }
-    
+
       return .notACollection
     }
   }
@@ -44,7 +44,7 @@ public enum _DebuggerSupport {
   private static func isClass(_ value: Any) -> Bool {
     return type(of: value) is AnyClass
   }
-  
+
   private static func checkValue<T>(
     _ value: Any,
     ifClass: (AnyObject) -> T,
@@ -77,9 +77,12 @@ public enum _DebuggerSupport {
     switch mirror.displayStyle {
     case .optional? where count > 0:
         return "\(mirror.subjectType)"
-    case .optional?:
-      return value.map(String.init(reflecting:))
-    case .collection?, .dictionary?, .set?, .tuple?:
+    case .optional? :
+      return value.map({ String.init(reflecting: $0) })
+    case .collection?,
+         .dictionary?,
+         .set?,
+         .some(.tuple):
       return count == 1 ? "1 element" : "\(count) elements"
     case .`struct`?, .`enum`?, nil:
       switch value {
@@ -90,9 +93,9 @@ public enum _DebuggerSupport {
       case _ where count > 0:
         return "\(mirror.subjectType)"
       default:
-        return value.map(String.init(reflecting:))
+        return value.map({ String.init(reflecting: $0) })
       }
-    case .`class`?:
+    case .some(.`class`):
       switch value {
       case let x as CustomDebugStringConvertible:
         return x.debugDescription
@@ -119,7 +122,7 @@ public enum _DebuggerSupport {
     isRoot: Bool
   ) -> Bool {
     if isRoot || collectionStatus.isCollection { return true }
-    if !mirror.children.isEmpty { return true }
+    if mirror.children.count > 0 { return true }
     if mirror.displayStyle == .`class` { return true }
     if let sc = mirror.superclassMirror { return ivarCount(mirror: sc) > 0 }
     return true
@@ -136,16 +139,16 @@ public enum _DebuggerSupport {
     refsAlreadySeen: inout Set<ObjectIdentifier>,
     maxItemCounter: inout Int,
     target: inout StreamType
-  ) {    
+  ) {
     guard maxItemCounter > 0 else { return }
 
     guard shouldExpand(mirror: mirror,
                        collectionStatus: parentCollectionStatus,
-                       isRoot: isRoot) 
+                       isRoot: isRoot)
     else { return }
 
     maxItemCounter -= 1
-  
+
     print(String(repeating: " ", count: indent), terminator: "", to: &target)
 
     // do not expand classes with no custom Mirror
@@ -159,9 +162,9 @@ public enum _DebuggerSupport {
       : count == 0    ? "- "
       : maxDepth <= 0 ? "▹ " : "▿ "
     print(bullet, terminator: "", to: &target)
-  
+
     let collectionStatus = parentCollectionStatus.getChildStatus(child: mirror)
-  
+
     if let name = name {
       print("\(name) : ", terminator: "", to: &target)
     }
@@ -169,7 +172,7 @@ public enum _DebuggerSupport {
     if let str = asStringRepresentation(value: value, mirror: mirror, count: count) {
       print(str, terminator: "", to: &target)
     }
-  
+
     if (maxDepth <= 0) || !willExpand {
       print("", to: &target)
       return
@@ -185,9 +188,9 @@ public enum _DebuggerSupport {
     }
 
     print("", to: &target)
-  
+
     var printedElements = 0
-  
+
     if let sc = mirror.superclassMirror {
       printForDebuggerImpl(
         value: nil,
@@ -201,7 +204,7 @@ public enum _DebuggerSupport {
         maxItemCounter: &maxItemCounter,
         target: &target)
     }
-  
+
     for (optionalName,child) in mirror.children {
       let childName = optionalName ?? "\(printedElements)"
       if maxItemCounter <= 0 {
@@ -214,7 +217,7 @@ public enum _DebuggerSupport {
         print(remainder == 1 ? " child)" : " children)", to: &target)
         return
       }
-    
+
       printForDebuggerImpl(
         value: child,
         mirror: Mirror(reflecting: child),
@@ -257,6 +260,7 @@ public func _stringForPrintObject(_ value: Any) -> String {
 
 public func _debuggerTestingCheckExpect(_: String, _: String) { }
 
+/*
 // Utilities to get refcount(s) of class objects.
 @_silgen_name("swift_retainCount")
 public func _getRetainCount(_ Value: AnyObject) -> UInt
@@ -264,3 +268,4 @@ public func _getRetainCount(_ Value: AnyObject) -> UInt
 public func _getUnownedRetainCount(_ Value : AnyObject) -> UInt
 @_silgen_name("swift_weakRetainCount")
 public func _getWeakRetainCount(_ Value : AnyObject) -> UInt
+*/

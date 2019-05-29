@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 import SwiftShims
-
+/*
 // Having @objc stuff in an extension creates an ObjC category, which we don't
 // want.
 #if _runtime(_ObjC)
@@ -33,7 +33,7 @@ private func _isNSString(_ str:AnyObject) -> UInt8 {
 }
 
 #else
-
+*/
 internal protocol _AbstractStringStorage {
   var asString: String { get }
   var count: Int { get }
@@ -41,10 +41,11 @@ internal protocol _AbstractStringStorage {
   var start: UnsafePointer<UInt8> { get }
 }
 
-#endif
+// #endif
 
 extension _AbstractStringStorage {
 
+/*
 // ObjC interfaces.
 #if _runtime(_ObjC)
 
@@ -72,8 +73,9 @@ extension _AbstractStringStorage {
     _ outputPtr: UnsafeMutablePointer<UInt8>, _ maxLength: Int, _ encoding: UInt
   ) -> Int8 {
     switch (encoding, isASCII) {
-    case (_cocoaASCIIEncoding, true),
-         (_cocoaUTF8Encoding, _):
+    case (_cocoaASCIIEncoding, true):
+      fallthrough
+    case (_cocoaUTF8Encoding, _):
       guard maxLength >= count + 1 else { return 0 }
       outputPtr.initialize(from: start, count: count)
       outputPtr[count] = 0
@@ -87,8 +89,9 @@ extension _AbstractStringStorage {
   @_effects(readonly)
   internal func _cString(encoding: UInt) -> UnsafePointer<UInt8>? {
     switch (encoding, isASCII) {
-    case (_cocoaASCIIEncoding, true),
-         (_cocoaUTF8Encoding, _):
+    case (_cocoaASCIIEncoding, true):
+      fallthrough
+    case (_cocoaUTF8Encoding, _):
       return start
     default:
       return _cocoaCStringUsingEncodingTrampoline(self, encoding)
@@ -141,9 +144,9 @@ extension _AbstractStringStorage {
       // one of ours.
 
       defer { _fixLifetime(other) }
-      
+
       let otherUTF16Length = _stdlib_binary_CFStringGetLength(other)
-      
+
       // CFString will only give us ASCII bytes here, but that's fine.
       // We already handled non-ASCII UTF8 strings earlier since they're Swift.
       if let otherStart = _cocoaUTF8Pointer(other) {
@@ -154,11 +157,11 @@ extension _AbstractStringStorage {
         return (start == otherStart ||
           (memcmp(start, otherStart, count) == 0)) ? 1 : 0
       }
-      
+
       if UTF16Length != otherUTF16Length {
         return 0
       }
-      
+
       /*
        The abstract implementation of -isEqualToString: falls back to -compare:
        immediately, so when we run out of fast options to try, do the same.
@@ -169,6 +172,7 @@ extension _AbstractStringStorage {
   }
 
 #endif //_runtime(_ObjC)
+*/
 }
 
 private typealias CountAndFlags = _StringObject.CountAndFlags
@@ -221,7 +225,8 @@ final internal class __StringStorage
   final internal var isASCII: Bool { return _countAndFlags.isASCII }
 
   final internal var asString: String {
-    @_effects(readonly) @inline(__always) get {
+    // @_effects(readonly) @inline(__always)
+    get {
       return String(_StringGuts(self))
     }
   }
@@ -230,14 +235,16 @@ final internal class __StringStorage
 
   @objc(length)
   final internal var UTF16Length: Int {
-    @_effects(readonly) @inline(__always) get {
+    // @_effects(readonly) @inline(__always)
+    get {
       return asString.utf16.count // UTF16View special-cases ASCII for us.
     }
   }
 
   @objc
   final internal var hash: UInt {
-    @_effects(readonly) get {
+    // @_effects(readonly)
+    get {
       if isASCII {
         return _cocoaHashASCIIBytes(start, length: count)
       }
@@ -293,7 +300,8 @@ final internal class __StringStorage
 
   @objc
   final internal var fastestEncoding: UInt {
-    @_effects(readonly) get {
+    // @_effects(readonly)
+    get {
       if isASCII {
         return _cocoaASCIIEncoding
       }
@@ -429,7 +437,7 @@ extension __StringStorage {
 extension __StringStorage {
   @inline(__always)
   private var mutableStart: UnsafeMutablePointer<UInt8> {
-    return UnsafeMutablePointer(Builtin.projectTailElems(self, UInt8.self))
+    return UnsafeMutablePointer<UInt8>(Builtin.projectTailElems(self, UInt8.self))
   }
   @inline(__always)
   private var mutableEnd: UnsafeMutablePointer<UInt8> {
@@ -438,12 +446,12 @@ extension __StringStorage {
 
   @inline(__always)
   internal var start: UnsafePointer<UInt8> {
-     return UnsafePointer(mutableStart)
+     return UnsafePointer<UInt8>(mutableStart)
   }
 
   @inline(__always)
   private final var end: UnsafePointer<UInt8> {
-    return UnsafePointer(mutableEnd)
+    return UnsafePointer<UInt8>(mutableEnd)
   }
 
   // Point to the nul-terminator.
@@ -464,7 +472,7 @@ extension __StringStorage {
       _realCapacity._builtinWordValue,
       UInt8.self,
       Optional<_StringBreadcrumbs>.self)
-    return UnsafeMutablePointer(raw)
+    return UnsafeMutablePointer<_StringBreadcrumbs?>(raw)
   }
 
   // The total capacity available for code units. Note that this excludes the
@@ -617,7 +625,7 @@ extension __StringStorage {
 
     // Copy in the contents.
     lowerPtr.moveInitialize(
-      from: UnsafeMutablePointer(
+      from: UnsafeMutablePointer<UInt8>(
         mutating: replacement.baseAddress._unsafelyUnwrappedUnchecked),
       count: replCount)
 
@@ -701,7 +709,8 @@ final internal class __SharedStringStorage
   final internal var isASCII: Bool { return _countAndFlags.isASCII }
 
   final internal var asString: String {
-    @_effects(readonly) @inline(__always) get {
+    // @_effects(readonly) @inline(__always)
+    get {
       return String(_StringGuts(self))
     }
   }
@@ -710,14 +719,16 @@ final internal class __SharedStringStorage
 
   @objc(length)
   final internal var UTF16Length: Int {
-    @_effects(readonly) get {
+    // @_effects(readonly)
+    get {
       return asString.utf16.count // UTF16View special-cases ASCII for us.
     }
   }
 
   @objc
   final internal var hash: UInt {
-    @_effects(readonly) get {
+    // @_effects(readonly)
+    get {
       if isASCII {
         return _cocoaHashASCIIBytes(start, length: count)
       }
@@ -742,7 +753,8 @@ final internal class __SharedStringStorage
 
   @objc
   final internal var fastestEncoding: UInt {
-    @_effects(readonly) get {
+    // @_effects(readonly)
+    get {
       if isASCII {
         return _cocoaASCIIEncoding
       }

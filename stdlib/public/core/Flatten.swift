@@ -1,4 +1,4 @@
-//===--- Flatten.swift ----------------------------------------*- swift -*-===//
+﻿//===--- Flatten.swift ----------------------------------------*- swift -*-===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -23,7 +23,7 @@
 /// * `s.joined()` does not create new storage
 /// * `s.joined().map(f)` maps eagerly and returns a new array
 /// * `s.lazy.joined().map(f)` maps lazily and returns a `LazyMapSequence`
-@_fixed_layout // lazy-performance
+// @_fixed_layout // lazy-performance
 public struct FlattenSequence<Base: Sequence> where Base.Element: Sequence {
 
   @usableFromInline // lazy-performance
@@ -39,7 +39,7 @@ public struct FlattenSequence<Base: Sequence> where Base.Element: Sequence {
 }
 
 extension FlattenSequence {
-  @_fixed_layout // lazy-performance
+  // @_fixed_layout // lazy-performance
   public struct Iterator {
     @usableFromInline // lazy-performance
     internal var _base: Base.Iterator
@@ -56,7 +56,7 @@ extension FlattenSequence {
 
 extension FlattenSequence.Iterator: IteratorProtocol {
   public typealias Element = Base.Element.Element
-  
+
   /// Advances to the next element and returns it, or `nil` if no next element
   /// exists.
   ///
@@ -90,7 +90,7 @@ extension FlattenSequence: Sequence {
   ///
   /// - Complexity: O(1).
   @inlinable // lazy-performance
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     return Iterator(_base: _base.makeIterator())
   }
 }
@@ -120,7 +120,7 @@ extension Sequence where Element : Sequence {
   /// - Returns: A flattened view of the elements of this
   ///   sequence of sequences.
   @inlinable // lazy-performance
-  public __consuming func joined() -> FlattenSequence<Self> {
+  public func joined() -> FlattenSequence<Self> {
     return FlattenSequence(_base: self)
   }
 }
@@ -129,7 +129,7 @@ extension LazySequenceProtocol where Element : Sequence {
   /// Returns a lazy sequence that concatenates the elements of this sequence of
   /// sequences.
   @inlinable // lazy-performance
-  public __consuming func joined() -> LazySequence<FlattenSequence<Elements>> {
+  public func joined() -> LazySequence<FlattenSequence<Elements>> {
     return FlattenSequence(_base: elements).lazy
   }
 }
@@ -138,7 +138,7 @@ public typealias FlattenCollection<T: Collection> = FlattenSequence<T> where T.E
 
 extension FlattenSequence where Base: Collection, Base.Element: Collection {
   /// A position in a FlattenCollection
-  @_fixed_layout // lazy-performance
+  // @_fixed_layout // lazy-performance
   public struct Index {
     /// The position in the outer collection of collections.
     @usableFromInline // lazy-performance
@@ -394,7 +394,7 @@ extension FlattenCollection: Collection {
   }
 
   @inlinable // lazy-performance
-  public subscript(bounds: Range<Index>) -> Slice<FlattenCollection<Base>> {
+  public subscript(bounds: Range<Index>) -> SubSequence {
     return Slice(base: self, bounds: bounds)
   }
 }

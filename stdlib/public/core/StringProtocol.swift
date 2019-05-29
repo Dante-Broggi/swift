@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -127,15 +127,16 @@ extension StringProtocol {
   //
   public // @SPI(NSStringAPI.swift)
   var _ephemeralString: String {
-    @_specialize(where Self == String)
-    @_specialize(where Self == Substring)
+    // @_specialize(where Self == String)
+    // @_specialize(where Self == Substring)
     get { return String(self) }
   }
 
   internal var _gutsSlice: _StringGutsSlice {
-    @_specialize(where Self == String)
-    @_specialize(where Self == Substring)
-    @inline(__always) get {
+    // @_specialize(where Self == String)
+    // @_specialize(where Self == Substring)
+    // @inline(__always)
+    get {
       if let str = self as? String {
         return _StringGutsSlice(str._guts)
       }
@@ -148,7 +149,8 @@ extension StringProtocol {
 
   @inlinable
   internal var _offsetRange: Range<Int> {
-    @inline(__always) get {
+    // @inline(__always)
+    get {
       let start = startIndex
       let end = endIndex
       _internalInvariant(
@@ -159,9 +161,10 @@ extension StringProtocol {
 
   @inlinable
   internal var _wholeGuts: _StringGuts {
-    @_specialize(where Self == String)
-    @_specialize(where Self == Substring)
-    @inline(__always) get {
+    // @_specialize(where Self == String)
+    // @_specialize(where Self == Substring)
+    // @inline(__always)
+    get {
       if let str = self as? String {
         return str._guts
       }

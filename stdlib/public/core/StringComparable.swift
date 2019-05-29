@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -14,10 +14,10 @@ import SwiftShims
 
 extension StringProtocol {
   @inlinable
-  @_specialize(where Self == String, RHS == String)
-  @_specialize(where Self == String, RHS == Substring)
-  @_specialize(where Self == Substring, RHS == String)
-  @_specialize(where Self == Substring, RHS == Substring)
+  // @_specialize(where Self == String, RHS == String)
+  // @_specialize(where Self == String, RHS == Substring)
+  // @_specialize(where Self == Substring, RHS == String)
+  // @_specialize(where Self == Substring, RHS == Substring)
   @_effects(readonly)
   public static func == <RHS: StringProtocol>(lhs: Self, rhs: RHS) -> Bool {
     return _stringCompare(
@@ -33,10 +33,10 @@ extension StringProtocol {
   }
 
   @inlinable
-  @_specialize(where Self == String, RHS == String)
-  @_specialize(where Self == String, RHS == Substring)
-  @_specialize(where Self == Substring, RHS == String)
-  @_specialize(where Self == Substring, RHS == Substring)
+  // @_specialize(where Self == String, RHS == String)
+  // @_specialize(where Self == String, RHS == Substring)
+  // @_specialize(where Self == Substring, RHS == String)
+  // @_specialize(where Self == Substring, RHS == Substring)
   @_effects(readonly)
   public static func < <RHS: StringProtocol>(lhs: Self, rhs: RHS) -> Bool {
     return _stringCompare(

@@ -1,4 +1,4 @@
-//===--- ArrayBuffer.swift - Dynamic storage for Swift Array --------------===//
+﻿//===--- ArrayBuffer.swift - Dynamic storage for Swift Array --------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -15,8 +15,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if _runtime(_ObjC)
-import SwiftShims
+#if OBJC//_runtime(_ObjC)
+// import SwiftShims
 
 @usableFromInline
 internal typealias _ArrayBridgeStorage
@@ -43,7 +43,7 @@ internal struct _ArrayBuffer<Element> : _ArrayBufferProtocol {
   /// - Precondition: The elements actually have dynamic type `U`, and `U`
   ///   is a class or `@objc` existential.
   @inlinable
-  __consuming internal func cast<U>(toBufferOf _: U.Type) -> _ArrayBuffer<U> {
+  internal func cast<U>(toBufferOf _: U.Type) -> _ArrayBuffer<U> {
     _internalInvariant(_isClassOrObjCExistential(Element.self))
     _internalInvariant(_isClassOrObjCExistential(U.self))
     return _ArrayBuffer<U>(storage: _storage)
@@ -55,12 +55,12 @@ internal struct _ArrayBuffer<Element> : _ArrayBufferProtocol {
   /// - Precondition: `U` is a class or `@objc` existential derived from
   /// `Element`.
   @inlinable
-  __consuming internal func downcast<U>(
+  internal func downcast<U>(
     toBufferWithDeferredTypeCheckOf _: U.Type
   ) -> _ArrayBuffer<U> {
     _internalInvariant(_isClassOrObjCExistential(Element.self))
     _internalInvariant(_isClassOrObjCExistential(U.self))
-    
+
     // FIXME: can't check that U is derived from Element pending
     // <rdar://problem/20028320> generic metatype casting doesn't work
     // _internalInvariant(U.self is Element.Type)
@@ -74,7 +74,7 @@ internal struct _ArrayBuffer<Element> : _ArrayBufferProtocol {
     // NSArray's need an element typecheck when the element type isn't AnyObject
     return !_isNativeTypeChecked && !(AnyObject.self is Element.Type)
   }
-  
+
   //===--- private --------------------------------------------------------===//
   @inlinable
   internal init(storage: _ArrayBridgeStorage) {
@@ -207,7 +207,7 @@ extension _ArrayBuffer {
   /// just-initialized memory.
   @inlinable
   @discardableResult
-  __consuming internal func _copyContents(
+  internal func _copyContents(
     subRange bounds: Range<Int>,
     initializing target: UnsafeMutablePointer<Element>
   ) -> UnsafeMutablePointer<Element> {
@@ -223,7 +223,7 @@ extension _ArrayBuffer {
     return UnsafeMutableRawPointer(result).assumingMemoryBound(to: Element.self)
   }
 
-  public __consuming func _copyContents(
+  public func _copyContents(
     initializing buffer: UnsafeMutableBufferPointer<Element>
   ) -> (Iterator,UnsafeMutableBufferPointer<Element>.Index) {
     // This customization point is not implemented for internal types.
@@ -264,7 +264,7 @@ extension _ArrayBuffer {
   /// The number of elements the buffer stores.
   @inlinable
   internal var count: Int {
-    @inline(__always)
+    // @inline(__always)
     get {
       return _fastPath(_isNative) ? _native.count : _nonNative.count
     }
@@ -292,7 +292,7 @@ extension _ArrayBuffer {
   }
 
   // TODO: gyb this
-  
+
   /// Traps if an inout violation is detected or if the buffer is
   /// native and typechecked and the subscript is out of range.
   ///
@@ -339,7 +339,7 @@ extension _ArrayBuffer {
       // checking for the native un-typechecked case.  Therefore we
       // have to do it here.
       _native._checkValidSubscript(i)
-      
+
       element = cast(toBufferOf: AnyObject.self)._native[i]
       precondition(
         element is Element,
@@ -368,7 +368,7 @@ extension _ArrayBuffer {
     get {
       return getElement(i, wasNativeTypeChecked: _isNativeTypeChecked)
     }
-    
+
     nonmutating set {
       if _fastPath(_isNative) {
         _native[i] = newValue
@@ -397,7 +397,7 @@ extension _ArrayBuffer {
     }
     return try ContiguousArray(self).withUnsafeBufferPointer(body)
   }
-  
+
   /// Call `body(p)`, where `p` is an `UnsafeMutableBufferPointer`
   /// over the underlying contiguous storage.
   ///
@@ -414,13 +414,13 @@ extension _ArrayBuffer {
     return try body(UnsafeMutableBufferPointer(
       start: firstElementAddressIfContiguous, count: count))
   }
-  
+
   /// An object that keeps the elements stored in this buffer alive.
   @inlinable
   internal var owner: AnyObject {
     return _fastPath(_isNative) ? _native._storage : _nonNative.buffer
   }
-  
+
   /// An object that keeps the elements stored in this buffer alive.
   ///
   /// - Precondition: This buffer is backed by a `_ContiguousArrayBuffer`.
@@ -443,7 +443,7 @@ extension _ArrayBuffer {
         Unmanaged.passUnretained(_nonNative.buffer).toOpaque())
     }
   }
-  
+
   //===--- Collection conformance -------------------------------------===//
   /// The position of the first element in a non-empty collection.
   ///
@@ -510,7 +510,7 @@ extension _ArrayBuffer {
 
   @inlinable
   internal var _nonNative: _CocoaArrayWrapper {
-    @inline(__always)
+    // @inline(__always)
     get {
       _internalInvariant(_isClassOrObjCExistential(Element.self))
       return _CocoaArrayWrapper(_storage.objCInstance)

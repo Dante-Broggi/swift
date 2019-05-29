@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -165,6 +165,7 @@ func _getErrorEmbeddedNSError<T : Error>(_ x: T)
   return x._getEmbeddedNSError()
 }
 
+/*
 /// Provided by the ErrorObject implementation.
 @_silgen_name("_swift_stdlib_getErrorDefaultUserInfo")
 internal func _getErrorDefaultUserInfo<T: Error>(_ error: T) -> AnyObject?
@@ -172,14 +173,16 @@ internal func _getErrorDefaultUserInfo<T: Error>(_ error: T) -> AnyObject?
 /// Provided by the ErrorObject implementation.
 /// Called by the casting machinery and by the Foundation overlay.
 @_silgen_name("_swift_stdlib_bridgeErrorToNSError")
-public func _bridgeErrorToNSError(_ error: __owned Error) -> AnyObject
+public func _bridgeErrorToNSError(_ error: Error) -> AnyObject
+*/
+
 #endif
 
 /// Invoked by the compiler when the subexpression of a `try!` expression
 /// throws an error.
 @_silgen_name("swift_unexpectedError")
 public func _unexpectedError(
-  _ error: __owned Error,
+  _ error: Error,
   filenameStart: Builtin.RawPointer,
   filenameLength: Builtin.Word,
   filenameIsASCII: Builtin.Int1,
@@ -200,10 +203,12 @@ public func _errorInMain(_ error: Error) {
   fatalError("Error raised at top level: \(String(reflecting: error))")
 }
 
+/*
 /// Runtime function to determine the default code for an Error-conforming type.
 /// Called by the Foundation overlay.
 @_silgen_name("_swift_stdlib_getDefaultErrorCode")
 public func _getDefaultErrorCode<T : Error>(_ error: T) -> Int
+*/
 
 extension Error {
   public var _code: Int {

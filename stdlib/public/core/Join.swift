@@ -1,4 +1,4 @@
-//===--- Join.swift - Protocol and Algorithm for concatenation ------------===//
+﻿//===--- Join.swift - Protocol and Algorithm for concatenation ------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -12,11 +12,11 @@
 
 /// A sequence that presents the elements of a base sequence of sequences
 /// concatenated using a given separator.
-@_fixed_layout // lazy-performance
+// @_fixed_layout // lazy-performance
 public struct JoinedSequence<Base : Sequence> where Base.Element : Sequence {
 
   public typealias Element = Base.Element.Element
-  
+
   @usableFromInline // lazy-performance
   internal var _base: Base
   @usableFromInline // lazy-performance
@@ -37,7 +37,7 @@ public struct JoinedSequence<Base : Sequence> where Base.Element : Sequence {
 extension JoinedSequence {
   /// An iterator that presents the elements of the sequences traversed
   /// by a base iterator, concatenated using a given separator.
-  @_fixed_layout // lazy-performance
+  // @_fixed_layout // lazy-performance
   public struct Iterator {
     @usableFromInline // lazy-performance
     internal var _base: Base.Iterator
@@ -47,9 +47,9 @@ extension JoinedSequence {
     internal var _separatorData: ContiguousArray<Element>
     @usableFromInline // lazy-performance
     internal var _separator: ContiguousArray<Element>.Iterator?
-    
-    @_frozen // lazy-performance
-    @usableFromInline // lazy-performance
+
+    // @_frozen // lazy-performance
+    // @usableFromInline // lazy-performance
     internal enum _JoinIteratorState {
       case start
       case generatingElements
@@ -69,7 +69,7 @@ extension JoinedSequence {
       self._base = base
       self._separatorData = ContiguousArray(separator)
     }
-  }  
+  }
 }
 
 extension JoinedSequence.Iterator: IteratorProtocol {
@@ -126,12 +126,12 @@ extension JoinedSequence: Sequence {
   ///
   /// - Complexity: O(1).
   @inlinable // lazy-performance
-  public __consuming func makeIterator() -> Iterator {
+  public func makeIterator() -> Iterator {
     return Iterator(base: _base.makeIterator(), separator: _separator)
   }
 
   @inlinable // lazy-performance
-  public __consuming func _copyToContiguousArray() -> ContiguousArray<Element> {
+  public func _copyToContiguousArray() -> ContiguousArray<Element> {
     var result = ContiguousArray<Element>()
     let separatorSize = _separator.count
 
@@ -154,7 +154,7 @@ extension JoinedSequence: Sequence {
     return result
   }
 }
-  
+
 extension Sequence where Element : Sequence {
   /// Returns the concatenated elements of this sequence of sequences,
   /// inserting the given separator between each element.
@@ -171,7 +171,7 @@ extension Sequence where Element : Sequence {
   ///   sequence's elements.
   /// - Returns: The joined sequence of elements.
   @inlinable // lazy-performance
-  public __consuming func joined<Separator : Sequence>(
+  public func joined<Separator : Sequence>(
     separator: Separator
   ) -> JoinedSequence<Self>
     where Separator.Element == Element.Element {

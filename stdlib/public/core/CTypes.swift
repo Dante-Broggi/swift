@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -115,7 +115,7 @@ public typealias CBool = Bool
 ///
 /// Opaque pointers are used to represent C pointers to types that
 /// cannot be represented in Swift, such as incomplete struct types.
-@_fixed_layout
+// @_fixed_layout
 public struct OpaquePointer {
   @usableFromInline
   internal var _rawValue: Builtin.RawPointer
@@ -258,7 +258,7 @@ extension CVaListPointer : CustomDebugStringConvertible {
 
 #else
 
-@_fixed_layout
+// @_fixed_layout
 public struct CVaListPointer {
   @usableFromInline // unsafe-performance
   internal var _value: UnsafeMutableRawPointer

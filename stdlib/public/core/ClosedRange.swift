@@ -1,4 +1,4 @@
-//===--- ClosedRange.swift ------------------------------------------------===//
+﻿//===--- ClosedRange.swift ------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -60,7 +60,7 @@
 /// `Stride` types, they cannot be used as the bounds of a countable range. If
 /// you need to iterate over consecutive floating-point values, see the
 /// `stride(from:through:by:)` function.
-@_fixed_layout
+// @_fixed_layout
 public struct ClosedRange<Bound: Comparable> {
   /// The range's lower bound.
   public let lowerBound: Bound
@@ -127,7 +127,7 @@ where Bound: Strideable, Bound.Stride: SignedInteger {
 }
 
 extension ClosedRange where Bound : Strideable, Bound.Stride : SignedInteger {
-  @_frozen // FIXME(resilience)
+  // @_frozen // FIXME(resilience)
   public enum Index {
     case pastEnd
     case inRange(Bound)
@@ -141,7 +141,7 @@ extension ClosedRange.Index : Comparable {
     rhs: ClosedRange<Bound>.Index
   ) -> Bool {
     switch (lhs, rhs) {
-    case (.inRange(let l), .inRange(let r)):
+    case let (.inRange(l), .inRange(r)):
       return l == r
     case (.pastEnd, .pastEnd):
       return true
@@ -156,7 +156,7 @@ extension ClosedRange.Index : Comparable {
     rhs: ClosedRange<Bound>.Index
   ) -> Bool {
     switch (lhs, rhs) {
-    case (.inRange(let l), .inRange(let r)):
+    case let (.inRange(l), .inRange(r)):
       return l < r
     case (.inRange, .pastEnd):
       return true
@@ -214,7 +214,7 @@ where Bound : Strideable, Bound.Stride : SignedInteger
       return x == upperBound
         ? .pastEnd
         : .inRange(x.advanced(by: 1))
-    case .pastEnd: 
+    case .pastEnd:
       _preconditionFailure("Incrementing past end index")
     }
   }
@@ -225,7 +225,7 @@ where Bound : Strideable, Bound.Stride : SignedInteger
     case .inRange(let x):
       _precondition(x > lowerBound, "Incrementing past start index")
       return .inRange(x.advanced(by: -1))
-    case .pastEnd: 
+    case .pastEnd:
       _precondition(upperBound >= lowerBound, "Incrementing past start index")
       return .inRange(upperBound)
     }
@@ -247,7 +247,7 @@ where Bound : Strideable, Bound.Stride : SignedInteger
     case .pastEnd:
       if distance == 0 {
         return i
-      } 
+      }
       if distance < 0 {
         return index(.inRange(upperBound), offsetBy: numericCast(distance + 1))
       }
@@ -316,7 +316,7 @@ where Bound : Strideable, Bound.Stride : SignedInteger
   }
 }
 
-extension Comparable {  
+extension Comparable {
   /// Returns a closed range that contains both of its bounds.
   ///
   /// Use the closed range operator (`...`) to create a closed range of any type
@@ -413,7 +413,7 @@ extension ClosedRange {
   @inlinable // trivial-implementation
   @inline(__always)
   public func clamped(to limits: ClosedRange) -> ClosedRange {
-    let lower =         
+    let lower =
       limits.lowerBound > self.lowerBound ? limits.lowerBound
           : limits.upperBound < self.lowerBound ? limits.upperBound
           : self.lowerBound
@@ -425,7 +425,7 @@ extension ClosedRange {
   }
 }
 
-extension ClosedRange where Bound: Strideable, Bound.Stride : SignedInteger {  
+extension ClosedRange where Bound: Strideable, Bound.Stride : SignedInteger {
   /// Creates an instance equivalent to the given `Range`.
   ///
   /// - Parameter other: A `Range` to convert to a `ClosedRange` instance.

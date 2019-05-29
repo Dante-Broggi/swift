@@ -1,4 +1,4 @@
-//===----------------------------------------------------------------------===//
+﻿//===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -35,7 +35,7 @@ internal func _allASCII(_ input: UnsafeBufferPointer<UInt8>) -> Bool {
   }
 
   while (i &+ stride) <= count {
-    let word: UInt = UnsafePointer(
+    let word: UInt = UnsafePointer<UInt>(
       bitPattern: address &+ i
     )._unsafelyUnwrappedUnchecked.pointee
     guard word & wordASCIIMask == 0 else { return false }
@@ -181,7 +181,7 @@ extension String {
 
   @usableFromInline
   internal static func _fromSubstring(
-    _ substring: __shared Substring
+    _ substring: Substring
   ) -> String {
     if substring._offsetRange == substring.base._offsetRange {
       return substring.base
