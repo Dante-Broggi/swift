@@ -32,7 +32,7 @@ extension Unicode.ASCII : Unicode.Encoding {
   public static func _isScalar(_ x: CodeUnit) -> Bool {
     return true
   }
-
+ 
   @inline(__always)
   @inlinable
   public static func decode(_ source: EncodedScalar) -> Unicode.Scalar {
